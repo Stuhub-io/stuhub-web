@@ -19,13 +19,13 @@ const CardItem = ({ content }: { content: string }) => {
         <div className='grid grid-cols-6 items-center justify-center gap-6 md:grid-cols-12 md:gap-4'>
           <div className='relative col-span-6 md:col-span-4'>
                             <Image
-                              alt='Album cover'
-                              className='object-cover'
-                              height={200}
-                              shadow='md'
-                              src='/images/album-cover.png'
-                              width='100%'
-                            />
+                            alt='Album cover'
+                            className='object-cover'
+                            height={200}
+                            shadow='md'
+                            src='/images/album-cover.png'
+                            width='100%'
+                          />
             {user}
           </div>
 
