@@ -41,7 +41,8 @@
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
-      "bun format:fix", "bun lint"
+      "bun format:fix",
+      "bun lint"
     ]
   }
 }
