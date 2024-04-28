@@ -2,6 +2,11 @@
   "name": "stuhub-web",
   "version": "0.1.0",
   "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "bun run lint-staged"
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,7 +14,11 @@
     "lint": "next lint",
     "format": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore .",
-    "prepare": "husky"
+    "lint-staged": "lint-staged",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": ["eslint", "prettier --check"]
   },
   "dependencies": {
     "@hello-pangea/dnd": "^16.6.0",
