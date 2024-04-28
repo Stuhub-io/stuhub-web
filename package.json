@@ -2,11 +2,6 @@
   "name": "stuhub-web",
   "version": "0.1.0",
   "private": true,
-  "husky": {
-    "hooks": {
-      "pre-commit": "bun run lint-staged"
-    }
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,11 +9,7 @@
     "lint": "next lint",
     "format": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore .",
-    "lint-staged": "lint-staged",
-    "prepare": "husky install"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["eslint", "prettier --check"]
+    "prepare": "husky"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^16.6.0",
@@ -47,5 +38,8 @@
     "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": ["bun run lint"]
   }
 }

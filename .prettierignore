@@ -4,6 +4,7 @@ package-lock.json
 yarn.lock
 bun.lockb
 package.json
+ .eslintrc.json
 /.next/
 .cache
 public
