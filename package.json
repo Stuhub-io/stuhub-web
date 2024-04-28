@@ -40,6 +40,8 @@
     "typescript": "^5"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["bun run lint"]
+    "*.{js,ts,tsx}": [
+      "bun format:fix", "bun lint"
+    ]
   }
 }
