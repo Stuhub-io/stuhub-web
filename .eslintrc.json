@@ -13,18 +13,20 @@
     "node": true
   },
   "root": true,
-  "extends": ["next/core-web-vitals", "prettier", "eslint:recommended",
+  "extends": [
+    "next/core-web-vitals",
+    "prettier",
+    "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "plugin:prettier/recommended",
     "plugin:react-hooks/recommended"
   ],
   "rules": {
-    "prefer-const": "warn",
+    "prefer-const": "error",
     "no-var": "warn",
     "object-shorthand": "warn",
     "quote-props": ["warn", "as-needed"],
-    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/array-type": [
       "warn",
       {
@@ -58,7 +60,6 @@
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "no-param-reassign": "warn",
-    "no-shadow": "warn",
-    "prettier/prettier": ["error", { "endOfLine": "auto" }]
+    "no-shadow": "warn"
   }
 }
