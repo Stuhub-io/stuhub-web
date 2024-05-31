@@ -9,7 +9,22 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontSize: {
+        xxs: '11px',
+        xxxs: '10px',
+        '3.5xl': '32px',
+        '4.5xl': '40px',
+      },
+      container: {
+        center: true,
+        screens: {
+          DEFAULT: '100%',
+          landing: '1120px',
+        },
+      },
+    },
+    
   },
   darkMode: 'class',
   plugins: [nextui()],
