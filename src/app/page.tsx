@@ -1,72 +1,82 @@
 'use client';
-import {
-  Button,
-  Dropdown,
-  DropdownSection,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from '@nextui-org/react';
-
-import {
-  AddNoteBulkIcon,
-  CopyDocumentBulkIcon,
-  EditDocumentBulkIcon,
-  DeleteDocumentBulkIcon,
-} from '@nextui-org/shared-icons';
-import clsx from 'clsx';
-
-const iconClasses = 'text-2xl text-default-500 pointer-events-none flex-shrink-0';
+import Typography from '@/components/common/Typography';
+import { LandingFooter } from '@/components/landing/Footer';
+import { LandingPageHeader } from '@/components/landing/Header';
+import { ROUTES } from '@/constants/routes';
+import { Button, Spacer } from '@nextui-org/react';
+import { ArrowRight, CalendarCheck, FileText, MessagesSquare, Target } from 'lucide-react';
+import Link from 'next/link';
 
 const Home = () => {
   return (
-    <Dropdown className='shadow-xl' placement='bottom'>
-      <DropdownTrigger>
-        <Button color='success' variant='flat'>
-          Actions
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu closeOnSelect aria-label='Actions' color='default' variant='flat'>
-        <DropdownSection title='Actions'>
-          <DropdownItem
-            key='new'
-            description='Create a new file'
-            shortcut='⌘N'
-            startContent={<AddNoteBulkIcon className={iconClasses} />}
-          >
-            New file
-          </DropdownItem>
-          <DropdownItem
-            key='copy'
-            description='Copy the file link'
-            shortcut='⌘C'
-            startContent={<CopyDocumentBulkIcon className={iconClasses} />}
-          >
-            Copy link
-          </DropdownItem>
-          <DropdownItem
-            key='edit'
-            description='Allows you to edit the file'
-            shortcut='⌘⇧E'
-            startContent={<EditDocumentBulkIcon className={iconClasses} />}
-          >
-            Edit file
-          </DropdownItem>
-        </DropdownSection>
-        <DropdownSection title='Danger zone'>
-          <DropdownItem
-            key='delete'
-            className='text-danger'
-            color='danger'
-            description='Permanently delete the file'
-            shortcut='⌘⇧D'
-            startContent={<DeleteDocumentBulkIcon className={clsx(iconClasses, '!text-danger')} />}
-          >
-            Delete file
-          </DropdownItem>
-        </DropdownSection>
-      </DropdownMenu>
-    </Dropdown>
+    <>
+      <LandingPageHeader />
+      <Spacer y={48} />
+      <div className='space-y-6'>
+        <div className='mx-auto max-w-[900px]'>
+          <Typography className='w-full text-center' level='h2'>
+            Revolutionize Your Workflow
+          </Typography>
+          <Typography className='w-full text-center' level='h2'>
+            Keep your team working asynchronously
+          </Typography>
+        </div>
+        <div className='mx-auto max-w-[600px]'>
+          <Typography className='w-full text-center font-thin text-gray-400' level='h5'>
+            Stuhub designed for remote teams to work together, share knowledge, and build a community.
+          </Typography>
+        </div>
+        <div className='mx-auto w-fit space-x-4'>
+          <Button variant='solid' color='primary' size='lg'>
+            Start trial now
+            <ArrowRight size={18} />
+          </Button>
+          <Button variant='flat' color='default' size='lg'>
+            Learn more
+          </Button>
+        </div>
+      </div>
+      <Spacer y={48} />
+      <div className='flex flex-col'>
+        <Typography className='mx-auto w-full max-w-[900px] text-center' level='h4'>
+          Manage everythings
+        </Typography>
+        <div className='mx-auto mb-8 mt-12 flex w-fit gap-12'>
+          <div className='flex flex-col items-center gap-4'>
+            <MessagesSquare className='text-gray-400' />
+            <Typography level='p2' className=' font-thin text-gray-400'>
+              Collaborative
+            </Typography>
+          </div>
+          <div className='flex flex-col items-center gap-4'>
+            <FileText className='text-gray-400' />
+            <Typography level='p2' className=' font-thin text-gray-400'>
+              Documents
+            </Typography>
+          </div>
+          <div className='flex flex-col items-center gap-4'>
+            <Target className='text-gray-400' />
+            <Typography level='p2' className=' font-thin text-gray-400'>
+              Kanband Projects
+            </Typography>
+          </div>
+          <div className='flex flex-col items-center gap-4'>
+            <CalendarCheck className='text-gray-400' />
+            <Typography level='p2' className=' font-thin text-gray-400'>
+              Calendar
+            </Typography>
+          </div>
+        </div>
+        <Typography className='mx-auto w-full max-w-[900px] text-center' level='p4'>
+          Simple, powerful, beautiful. Next-gen notes & docs.{' '}
+          <span className='ml-1 inline-flex items-center gap-2 text-primary'>
+            <Link href={ROUTES.LANDING_PAGE}>Learn more</Link>
+            <ArrowRight size={14} />
+          </span>
+        </Typography>
+      </div>
+      <LandingFooter />
+    </>
   );
 };
 
