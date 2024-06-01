@@ -1,0 +1,1 @@
+export const SUBSTACK_DOMAIN = process.env.SUBSTACK_DOMAIN;

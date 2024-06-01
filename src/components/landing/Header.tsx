@@ -12,7 +12,7 @@ export const LandingPageHeader = () => {
       <NavbarContent justify='start'>
         <NavbarBrand className='gap-4'>
           <Link href={ROUTES.LANDING_PAGE}>
-            <Typography level='h5'>Stuhub</Typography>
+            <Typography level='h5'>Stuhub 📖</Typography>
           </Link>
         </NavbarBrand>
         <NavbarContent>
