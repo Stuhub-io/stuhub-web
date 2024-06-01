@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss';
-import { nextui } from '@nextui-org/react';
+import { ThemeColors, nextui } from '@nextui-org/react';
+import { colors } from '@nextui-org/react'
 
 const config: Config = {
   content: [
@@ -24,9 +25,32 @@ const config: Config = {
         },
       },
     },
-    
   },
   darkMode: 'class',
-  plugins: [nextui()],
+  plugins: [nextui({
+    themes: {
+      light:{
+        colors: {
+          text: {
+            primary: colors.zinc[800],
+            secondary : colors.zinc[700],
+            tertiary: colors.zinc[500],
+          },
+        } as Partial<ThemeColors>,
+      },
+      dark: {
+        colors: {
+          text: {
+            primary: colors.zinc['100'],
+            secondary: colors.zinc['200'],
+            tertiary: colors.zinc['400'],
+            // icon: colors.zinc['50'], // removeable
+            // 'icon-primary': colors.zinc['50'],
+            // 'icon-secondary': colors.zinc['400'],
+          },
+        } as Partial<ThemeColors>,
+      },
+    },
+  })],
 };
 export default config;

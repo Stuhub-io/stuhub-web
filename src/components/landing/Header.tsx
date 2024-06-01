@@ -1,10 +1,12 @@
-import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
+import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, Switch } from '@nextui-org/react';
 import Typography from '../common/Typography';
 import Link from 'next/link';
 import { ROUTES } from '@/constants/routes';
 import { ChevronRight } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 export const LandingPageHeader = () => {
+  const { setTheme, activeTheme } = useTheme();
   return (
     <Navbar>
       <NavbarContent justify='start'>
@@ -13,6 +15,16 @@ export const LandingPageHeader = () => {
             <Typography level='h5'>Stuhub</Typography>
           </Link>
         </NavbarBrand>
+        <NavbarContent>
+          {activeTheme === 'dark' ? '🌙' : '☀️'}
+          <Switch
+            size='sm'
+            isSelected={activeTheme === 'dark'}
+            onValueChange={(isSelected) => {
+              setTheme(isSelected ? 'dark' : 'light');
+            }}
+          />
+        </NavbarContent>
       </NavbarContent>
       <NavbarContent justify='center'>
         <NavbarItem>
