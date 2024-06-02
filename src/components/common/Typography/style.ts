@@ -1,13 +1,14 @@
 import { VariantProps, cva } from "class-variance-authority"
 
-const typographyVariants = cva(['overflow-hidden'], {
+const typographyVariants = cva([''], {
   variants: {
     level: {
-      h1: 'text-7xl font-semibold tracking-[-0.5px]',
-      h2: 'text-5xl font-semibold tracking-[-0.5px]',
-      h3: 'text-4.5xl font-semibold tracking-[-0.5px]',
-      h4: 'text-3.5xl font-semibold tracking-[-0.5px]',
-      h5: 'text-2xl font-semibold tracking-[-0.5px]',
+      h0: 'text-7xl font-semibold tracking-[-0.5px]',
+      h1: 'text-5xl font-semibold tracking-[-0.5px]',
+      h2: 'text-4.5xl font-semibold tracking-[-0.5px]',
+      h3: 'text-3.5xl font-semibold tracking-[-0.5px]',
+      h4: 'text-2xl font-semibold tracking-[-0.5px]',
+      h5: 'text-xl font-semibold tracking-[-0.5px]',
 
       h6: 'text-lg font-semibold tracking-[-0.2px]',
       h7: 'text-base font-semibold tracking-[-0.2px]',
@@ -19,7 +20,7 @@ const typographyVariants = cva(['overflow-hidden'], {
       p4: 'text-base tracking-[-0.2px]',
       p5: 'text-sm tracking-[-0.2px]',
       p6: 'text-xs tracking-[-0.2px]',
-      p7: 'text-xxxs tracking-normal tracking-[-0.2px]',
+      p7: 'text-xxs tracking-normal tracking-[-0.2px]',
       inherit: 'text-inherit',
     },
     color: {

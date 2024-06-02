@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, Switch } from '@nextui-org/react';
 import Typography from '../common/Typography';
 import Link from 'next/link';
@@ -8,7 +10,11 @@ import { useTheme } from '@/hooks/useTheme';
 export const LandingPageHeader = () => {
   const { setTheme, activeTheme } = useTheme();
   return (
-    <Navbar>
+    <Navbar
+      classNames={{
+        wrapper: '!container',
+      }}
+    >
       <NavbarContent justify='start'>
         <NavbarBrand className='gap-4'>
           <Link href={ROUTES.LANDING_PAGE}>

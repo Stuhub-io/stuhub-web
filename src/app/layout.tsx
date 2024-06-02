@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
-import { Signika_Negative } from 'next/font/google';
+import { Signika } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from 'next-themes';
-import Providers from './providers';
 import { cn } from '@/libs/utils';
-import { Layout } from '@/components/common/Layout';
+import { NextUIProvider } from '@nextui-org/react';
 
-const inter = Signika_Negative({ subsets: ['latin'] });
+const inter = Signika({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Stuhub',
@@ -23,9 +22,7 @@ export default function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <body className={cn(inter.className)}>
         <ThemeProvider>
-          <Providers>
-            <Layout>{children}</Layout>
-          </Providers>
+          <NextUIProvider>{children}</NextUIProvider>
         </ThemeProvider>
       </body>
     </html>

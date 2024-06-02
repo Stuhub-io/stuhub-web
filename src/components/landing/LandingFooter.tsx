@@ -1,9 +1,14 @@
+'use client';
+
 import { SUBSTACK_DOMAIN } from '@/constants/envs';
 import { cn } from '@/libs/utils';
 import { useEffect } from 'react';
 import Typography from '../common/Typography';
+import { Footer } from '../common/Footer/Footer';
+import { BookCheck } from 'lucide-react';
 
 export const LandingFooter = () => {
+  const year = new Date().getFullYear();
   useEffect(() => {
     const script = document.createElement('script');
 
@@ -19,13 +24,33 @@ export const LandingFooter = () => {
     };
   }, []);
   return (
-    <div className='mt-16 flex min-h-[300px] w-full flex-col items-center gap-4 p-16'>
-      <div className='flex gap-8'>
-        <Typography level='p4' className='text-center' fontWeight='sm' color='textSecondary'>
-          © 2024 Stuhub Inc.
-        </Typography>
-      </div>
-      <div className='h-fit w-fit'>
+    <Footer
+      className='mt-32'
+      nav={[
+        {
+          title: 'Developers',
+          links: [{ href: 'https://github.com/Stuhub-io/', text: 'GitHub', newTab: true }],
+        },
+        {
+          title: 'Resources',
+          links: [
+            {
+              text: 'Changelog',
+              href: '/changelog',
+            },
+          ],
+        },
+      ]}
+      social={[]}
+      logo={<BookCheck size={26} />}
+      copyrightText={
+        <div className='flex flex-col gap-y-2'>
+          <Typography level='p5' color='textTertiary' className='text-right'>
+            Copyright © {year} Stuhub, All rights reserved
+          </Typography>
+        </div>
+      }
+      extraInfo={
         <div
           id='custom-substack-embed'
           className={cn(
@@ -63,7 +88,7 @@ export const LandingFooter = () => {
             '[&_p]:!text-xs'
           )}
         />
-      </div>
-    </div>
+      }
+    />
   );
 };

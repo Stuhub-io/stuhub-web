@@ -1,7 +1,5 @@
 'use client';
 import Typography from '@/components/common/Typography';
-import { LandingFooter } from '@/components/landing/Footer';
-import { LandingPageHeader } from '@/components/landing/Header';
 import { ROUTES } from '@/constants/routes';
 import { cn } from '@/libs/utils';
 import { Button, Spacer } from '@nextui-org/react';
@@ -9,18 +7,17 @@ import { ArrowRight, CalendarCheck, FileText, MessagesSquare, Target } from 'luc
 import Link from 'next/link';
 import { useState } from 'react';
 
-const Home = () => {
+export default function Home() {
   const [selectedTab, setSelectedTab] = useState(0);
   return (
     <>
-      <LandingPageHeader />
       <Spacer y={48} />
       <div className='space-y-6'>
         <div className='mx-auto max-w-[900px]'>
-          <Typography className='w-full text-center' level='h2'>
+          <Typography className='w-full text-center' level='h1'>
             Revolutionize Your Workflow
           </Typography>
-          <Typography className='w-full text-center' level='h2'>
+          <Typography className='w-full text-center' level='h1'>
             Keep your team working asynchronously
           </Typography>
         </div>
@@ -97,9 +94,6 @@ const Home = () => {
           </span>
         </Typography>
       </div>
-      <LandingFooter />
     </>
   );
-};
-
-export default Home;
+}

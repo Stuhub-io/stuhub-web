@@ -13,17 +13,18 @@ const config: Config = {
     extend: {
       fontSize: {
         xxs: '11px',
-        xxxs: '10px',
         '3.5xl': '32px',
         '4.5xl': '40px',
       },
       container: {
         center: true,
         screens: {
-          DEFAULT: '100%',
-          landing: '1120px',
-        },
-      },
+          sm: '100%',
+          md: '100%',
+          lg: '1024px',
+          xl: '1280px',
+        }
+      }
     },
   },
   darkMode: 'class',
@@ -44,9 +45,6 @@ const config: Config = {
             primary: colors.zinc['100'],
             secondary: colors.zinc['200'],
             tertiary: colors.zinc['400'],
-            // icon: colors.zinc['50'], // removeable
-            // 'icon-primary': colors.zinc['50'],
-            // 'icon-secondary': colors.zinc['400'],
           },
         } as Partial<ThemeColors>,
       },
