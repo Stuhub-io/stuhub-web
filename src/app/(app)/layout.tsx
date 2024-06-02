@@ -5,6 +5,6 @@ export const metadata: Metadata = {
   description: 'Shaping worklife',
 };
 
-export const AppLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+export default function AppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <>{children}</>;
-};
+}
