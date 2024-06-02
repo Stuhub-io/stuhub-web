@@ -20,7 +20,6 @@ export const LandingFooter = () => {
       substackUrl: SUBSTACK_DOMAIN,
       placeholder: 'Enter your email',
       buttonText: 'Subscribe',
-      // Go to substackapi.com to unlock custom redirect
     };
   }, []);
   return (
