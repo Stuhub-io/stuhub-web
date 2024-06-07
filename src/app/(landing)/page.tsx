@@ -31,11 +31,16 @@ export default function Home() {
             Start trial now
             <ArrowRight size={18} />
           </Button>
-          <Link href={ROUTES.CHANGELOG_PAGE}>
-            <Button variant='flat' color='default' size='lg'>
-              Learn more
-            </Button>
-          </Link>
+          <Button
+            variant='flat'
+            color='default'
+            size='lg'
+            type='button'
+            as={Link}
+            href={ROUTES.CHANGELOG_PAGE}
+          >
+            Learn more
+          </Button>
         </div>
       </div>
       <Spacer y={48} />
