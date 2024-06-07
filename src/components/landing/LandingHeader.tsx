@@ -12,7 +12,7 @@ export const LandingPageHeader = () => {
   return (
     <Navbar
       classNames={{
-        wrapper: '!container',
+        wrapper: '!container backdrop-blur-md',
       }}
     >
       <NavbarContent justify='start'>

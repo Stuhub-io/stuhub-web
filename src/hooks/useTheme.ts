@@ -7,6 +7,7 @@ export type ThemeValue = 'light' | 'dark' | 'system' | undefined
 export const useTheme = () => {
   const { theme, systemTheme, ...rest } = useInternalTheme()
   const [mounted, setMounted] = useState(false)
+  
   useEffect(() => {
     setMounted(true)
   }, [])
