@@ -45,7 +45,7 @@ export const LandingPageHeader = () => {
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem>
-          <Button color='primary'>
+          <Button color='primary' as={Link} href={ROUTES.LOGIN_PAGE}>
             Getting Start
             <ChevronRight size={16} />
           </Button>

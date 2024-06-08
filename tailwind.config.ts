@@ -34,7 +34,7 @@ const config: Config = {
         colors: {
           text: {
             primary: colors.zinc[800],
-            secondary : colors.zinc[700],
+            secondary : colors.zinc[600],
             tertiary: colors.zinc[500],
           },
         } as Partial<ThemeColors>,
