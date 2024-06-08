@@ -31,7 +31,14 @@ export default function Home() {
             Start trial now
             <ArrowRight size={18} />
           </Button>
-          <Button variant='flat' color='default' size='lg'>
+          <Button
+            variant='flat'
+            color='default'
+            size='lg'
+            type='button'
+            as={Link}
+            href={ROUTES.CHANGELOG_PAGE}
+          >
             Learn more
           </Button>
         </div>
@@ -89,7 +96,7 @@ export default function Home() {
         <Typography className='mx-auto w-full max-w-[900px] text-center' level='p4'>
           Simple, powerful, beautiful. Next-gen notes & docs.{' '}
           <span className='ml-1 inline-flex items-center gap-2 text-primary'>
-            <Link href={ROUTES.LANDING_PAGE}>Learn more</Link>
+            <Link href={ROUTES.CHANGELOG_PAGE}>Learn more</Link>
             <ArrowRight size={14} />
           </span>
         </Typography>

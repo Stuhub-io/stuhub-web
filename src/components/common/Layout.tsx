@@ -8,8 +8,10 @@ interface Props {
 
 export const Layout = forwardRef<ElementRef<'div'>, Props>((props, ref) => {
   return (
-    <div ref={ref} className={cn('flex flex-col overflow-y-auto', 'h-[100vh]', props.className ?? '')}>
-      <div className='container w-full flex-1'>{props.children}</div>
+    <div ref={ref} className={cn('', 'h-[100vh]', props.className ?? '')}>
+      <div className='flex h-full w-full flex-col overflow-y-auto backdrop-blur-md'>
+        <div className='container flex w-full flex-1 flex-col '>{props.children}</div>
+      </div>
     </div>
   );
 });
