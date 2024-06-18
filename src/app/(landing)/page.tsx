@@ -3,12 +3,19 @@ import Typography from '@/components/common/Typography';
 import { ROUTES } from '@/constants/routes';
 import { cn } from '@/libs/utils';
 import { Button, Spacer } from '@nextui-org/react';
-import { ArrowRight, CalendarCheck, FileText, MessagesSquare, Target } from 'lucide-react';
+import {
+  RiArrowRightLine,
+  RiCalendar2Fill,
+  RiFileTextFill,
+  RiKanbanView,
+  RiMessage3Fill,
+} from 'react-icons/ri';
 import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Home() {
   const [selectedTab, setSelectedTab] = useState(0);
+
   return (
     <>
       <Spacer y={48} />
@@ -29,7 +36,7 @@ export default function Home() {
         <div className='mx-auto w-fit space-x-4'>
           <Button variant='solid' color='primary' size='lg'>
             Start trial now
-            <ArrowRight size={18} />
+            <RiArrowRightLine size={18} />
           </Button>
           <Button
             variant='flat'
@@ -51,19 +58,19 @@ export default function Home() {
         <div className='mx-auto mb-8 mt-12 flex w-fit gap-12'>
           {[
             {
-              Icon: MessagesSquare,
+              Icon: RiMessage3Fill,
               title: 'Collaborative',
             },
             {
-              Icon: FileText,
+              Icon: RiFileTextFill,
               title: 'Documents',
             },
             {
-              Icon: Target,
+              Icon: RiKanbanView,
               title: 'Kanband Projects',
             },
             {
-              Icon: CalendarCheck,
+              Icon: RiCalendar2Fill,
               title: 'Calendar',
             },
           ].map(({ Icon, title }, index) => {
@@ -80,6 +87,7 @@ export default function Home() {
                   className={cn('transition-al', {
                     'text-text-tertiary': !selected,
                   })}
+                  size={24}
                 />
                 <Typography
                   level='p2'
@@ -97,7 +105,7 @@ export default function Home() {
           Simple, powerful, beautiful. Next-gen notes & docs.{' '}
           <span className='ml-1 inline-flex items-center gap-2 text-primary'>
             <Link href={ROUTES.CHANGELOG_PAGE}>Learn more</Link>
-            <ArrowRight size={14} />
+            <RiArrowRightLine size={14} />
           </span>
         </Typography>
       </div>

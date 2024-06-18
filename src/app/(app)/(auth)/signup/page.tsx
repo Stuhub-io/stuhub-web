@@ -3,9 +3,9 @@
 import Typography from '@/components/common/Typography';
 import { ROUTES } from '@/constants/routes';
 import { Button, Divider, Input } from '@nextui-org/react';
-import { Github } from 'lucide-react';
 import Link from 'next/link';
 import { Form, useForm } from 'react-hook-form';
+import { RiGithubLine } from 'react-icons/ri';
 
 interface SignUpForm {
   email?: string;
@@ -50,7 +50,7 @@ export default function SignUpPage() {
         </Button>
         <Button variant='flat' size='lg' fullWidth>
           Sign up with Email
-          <Github size={16} />
+          <RiGithubLine size={16} />
         </Button>
       </div>
       <div className='mt-6 flex w-full max-w-md justify-center space-y-3'>
