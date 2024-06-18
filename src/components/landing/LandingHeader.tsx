@@ -4,7 +4,7 @@ import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, Switch } from '
 import Typography from '../common/Typography';
 import Link from 'next/link';
 import { ROUTES } from '@/constants/routes';
-import { ChevronRight } from 'lucide-react';
+import { BsChevronRight } from 'react-icons/bs';
 import { useTheme } from '@/hooks/useTheme';
 
 export const LandingPageHeader = () => {
@@ -45,9 +45,9 @@ export const LandingPageHeader = () => {
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem>
-          <Button color='primary' as={Link} href={ROUTES.LOGIN_PAGE}>
+          <Button color='primary' as={Link} href={ROUTES.SIGNIN_PAGE}>
             Getting Start
-            <ChevronRight size={16} />
+            <BsChevronRight size={16} />
           </Button>
         </NavbarItem>
       </NavbarContent>

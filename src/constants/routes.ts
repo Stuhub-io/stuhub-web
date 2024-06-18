@@ -2,5 +2,7 @@
 export const ROUTES = {
     LANDING_PAGE: '/',
     CHANGELOG_PAGE: '/changelog',
-    LOGIN_PAGE: '/login',
+    SIGNIN_PAGE: '/signin',
+    SIGNUP_PAGE: '/signup',
+    ONBOARDING: '/onboarding',
 }

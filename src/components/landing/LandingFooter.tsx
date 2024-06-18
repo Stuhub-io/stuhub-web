@@ -5,7 +5,7 @@ import { cn } from '@/libs/utils';
 import { useEffect } from 'react';
 import Typography from '../common/Typography';
 import { Footer } from '../common/Footer/Footer';
-import { BookCheck } from 'lucide-react';
+import { BsBookmarkCheck } from 'react-icons/bs';
 
 export const LandingFooter = () => {
   const year = new Date().getFullYear();
@@ -41,7 +41,7 @@ export const LandingFooter = () => {
         },
       ]}
       social={[]}
-      logo={<BookCheck size={26} />}
+      logo={<BsBookmarkCheck size={26} />}
       copyrightText={
         <div className='flex flex-col gap-y-2'>
           <Typography level='p5' color='textTertiary' className='text-right'>

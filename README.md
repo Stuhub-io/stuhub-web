@@ -42,6 +42,7 @@ bun dev
 | Files | 3rd party keys | ... |
 
 ## Technique Document
+**Source Code**
 
 - `src`
   - `app`: pages, layouts entrance components, handle routing *(follow [NextJs documentsh](ttps://nextjs.org/docs))*.
@@ -60,3 +61,14 @@ bun dev
         - `useFetchProjects.ts`: React query Hook for fetching user's Projects
         - `...`
   - `libs`: Third - parties related files for utils, setup(Ex: `firebase.ts`, `knock.ts`).
+
+**Convention**
+
+When signing new commit, the message should follow these rules
+- The message must include one of these headers: `feat`, `fix`, `release`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `revert`, `ci`, `build`.
+
+- Include the context of the changes:,`ui`,`auth`,`profile`,`landing`,`workspace`,`noti`,`all`,
+,`common`.
+- Message length should be under 75 characters.
+
+**Example**: `feat(auth): integreate api for login page`
