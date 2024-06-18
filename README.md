@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Stuhub IO
 
-## Getting Started
-
-First, run the development server:
+### Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+git clone git@github.com:Stuhub-io/stuhub-web.git
+
+cd stuhub-web
+bun install
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment
+### Web
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Environment | URL |
+| --- | --- |
+| Development | https://stuhub-web-dev.vercel.app/
+| Alpha | --- |
+| Staging | ... 
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Core Api
 
-## Learn More
+| Environment | URL |
+| --- | --- |
+| Development | ... |
+| Alpha | ... |
+| Staging | ... 
 
-To learn more about Next.js, take a look at the following resources:
+## Repos
+| Repo | URL | 
+| --- | --- |
+| Be core | https://github.com/Stuhub-io/stuhub-core | 
+| Web | https://github.com/Stuhub-io/stuhub-web |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Resources
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| Name | Description | URL
+| --- | --- | --- |
+| Design | mockup for UI | setting up Visibly .... |
+| Doc | Business Docs | setting up Lark |
+| Files | 3rd party keys | ... |
