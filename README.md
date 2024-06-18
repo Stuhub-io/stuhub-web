@@ -40,3 +40,23 @@ bun dev
 | Design | mockup for UI | setting up Visibly .... |
 | Doc | Business Docs | setting up Lark |
 | Files | 3rd party keys | ... |
+
+## Technique Document
+
+- `src`
+  - `app`: pages, layouts entrance components, handle routing *(follow [NextJs documentsh](ttps://nextjs.org/docs))*.
+  - `components`: contains reusable UI Components.
+    - `common`: contains most use components across the app.
+      - `Button`: Example component
+        - `Button.tsx`: Contains Button components
+        - `utils.tsx`: Utils that bound to the button only
+        - `index.ts`: export all the exported utils, components in the folder.
+    - `...`: sub folders for contain relate components of same domain (ex: auth, noti, chat, ...)
+    - 
+  - `constants`: Contain app's constant files, (`routes.ts`, `envs.ts`, `enum.ts`)
+  - `context`: Contain app level contexts (`auth`, `noti`, `socket`, ...)
+  - `hooks`: Contain reusable Hooks for app, grouped by domains.
+      - `projects`: Example for project domain's hooks.
+        - `useFetchProjects.ts`: React query Hook for fetching user's Projects
+        - `...`
+  - `libs`: Third - parties related files for utils, setup(Ex: `firebase.ts`, `knock.ts`).
