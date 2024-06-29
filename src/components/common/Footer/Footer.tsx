@@ -1,30 +1,31 @@
-import { ReactNode, forwardRef } from 'react';
-import { footer } from './style';
-import Typography from '../Typography';
+import { ReactNode, forwardRef } from 'react'
+import { footer } from './style'
+import Typography from '../Typography'
+import Link from 'next/link'
 
 interface FooterNavBlock {
-  title?: string;
+  title?: string
   links: {
-    href: string;
-    text: string;
-    newTab?: boolean;
-    as?: 'a' | any;
-  }[];
+    href: string
+    text: string
+    newTab?: boolean
+    as?: 'a' | any
+  }[]
 }
 
 interface FooterSocial {
-  title: string;
-  href: string;
-  Icon: (props: any) => JSX.Element;
+  title: string
+  href: string
+  Icon: (props: any) => JSX.Element
 }
 
 interface FooterProps {
-  className?: string;
-  logo: React.ReactNode;
-  copyrightText: React.ReactNode;
-  nav: FooterNavBlock[];
-  social: FooterSocial[];
-  extraInfo?: ReactNode;
+  className?: string
+  logo: React.ReactNode
+  copyrightText: React.ReactNode
+  nav: FooterNavBlock[]
+  social: FooterSocial[]
+  extraInfo?: ReactNode
 }
 
 const Footer = forwardRef<HTMLElement, FooterProps>(
@@ -41,7 +42,7 @@ const Footer = forwardRef<HTMLElement, FooterProps>(
                     <div className={footer.navBlockClsx} key={index}>
                       <h6 className={footer.navTitleClsx}>{block.title}</h6>
                       {block.links.map(({ href, text, as, newTab }, index) => {
-                        const Component = as || 'a';
+                        const Component = as || Link
                         return (
                           <Component
                             key={`${index} ${href}`}
@@ -51,16 +52,16 @@ const Footer = forwardRef<HTMLElement, FooterProps>(
                           >
                             {text}
                           </Component>
-                        );
+                        )
                       })}
                     </div>
-                  );
+                  )
                 })}
               </div>
             ) : null}
             <div className={footer.infoClsx}>
               {typeof copyrightText === 'string' ? (
-                <Typography level='p5' color='textTertiary' className={footer.copyrightClsx}>
+                <Typography level="p5" color="textTertiary" className={footer.copyrightClsx}>
                   {copyrightText}
                 </Typography>
               ) : (
@@ -70,8 +71,8 @@ const Footer = forwardRef<HTMLElement, FooterProps>(
                 {social.map(({ href, title, Icon }) => (
                   <a
                     key={href}
-                    target='_blank'
-                    rel='noreferrer'
+                    target="_blank"
+                    rel="noreferrer"
                     title={title}
                     href={href}
                     className={footer.socialLinkClsx}
@@ -85,10 +86,10 @@ const Footer = forwardRef<HTMLElement, FooterProps>(
           </div>
         </div>
       </footer>
-    );
-  }
-);
+    )
+  },
+)
 
-Footer.displayName = 'Footer';
+Footer.displayName = 'Footer'
 
-export { Footer, type FooterProps };
+export { Footer, type FooterProps }

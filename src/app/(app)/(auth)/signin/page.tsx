@@ -1,65 +1,130 @@
-'use client';
+'use client'
 
-import Typography from '@/components/common/Typography';
-import { ROUTES } from '@/constants/routes';
-import { Button, Divider, Input } from '@nextui-org/react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Form, useForm } from 'react-hook-form';
+import { FormInput } from '@/components/common/Form/FormInput'
+import Typography from '@/components/common/Typography'
+import { Button, Chip, Divider } from '@nextui-org/react'
+import { signIn, useSession } from 'next-auth/react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { BsGithub } from 'react-icons/bs'
+import { FcGoogle } from 'react-icons/fc'
+import { z } from 'zod'
+import { useState } from 'react'
 
-interface LoginForm {
-  email?: string;
-  password?: string;
+interface LoginFormValues {
+  email?: string
+  password?: string
+  showPassword: boolean
 }
 
+const getSchema = (isRequiredPassword: boolean) =>
+  z.object({
+    email: z.string().email(),
+    password: isRequiredPassword ? z.string().min(6) : z.string().optional(),
+  })
+
 export default function LoginPage() {
-  const navigation = useRouter();
-  const form = useForm<LoginForm>({
+  const [showPassword, setShowPassword] = useState(false)
+  const form = useForm<LoginFormValues>({
     defaultValues: {
       email: '',
       password: '',
+      showPassword: true,
     },
-  });
+    mode: 'onSubmit',
+    resolver: zodResolver(getSchema(showPassword)),
+  })
+  const { data } = useSession()
+  console.log({ data })
+
+  const handleSubmit = form.handleSubmit(async (values: LoginFormValues) => {
+    signIn('credentials', { email: values.email, password: values.password, redirect: false })
+    form.reset(undefined, {
+      keepValues: true,
+      keepErrors: false,
+      keepDirty: false,
+      keepIsSubmitted: false,
+    })
+    setShowPassword(true)
+  })
+
+  console.log(form.watch('showPassword'))
 
   return (
-    <Form
-      {...form}
-      className='flex w-full flex-col items-center py-10'
-      onSubmit={() => navigation.push(ROUTES.ONBOARDING)}
-    >
-      <Typography level='h4' className='mb-2 w-fit'>
-        Welcome to StuHub
-      </Typography>
-      <Typography level='p4' color='textTertiary'>
-        Enter your email and password to log in.
-      </Typography>
-      <div className='mt-6 w-full max-w-md space-y-3'>
-        <Input size='lg' placeholder='example@gmail.com' />
-        <Input size='lg' placeholder='Your Password' />
-        <Button variant='solid' size='lg' color='primary' fullWidth type='submit'>
-          Sign in with Email
-        </Button>
-      </div>
-      <div className='my-6 flex w-full max-w-md items-center justify-center gap-4 overflow-hidden'>
-        <Divider orientation='horizontal' />
-        <Typography color='textTertiary' level='p5' className='shrink-0'>
-          OR CONTINUTE WITH
-        </Typography>
-        <Divider orientation='horizontal' />
-      </div>
-
-      <div className='w-full max-w-md space-y-3'>
-        <Button variant='flat' size='lg' fullWidth type='submit'>
-          Sign in with Google
-        </Button>
-      </div>
-      <div className='mt-6 flex w-full max-w-md justify-center space-y-3'>
-        <Link className='underline underline-offset-4' href={ROUTES.SIGNUP_PAGE}>
-          <Typography fontWeight='sm' color='textTertiary'>
-            Don&apos;t have an account? Sign Up
+    <FormProvider {...form}>
+      <form className="mb-8 flex w-full flex-col items-center py-20" onSubmit={handleSubmit}>
+        <div className="w-full max-w-md">
+          <Typography level="h4" className="w-fit" color="textTertiary">
+            Boost Your Productivity
           </Typography>
-        </Link>
-      </div>
-    </Form>
-  );
+          <Typography level="h3">Sign in to Stuhub account</Typography>
+        </div>
+        <div className="mt-6 w-full max-w-md space-y-4">
+          <Button
+            variant="flat"
+            size="lg"
+            fullWidth
+            type="button"
+            onClick={() => {
+              signIn('google', { redirect: false })
+            }}
+          >
+            <FcGoogle size={24} />
+            Continue with Google
+          </Button>
+          <Button
+            variant="flat"
+            size="lg"
+            fullWidth
+            type="button"
+            disabled
+            className="relative text-text-tertiary"
+          >
+            <BsGithub size={24} />
+            Continue with Github
+            <Chip className="absolute right-4" size="sm">
+              Soon
+            </Chip>
+          </Button>
+        </div>
+        <div className="my-6 flex w-full max-w-md items-center justify-center gap-4 overflow-hidden">
+          <Divider orientation="horizontal" />
+        </div>
+        <div className="w-full max-w-md space-y-4">
+          <Typography level="p4" color="textTertiary">
+            Use an organization email to easily collaborate with teammates
+          </Typography>
+          <FormInput
+            name="email"
+            size="lg"
+            placeholder="example@gmail.com"
+            label="Email"
+            variant="flat"
+            isClearable
+          />
+          {showPassword && (
+            <FormInput
+              name="password"
+              type="password"
+              size="lg"
+              label="Password"
+              placeholder="example@gmail.com"
+              variant="flat"
+              isClearable
+            />
+          )}
+          <Button variant="solid" size="lg" color="primary" fullWidth type="submit">
+            Continue
+          </Button>
+        </div>
+        <div className="mt-24 w-full max-w-md translate-y-8 text-center">
+          <Typography color="textTertiary" fontWeight="sm" level="p4">
+            Your name and photo are displayed to users who invite you to a workspace using your
+            email. By continuing, you acknowledge that you understand and agree to the Term &
+            Conditions and Private Privacy
+          </Typography>
+        </div>
+      </form>
+    </FormProvider>
+  )
 }
