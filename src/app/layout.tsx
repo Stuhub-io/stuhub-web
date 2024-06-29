@@ -3,6 +3,7 @@ import { cn } from '@/libs/utils';
 import type { Metadata } from 'next';
 import { Signika } from 'next/font/google';
 import './globals.css';
+import { AuthSessionProvider } from '@/components/auth/AuthSessionProvider';
 
 const inter = Signika({ subsets: ['latin'] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={cn(inter.className)}>
-        <AppProviders>{children}</AppProviders>
+        <AuthSessionProvider>
+          <AppProviders>{children}</AppProviders>
+        </AuthSessionProvider>
       </body>
     </html>
   );
