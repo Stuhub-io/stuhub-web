@@ -1,11 +1,11 @@
 'use client'
-
 import { FormInput } from '@/components/common/Form/FormInput'
 import Typography from '@/components/common/Typography'
 import { useToast } from '@/hooks/useToast'
+import { useAuthenEmailStepOne } from '@/hooks/auth/useAuthEmailStepOne'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Chip, Divider } from '@nextui-org/react'
-import { signIn, useSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { BsGithub } from 'react-icons/bs'
@@ -26,7 +26,10 @@ const getSchema = (isRequiredPassword: boolean) =>
   })
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
+  const [isSentMail, setIsSentMail] = useState(false)
+  const { toast } = useToast()
+  const [step, setStep] = useState<'one' | 'two'>('one')
+
   const form = useForm<LoginFormValues>({
     defaultValues: {
       email: '',
@@ -34,21 +37,34 @@ export default function LoginPage() {
       showPassword: true,
     },
     mode: 'onSubmit',
-    resolver: zodResolver(getSchema(showPassword)),
+    resolver: zodResolver(getSchema(step === 'two' && !isSentMail)),
   })
-  const { data } = useSession()
-  console.log(data)
-  const { toast } = useToast()
+
+  const { mutate, isPending: isLoadingStepOne } = useAuthenEmailStepOne()
 
   const handleSubmit = form.handleSubmit(async (values: LoginFormValues) => {
-    signIn('credentials', { email: values.email, password: values.password, redirect: false })
+    mutate(
+      { email: values.email ?? '' },
+      {
+        onSuccess(data) {
+          setStep('two')
+          if (data.data.is_required_email) {
+            // Continue with password
+            setIsSentMail(false)
+            return
+          }
+          // Continue with email
+          setIsSentMail(true)
+        },
+        onError() {
+          alert('Error')
+        },
+      },
+    )
+
     form.reset(undefined, {
       keepValues: true,
-      keepErrors: false,
-      keepDirty: false,
-      keepIsSubmitted: false,
     })
-    setShowPassword(true)
   })
 
   return (
@@ -79,6 +95,7 @@ export default function LoginPage() {
             variant="flat"
             size="lg"
             fullWidth
+            disabled={isLoadingStepOne}
             type="button"
             onClick={() => {
               signIn('google', { redirect: false })
@@ -115,9 +132,10 @@ export default function LoginPage() {
             placeholder="example@gmail.com"
             label="Email"
             variant="flat"
+            disabled={isLoadingStepOne}
             isClearable
           />
-          {showPassword && (
+          {step === 'two' && !isSentMail && (
             <FormInput
               name="password"
               type="password"
