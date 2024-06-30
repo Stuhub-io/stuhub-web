@@ -2,6 +2,7 @@ import type { Config } from 'tailwindcss'
 import { ThemeColors, nextui } from '@nextui-org/react'
 import { colors } from '@nextui-org/react'
 
+/** @type {import('tailwindcss').Config} */
 const config: Config = {
   content: [
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
@@ -29,6 +30,7 @@ const config: Config = {
   },
   darkMode: 'class',
   plugins: [
+    require('tailwindcss-animate'),
     nextui({
       themes: {
         light: {

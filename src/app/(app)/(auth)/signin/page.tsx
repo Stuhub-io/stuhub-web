@@ -2,6 +2,7 @@
 
 import { FormInput } from '@/components/common/Form/FormInput'
 import Typography from '@/components/common/Typography'
+import { useToast } from '@/hooks/useToast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Chip, Divider } from '@nextui-org/react'
 import { signIn, useSession } from 'next-auth/react'
@@ -10,6 +11,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { BsGithub } from 'react-icons/bs'
 import { FcGoogle } from 'react-icons/fc'
 import { z } from 'zod'
+import { FcOk } from 'react-icons/fc'
 
 interface LoginFormValues {
   email?: string
@@ -35,7 +37,8 @@ export default function LoginPage() {
     resolver: zodResolver(getSchema(showPassword)),
   })
   const { data } = useSession()
-  console.log({ data })
+  console.log(data)
+  const { toast } = useToast()
 
   const handleSubmit = form.handleSubmit(async (values: LoginFormValues) => {
     signIn('credentials', { email: values.email, password: values.password, redirect: false })
@@ -51,6 +54,20 @@ export default function LoginPage() {
   return (
     <FormProvider {...form}>
       <form className="mb-8 flex w-full flex-col items-center py-20" onSubmit={handleSubmit}>
+        <Button
+          onClick={() => {
+            toast({
+              title: 'Scheduled: Catch up ',
+              description: 'Friday, February 10, 2023 at 5:57 PM',
+              icon: <FcOk size={24} />,
+              size: 'small',
+              variant: 'warning',
+              position: 'topCenter',
+            })
+          }}
+        >
+          Add to calendar
+        </Button>
         <div className="w-full max-w-md">
           <Typography level="h2" className="w-fit" color="textSecondary">
             Boost Your Productivity

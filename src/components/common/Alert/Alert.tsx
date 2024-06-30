@@ -29,7 +29,7 @@ const Alert = React.forwardRef<
 Alert.displayName = 'Alert'
 
 const AlertTitle = React.forwardRef<HTMLParagraphElement, TypographyProps>(
-  ({ className, level = 'h5', ...props }, ref) => (
+  ({ className, level = 'h6', ...props }, ref) => (
     <Typography
       ref={ref}
       className={cn('mb-1 leading-none tracking-tight', className)}
