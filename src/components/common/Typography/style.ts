@@ -1,4 +1,4 @@
-import { VariantProps, cva } from "class-variance-authority"
+import { VariantProps, cva } from 'class-variance-authority'
 
 const typographyVariants = cva([''], {
   variants: {
@@ -32,6 +32,7 @@ const typographyVariants = cva([''], {
       textPrimary: 'text-text-primary',
       textSecondary: 'text-text-secondary',
       textTertiary: 'text-text-tertiary',
+      inherit: 'text-inherit',
     },
     noWrap: {
       true: 'text-ellipsis whitespace-nowrap',

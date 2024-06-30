@@ -2,14 +2,14 @@
 
 import { FormInput } from '@/components/common/Form/FormInput'
 import Typography from '@/components/common/Typography'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Chip, Divider } from '@nextui-org/react'
 import { signIn, useSession } from 'next-auth/react'
+import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { BsGithub } from 'react-icons/bs'
 import { FcGoogle } from 'react-icons/fc'
 import { z } from 'zod'
-import { useState } from 'react'
 
 interface LoginFormValues {
   email?: string
@@ -48,13 +48,11 @@ export default function LoginPage() {
     setShowPassword(true)
   })
 
-  console.log(form.watch('showPassword'))
-
   return (
     <FormProvider {...form}>
       <form className="mb-8 flex w-full flex-col items-center py-20" onSubmit={handleSubmit}>
         <div className="w-full max-w-md">
-          <Typography level="h4" className="w-fit" color="textTertiary">
+          <Typography level="h2" className="w-fit" color="textSecondary">
             Boost Your Productivity
           </Typography>
           <Typography level="h3">Sign in to Stuhub account</Typography>
