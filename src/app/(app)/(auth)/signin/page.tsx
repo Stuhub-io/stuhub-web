@@ -1,4 +1,5 @@
 'use client'
+import { CredentialAuth } from '@/auth/credential'
 import { FormInput } from '@/components/common/Form/FormInput'
 import Typography from '@/components/common/Typography'
 import { useToast } from '@/hooks/useToast'
@@ -40,31 +41,50 @@ export default function LoginPage() {
     resolver: zodResolver(getSchema(step === 'two' && !isSentMail)),
   })
 
-  const { mutate, isPending: isLoadingStepOne } = useAuthenEmailStepOne()
+  const { mutate, isPending: isMutatingStepOne } = useAuthenEmailStepOne()
 
   const handleSubmit = form.handleSubmit(async (values: LoginFormValues) => {
-    mutate(
-      { email: values.email ?? '' },
-      {
-        onSuccess(data) {
-          setStep('two')
-          if (data.data.is_required_email) {
-            // Continue with password
+    if (step === 'one') {
+      // Check if email is required password
+      mutate(
+        { email: values.email ?? '' },
+        {
+          onSuccess(data) {
+            setStep('two')
+            if (data.data.is_required_email) {
+              // Continue with password
+              setIsSentMail(true)
+              form.reset(
+                {
+                  email: values.email,
+                  password: '',
+                },
+                {
+                  keepDirty: false,
+                  keepIsValid: true,
+                  keepDirtyValues: true,
+                  keepIsSubmitted: false,
+                },
+              )
+              return
+            }
+            // Continue with email
             setIsSentMail(false)
-            return
-          }
-          // Continue with email
-          setIsSentMail(true)
+          },
+          onError() {
+            alert('Error')
+          },
         },
-        onError() {
-          alert('Error')
-        },
-      },
-    )
-
-    form.reset(undefined, {
-      keepValues: true,
+      )
+      return
+    }
+    // Authen with email and password
+    const result = await signIn(CredentialAuth.signinConfig.id, {
+      email: values.email,
+      password: values.password,
+      redirect: false,
     })
+    console.log(result)
   })
 
   return (
@@ -95,7 +115,7 @@ export default function LoginPage() {
             variant="flat"
             size="lg"
             fullWidth
-            disabled={isLoadingStepOne}
+            disabled={isMutatingStepOne}
             type="button"
             onClick={() => {
               signIn('google', { redirect: false })
@@ -132,7 +152,7 @@ export default function LoginPage() {
             placeholder="example@gmail.com"
             label="Email"
             variant="flat"
-            disabled={isLoadingStepOne}
+            disabled={isMutatingStepOne}
             isClearable
           />
           {step === 'two' && !isSentMail && (
@@ -141,12 +161,19 @@ export default function LoginPage() {
               type="password"
               size="lg"
               label="Password"
-              placeholder="example@gmail.com"
               variant="flat"
+              placeholder="Enter your account's password"
               isClearable
             />
           )}
-          <Button variant="solid" size="lg" color="primary" fullWidth type="submit">
+          <Button
+            variant="solid"
+            size="lg"
+            color="primary"
+            fullWidth
+            type="submit"
+            isLoading={isMutatingStepOne}
+          >
             Continue
           </Button>
         </div>
