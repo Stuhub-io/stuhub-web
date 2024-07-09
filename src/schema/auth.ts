@@ -1,4 +1,5 @@
-import { User } from "next-auth"
+
+import { type User } from "./user"
 
 export type AuthEmailStepOneRequest = {
     email: string

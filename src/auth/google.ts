@@ -3,7 +3,7 @@ import { GOOGLE_ID, GOOGLE_SECRET } from "@/constants/envs";
 import { JWT } from "next-auth/jwt";
 
 const googleSigninConfig = {
-  id: "google-signin",
+  id: "google",
   name: "google",
   clientId: GOOGLE_ID,
   clientSecret: GOOGLE_SECRET,
@@ -13,6 +13,9 @@ const googleSigninConfig = {
 const authHandler = async (ctx: any) => {
   const authType = ctx.account.provider;
   if (authType === googleSigninConfig.id) {
+    setTimeout(() => {
+    console.log("\n\n", ctx.account, "\n\n");
+    }, 100)
     try {
       await authService.googleOauth({
         token: ctx.account.access_token,
