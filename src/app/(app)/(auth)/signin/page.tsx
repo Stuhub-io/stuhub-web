@@ -22,6 +22,7 @@ import Image from 'next/image'
 import { BsGithub } from 'react-icons/bs'
 import { FcGoogle } from 'react-icons/fc'
 import { z } from 'zod'
+import { useToast } from '@/hooks/useToast'
 
 const emailSchema = z.object({
   email: z.string().email(),
@@ -35,6 +36,7 @@ const passwordSchema = z.object({
 export default function LoginPage() {
   const { mutate, isPending: isMutatingStepOne } = useAuthenEmailStepOne()
   const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
 
   const [authState, setAuthState] = useState<'check-email' | 'email-sent' | 'password'>(
     'check-email',
@@ -75,8 +77,11 @@ export default function LoginPage() {
           }
         },
         onError: () => {
-          // FIXME: update toast message
-          alert('Error')
+          toast({
+            variant: 'danger',
+            title: 'Validate Email Error',
+            description: 'Some thing went wrong, please try again later',
+          })
         },
       },
     )
