@@ -15,7 +15,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import Image from 'next/image'
@@ -34,6 +34,8 @@ const passwordSchema = z.object({
 })
 
 export default function LoginPage() {
+  const { data } = useSession()
+  console.log(data)
   const { mutate, isPending: isMutatingStepOne } = useAuthenEmailStepOne()
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()

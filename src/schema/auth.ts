@@ -34,3 +34,16 @@ export type OAuthGoogleData = {
     }
     profile: User
 }
+
+export type VerifyEmailAuthTokenData = {
+    email: string
+    oauth_provider: 'google'
+    action_token: string
+}
+
+
+export type SetPasswordRequest = {
+    email: string
+    password: string
+    action_token: string
+}
