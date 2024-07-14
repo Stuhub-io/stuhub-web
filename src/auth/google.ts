@@ -13,9 +13,6 @@ const googleSigninConfig = {
 const authHandler = async (ctx: any) => {
   const authType = ctx.account.provider;
   if (authType === googleSigninConfig.id) {
-    setTimeout(() => {
-    console.log("\n\n", ctx.account, "\n\n");
-    }, 100)
     try {
       await authService.googleOauth({
         token: ctx.account.access_token,

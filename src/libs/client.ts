@@ -15,15 +15,23 @@ export class Client {
     credentials: 'include',
   }
 
+  token = ''
+
   public setAuthToken(token: string) {
+    this.token = token
     this.privateHeaders = {
       ...this.privateHeaders,
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${this.token}`,
     }
   }
 
   public clearAuthToken() {
     this.privateHeaders = { ...this.headers }
+    this.token = ''
+  }
+
+  public hasAuthToken() {
+    return this.token
   }
 
   public get formDataHeaders(): Headers {

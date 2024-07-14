@@ -31,6 +31,7 @@ const handler = NextAuth({
             }
         },
         jwt: async ({token, user, account}) => {
+
             // NOTE: First Signin in -> Include accessToken, profile in JWT
             if (account) {
                 try {
@@ -40,6 +41,7 @@ const handler = NextAuth({
                     return GoogleAuth.getProfile({ account })
                 }
                 if (CredentialAuth.isCredentialProvider(account.provider)) {
+
                     // include user profile, accessToken
                     return CredentialAuth.getProfile({user})
                 }

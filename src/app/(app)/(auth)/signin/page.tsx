@@ -15,7 +15,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react'
-import { signIn, useSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import Image from 'next/image'
@@ -23,10 +23,10 @@ import { BsGithub } from 'react-icons/bs'
 import { FcGoogle } from 'react-icons/fc'
 import { z } from 'zod'
 import { useToast } from '@/hooks/useToast'
+import { ROUTES } from '@/constants/routes'
 
 const emailSchema = z.object({
   email: z.string().email(),
-  // password: isRequiredPassword ? z.string().min(6) : z.string().optional(),
 })
 
 const passwordSchema = z.object({
@@ -34,8 +34,6 @@ const passwordSchema = z.object({
 })
 
 export default function LoginPage() {
-  const { data } = useSession()
-  console.log(data)
   const { mutate, isPending: isMutatingStepOne } = useAuthenEmailStepOne()
   const [loading, setLoading] = useState(false)
   const { toast } = useToast()
@@ -90,16 +88,19 @@ export default function LoginPage() {
   })
 
   const handleSubmitPassword = passwordForm.handleSubmit(async (values) => {
-    try {
-      setLoading(true)
-      await signIn(CredentialAuth.signinConfig.id, {
-        email: validEmail,
-        password: values.password,
-        redirect: false,
-      })
-    } catch (e) {
+    setLoading(true)
+    const resp = await signIn(CredentialAuth.signinConfig.id, {
+      email: validEmail,
+      password: values.password,
+      redirect: false,
+    })
+    if (!resp?.ok) {
       //toast
-      console.log(e)
+      toast({
+        variant: 'danger',
+        title: 'Sign in error',
+        description: 'Invalid email or password, please try again!',
+      })
     }
     setLoading(false)
   })
@@ -123,8 +124,10 @@ export default function LoginPage() {
               fullWidth
               disabled={isMutatingStepOne}
               type="button"
-              onClick={() => {
-                signIn(GoogleAuth.signinConfig.id, { redirect: false })
+              onClick={async () => {
+                await signIn(GoogleAuth.signinConfig.id, {
+                  callbackUrl: ROUTES.HOME_PAGE,
+                })
               }}
             >
               <FcGoogle size={24} />

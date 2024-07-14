@@ -4,6 +4,7 @@ import { authService } from "./auth";
 
 const privateServices: Client[] = [
     // NOTE: add services ... 
+    authService
 ]
 
 const servicesGuard = {
@@ -13,6 +14,9 @@ const servicesGuard = {
   clearAuthToken: () => {
     privateServices.forEach((service) => service.clearAuthToken())
   },
+  hasAuthToken: () => {
+    return privateServices.every(s => s.hasAuthToken())
+  }
 }
 
 export { authService, servicesGuard }

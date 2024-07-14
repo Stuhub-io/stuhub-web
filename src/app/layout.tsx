@@ -5,6 +5,7 @@ import { Signika } from 'next/font/google'
 import './globals.css'
 import { AuthSessionProvider } from '@/components/auth/AuthSessionProvider'
 import Toaster from '@/components/common/Toast'
+import { AuthGuard } from '@/components/auth/AuthGuard'
 
 const inter = Signika({ subsets: ['latin'] })
 
@@ -22,7 +23,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={cn(inter.className)}>
         <AuthSessionProvider>
-          <AppProviders>{children}</AppProviders>
+          <AppProviders>
+            <AuthGuard>{children}</AuthGuard>
+          </AppProviders>
         </AuthSessionProvider>
         <Toaster />
       </body>
