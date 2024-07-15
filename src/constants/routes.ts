@@ -11,5 +11,6 @@ export const ROUTES = {
 
     // app
     HOME_PAGE: '/',
+    AUTH_EMAIL: '/auth-email',
     ORGANIZATION: '/dadas-adasdas-dasdas',
 }

@@ -7,6 +7,7 @@ import Typography from '@/components/common/Typography'
 import { ROUTES } from '@/constants/routes'
 import { useAccountSetPassword } from '@/hooks/auth/useSetPassowrd'
 import { useVerifyTokenEmail } from '@/hooks/auth/useVerifyTokenEmail'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Spinner } from '@nextui-org/react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
@@ -39,6 +40,7 @@ export default function ValidateAuthEmail() {
       password: '',
       confirmPassword: '',
     },
+    resolver: zodResolver(schema),
   })
 
   const handleSubmitSetPw = formInstance.handleSubmit(async (data) => {

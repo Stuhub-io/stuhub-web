@@ -9,7 +9,7 @@ export default function Page() {
   const router = useRouter()
   return (
     <div>
-      <Button onClick={() => signOut()}>Logout</Button>
+      <Button onClick={() => signOut({ redirect: false })}>Logout</Button>
       <Button onClick={() => router.push(ROUTES.ORGANIZATION)}>ORGS</Button>
       <CircularProgress />
     </div>
