@@ -35,7 +35,7 @@ const typographyVariants = cva([''], {
       inherit: 'text-inherit',
     },
     noWrap: {
-      true: 'text-ellipsis whitespace-nowrap',
+      true: 'truncate',
     },
     fontWeight: {
       sm: '!font-thin',

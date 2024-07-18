@@ -1,13 +1,12 @@
-import Typography from '../Typography'
+import { cn } from '@/libs/utils'
+import Typography, { TypographyProps } from '../Typography'
 import { FcRuler } from 'react-icons/fc'
-import { FcSettings } from 'react-icons/fc'
 
-export const AppLogo = () => {
+export const AppLogo = (props: TypographyProps) => {
   return (
-    <Typography level="h1" className="flex">
+    <Typography level="h5" {...props} className={cn('flex', props.className)}>
       Stuhub.
       <FcRuler />
-      <FcSettings className="animate-spin" />
     </Typography>
   )
 }

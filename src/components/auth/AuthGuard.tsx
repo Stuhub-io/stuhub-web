@@ -5,8 +5,8 @@ import { ROUTES } from '@/constants/routes'
 import { useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { PropsWithChildren, useEffect } from 'react'
-import { AppLogo } from '../common/AppLogo'
 import { AnimatePresence, motion } from 'framer-motion'
+import { SplashAppLogo } from '../common/SplashAppLogo'
 
 const publicRoutes = [
   ROUTES.SIGNIN_PAGE,
@@ -67,7 +67,7 @@ export const AuthGuard = (props: AuthGuardProps) => {
               exit={{ opacity: 0 }}
               className="fixed flex h-[100dvh] w-full flex-col items-center justify-center"
             >
-              <AppLogo />
+              <SplashAppLogo />
             </motion.div>
           )}
         </AnimatePresence>
