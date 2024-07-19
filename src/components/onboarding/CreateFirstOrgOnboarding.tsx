@@ -1,10 +1,9 @@
 import Typography from '@/components/common/Typography'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { FormInput } from '../common/Form/FormInput'
 import { Avatar, Button, Card, CardBody, CardHeader, Divider } from '@nextui-org/react'
 import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
 import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { LuDot } from 'react-icons/lu'
 import dayjs from 'dayjs'
 
@@ -16,90 +15,84 @@ const UpdateOrgSchema = z.object({
 type UpdateOrgFormValues = z.infer<typeof UpdateOrgSchema>
 
 interface CreateFirstOrgOnboardingProps {
-  onSubmit?: (values: UpdateOrgFormValues) => void
+  onContinue?: () => void
   onBack?: () => void
 }
 
-export const CreateFirstOrgOnboarding = ({ onSubmit, onBack }: CreateFirstOrgOnboardingProps) => {
-  const form = useForm<UpdateOrgFormValues>({
-    resolver: zodResolver(UpdateOrgSchema),
-    defaultValues: {
-      orgName: 'First Org',
-      orgDescription: 'Your organization description',
-    },
-  })
+export const CreateFirstOrgOnboarding = ({ onContinue, onBack }: CreateFirstOrgOnboardingProps) => {
+  const form = useFormContext<UpdateOrgFormValues>()
 
   const wOrgName = form.watch('orgName')
   const wOrgDescription = form.watch('orgDescription')
 
-  const handleSubmit = form.handleSubmit(async (values) => {
-    onSubmit?.(values)
-  })
-
   return (
-    <FormProvider {...form}>
-      <form className="flex min-h-[400px] w-[560px] max-w-full flex-col" onSubmit={handleSubmit}>
-        <Typography level="h3" className="mb-1">
-          Setting thing up
-        </Typography>
-        <Typography level="p2" color="textTertiary">
-          Update your first organization info
-        </Typography>
+    <form
+      id="create-first-org-onboarding"
+      className="flex min-h-[400px] w-[560px] max-w-full flex-col"
+      onSubmit={(e) => {
+        e.preventDefault()
+        onContinue?.()
+      }}
+    >
+      <Typography level="h3" className="mb-1">
+        Setting thing up
+      </Typography>
+      <Typography level="p2" color="textTertiary">
+        Update your first organization info
+      </Typography>
 
-        <div className="mt-8 flex flex-col gap-8">
-          <FormInput
-            size="lg"
-            className="scale-105"
-            label="What is your organization's name?"
-            name="orgName"
+      <div className="mt-8 flex flex-col gap-8">
+        <FormInput size="lg" className="scale-105" label="Organization's name" name="orgName" />
+        <FormInput
+          size="lg"
+          className="scale-105"
+          label="Organization's description"
+          name="orgDescription"
+        />
+      </div>
+      <div className="mt-8 space-y-4">
+        <Typography level="h5" color="textSecondary">
+          Your organization&apos; card
+        </Typography>
+        <div className="flex items-start gap-4">
+          <OrganizationCard
+            name={wOrgName}
+            description={wOrgDescription}
+            avatar="https://avatars.dicebear.com/api/avataaars/1.svg"
           />
-          <FormInput
-            size="lg"
-            className="scale-105"
-            label="What is your organization about?"
-            name="orgDescription"
-          />
-        </div>
-        <div className="mt-8 space-y-4">
-          <Typography level="h5" color="textSecondary">
-            Your organization&apos; card
-          </Typography>
-          <div className="flex gap-4">
-            <OrganizationCard
-              name={wOrgName}
-              description={wOrgDescription}
-              avatar="https://avatars.dicebear.com/api/avataaars/1.svg"
-            />
-          </div>
-        </div>
-        <div className="mt-8 flex items-center justify-between gap-2">
-          <Button
-            size="lg"
-            type="button"
-            variant="flat"
-            className="w-fit text-text-tertiary"
-            onClick={() => {
-              onBack?.()
-            }}
-          >
-            <RiArrowLeftLine size={16} />
-            Back
-          </Button>
-          <Button
-            size="lg"
-            disabled={
-              (form.formState.isSubmitted && !form.formState.isValid) || form.formState.isSubmitting
-            }
-            variant="solid"
-            color="primary"
-            type="submit"
-          >
-            Continue
-            <RiArrowRightLine size={18} />
+          <Button size="sm" color="primary" variant="flat">
+            Upload Avatar
           </Button>
         </div>
-      </form>
-    </FormProvider>
+      </div>
+      <div className="mt-8 flex items-center justify-between gap-2">
+        <Button
+          size="lg"
+          type="button"
+          variant="flat"
+          className="w-fit text-text-tertiary"
+          onClick={() => {
+            onBack?.()
+          }}
+        >
+          <RiArrowLeftLine size={16} />
+          Back
+        </Button>
+        <Button
+          size="lg"
+          disabled={
+            (form.formState.isSubmitted && !form.formState.isValid) || form.formState.isSubmitting
+          }
+          variant="solid"
+          color="primary"
+          type="submit"
+          form="create-first-org-onboarding"
+        >
+          Continue
+          <RiArrowRightLine size={18} />
+        </Button>
+      </div>
+    </form>
   )
 }
 

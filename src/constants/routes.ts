@@ -7,7 +7,6 @@ export const ROUTES = {
     LANDING_PAGE: '/product',
     CHANGELOG_PAGE: '/changelog',
     SIGNIN_PAGE: '/signin',
-    ONBOARDING: '/onboarding',
 
     // app
     HOME_PAGE: '/',
