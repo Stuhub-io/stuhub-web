@@ -46,11 +46,10 @@ export const PreviewOnboardingDashboard = () => {
           </div>
         </div>
         <Divider />
-        <div className="flex flex-col gap-4 opacity-30">
-          <Skeleton className="h-[40px] w-full rounded-large" disableAnimation />
-          <Skeleton className="h-[40px] w-full rounded-large" disableAnimation />
-          <Skeleton className="h-[40px] w-full rounded-large" disableAnimation />
-          <Skeleton className="h-[40px] w-full rounded-large" disableAnimation />
+        <div className="flex flex-col gap-4 opacity-40">
+          <Skeleton className="h-[48px] w-full rounded-large" disableAnimation />
+          <Skeleton className="h-[48px] w-full rounded-large" disableAnimation />
+          <Skeleton className="h-[48px] w-full rounded-large" disableAnimation />
         </div>
         <div className="flex-1" />
         <Card>
@@ -72,7 +71,17 @@ export const PreviewOnboardingDashboard = () => {
           />
         </div>
       </div>
-      <div className="flex-1"></div>
+      <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="flex w-full justify-center gap-4">
+          <Skeleton className="h-14 w-14 rounded-large opacity-40" disableAnimation />
+          <Skeleton className="h-14 w-14 rounded-large opacity-40" disableAnimation />
+          <Skeleton className="h-14 w-14 rounded-large opacity-40" disableAnimation />
+        </div>
+        <Divider />
+        <div className="flex flex-col gap-8 p-8 opacity-40">
+          <Skeleton className="h-[328px] w-[456px] rounded-large" disableAnimation />
+        </div>
+      </div>
     </div>
   )
 }
