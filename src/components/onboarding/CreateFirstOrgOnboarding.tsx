@@ -2,28 +2,48 @@ import Typography from '@/components/common/Typography'
 import { useFormContext } from 'react-hook-form'
 import { FormInput } from '../common/Form/FormInput'
 import { Avatar, Button, Card, CardBody, CardHeader, Divider } from '@nextui-org/react'
-import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
-import { z } from 'zod'
+import { RiArrowLeftLine, RiArrowRightLine, RiCloseLine } from 'react-icons/ri'
 import { LuDot } from 'react-icons/lu'
 import dayjs from 'dayjs'
-
-const UpdateOrgSchema = z.object({
-  orgName: z.string().trim().min(1, 'Please enter your organization name'),
-  orgDescription: z.string().trim().min(1, 'Please enter your organization description'),
-})
-
-type UpdateOrgFormValues = z.infer<typeof UpdateOrgSchema>
+import { useEffect, useState } from 'react'
+import { OnboardingFormValues } from './utils'
+import { FileUploadWrapper } from '../common/FileUploadWrapper/FileUploadWrapper'
 
 interface CreateFirstOrgOnboardingProps {
   onContinue?: () => void
   onBack?: () => void
+  selectedOrgAvatar?: Blob
+  onSelectedOrgAvatar?: (image?: Blob) => void
 }
 
-export const CreateFirstOrgOnboarding = ({ onContinue, onBack }: CreateFirstOrgOnboardingProps) => {
-  const form = useFormContext<UpdateOrgFormValues>()
+export const CreateFirstOrgOnboarding = ({
+  onContinue,
+  onBack,
+  selectedOrgAvatar,
+  onSelectedOrgAvatar,
+}: CreateFirstOrgOnboardingProps) => {
+  const form = useFormContext<OnboardingFormValues>()
 
   const wOrgName = form.watch('orgName')
   const wOrgDescription = form.watch('orgDescription')
+  const [previewOrgAvatar, setPreviewOrgAvatar] = useState<string>()
+
+  const onRemoveOrgAvatar = () => {
+    if (selectedOrgAvatar) {
+      setPreviewOrgAvatar(undefined)
+      onSelectedOrgAvatar?.(undefined)
+      return
+    }
+  }
+
+  useEffect(() => {
+    if (selectedOrgAvatar) {
+      const preview = URL.createObjectURL(selectedOrgAvatar)
+      setPreviewOrgAvatar(preview)
+      return () => URL.revokeObjectURL(preview)
+    }
+    setPreviewOrgAvatar(undefined)
+  }, [selectedOrgAvatar])
 
   return (
     <form
@@ -58,11 +78,29 @@ export const CreateFirstOrgOnboarding = ({ onContinue, onBack }: CreateFirstOrgO
           <OrganizationCard
             name={wOrgName}
             description={wOrgDescription}
-            avatar="https://avatars.dicebear.com/api/avataaars/1.svg"
+            avatar={previewOrgAvatar}
           />
-          <Button size="sm" color="primary" variant="flat">
-            Upload Avatar
-          </Button>
+          {previewOrgAvatar ? (
+            <Button
+              size="sm"
+              variant="flat"
+              color="danger"
+              type="button"
+              onClick={onRemoveOrgAvatar}
+            >
+              <RiCloseLine size={16} />
+              Remove
+            </Button>
+          ) : (
+            <FileUploadWrapper
+              onSelectedFile={onSelectedOrgAvatar}
+              isSelected={!!selectedOrgAvatar}
+            >
+              <Button size="sm" color="primary" variant="flat">
+                Upload Avatar
+              </Button>
+            </FileUploadWrapper>
+          )}
         </div>
       </div>
       <div className="mt-8 flex items-center justify-between gap-2">
@@ -97,8 +135,8 @@ export const CreateFirstOrgOnboarding = ({ onContinue, onBack }: CreateFirstOrgO
 }
 
 interface OrganizationCardProps {
-  name: string
-  description: string
+  name?: string
+  description?: string
   avatar?: string
 }
 
@@ -108,7 +146,7 @@ export const OrganizationCard = (props: OrganizationCardProps) => {
     <Card className="min-w-[300px] max-w-[400px]">
       <CardHeader className="flex justify-between">
         <div className="flex w-full gap-3">
-          <Avatar fallback="AB" src={avatar} className="shrink-0" />
+          <Avatar fallback={name?.[0]} src={avatar} className="shrink-0 uppercase" />
           <div className="flex flex-1 flex-col overflow-hidden pr-2">
             <Typography noWrap level="p4">
               {name || 'Untitled'}

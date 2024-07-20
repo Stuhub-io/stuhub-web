@@ -4,43 +4,68 @@ import { FormInput } from '@/components/common/Form/FormInput'
 import { ProfileBadge } from '@/components/common/ProfileBadge'
 import Typography from '@/components/common/Typography'
 import { getUserFullName } from '@/utils/user'
-import { Button } from '@nextui-org/react'
-import { signOut } from 'next-auth/react'
+import { Button, Tooltip } from '@nextui-org/react'
+import { signOut, useSession } from 'next-auth/react'
+import { FormEventHandler, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { RiArrowLeftLine, RiArrowRightLine } from 'react-icons/ri'
-import { z } from 'zod'
-
-const SetProfileSChema = z.object({
-  firstName: z.string().min(1, 'Please enter your first name'),
-  lastName: z.string().min(1, 'Please enter your last name'),
-  avatar: z.string().optional(),
-})
-
-type ProfileUpdateFormValues = z.infer<typeof SetProfileSChema>
+import { RiArrowGoBackFill, RiArrowLeftLine, RiArrowRightLine, RiCloseLine } from 'react-icons/ri'
+import { FileUploadWrapper } from '../common/FileUploadWrapper/FileUploadWrapper'
+import { OnboardingFormValues } from './utils'
 
 export interface UpdateProfileOnboardingProps {
-  onContinue?: () => void
+  onContinue?: FormEventHandler<HTMLFormElement>
+  selectedUserAvatar?: Blob
+  onSelectedUserAvatar: (image?: Blob) => void
 }
 
-export function UpdateProfileOnboarding({ onContinue }: UpdateProfileOnboardingProps) {
-  const profileForm = useFormContext<ProfileUpdateFormValues>()
+export function UpdateProfileOnboarding(props: UpdateProfileOnboardingProps) {
+  const { onContinue, onSelectedUserAvatar, selectedUserAvatar } = props
+  const { data } = useSession()
+
+  const initAvatar = data?.user?.avatar ?? ''
+
+  const profileForm = useFormContext<OnboardingFormValues>()
 
   const wFirstName = profileForm.watch('firstName')
   const wLastName = profileForm.watch('lastName')
+  const wAvatar = profileForm.watch('avatar')
+  const [previewedImage, setPreviewedImage] = useState<string>()
 
   const fullName = getUserFullName({
     firstName: wFirstName,
     lastName: wLastName,
   })
 
+  const hasAvatar = !!wAvatar || !!selectedUserAvatar
+
+  const handleSelectImage = (image: Blob) => {
+    console.log('image', image)
+    onSelectedUserAvatar(image)
+  }
+  console.log('selectedUserAvatar', selectedUserAvatar)
+
+  const onRemoveAvatar = () => {
+    if (selectedUserAvatar) {
+      setPreviewedImage(undefined)
+      onSelectedUserAvatar(undefined)
+      return
+    }
+    if (wAvatar) {
+      profileForm.setValue('avatar', '')
+    }
+  }
+
+  useEffect(() => {
+    if (!selectedUserAvatar) return
+    const objectUrl = URL.createObjectURL(selectedUserAvatar)
+    setPreviewedImage(objectUrl)
+    return () => {
+      URL.revokeObjectURL(objectUrl)
+    }
+  }, [selectedUserAvatar])
+
   return (
-    <form
-      className="flex min-h-[400px] w-[560px] max-w-full flex-col"
-      onSubmit={(e) => {
-        e.preventDefault()
-        onContinue?.()
-      }}
-    >
+    <form className="flex min-h-[400px] w-[560px] max-w-full flex-col" onSubmit={onContinue}>
       <Typography level="h3" className="mb-1">
         Get started
       </Typography>
@@ -59,11 +84,41 @@ export function UpdateProfileOnboarding({ onContinue }: UpdateProfileOnboardingP
           <ProfileBadge
             size="lg"
             fullName={fullName || 'Your Name'}
-            avatar="https://scontent.fhan14-1.fna.fbcdn.net/v/t39.30808-6/369053435_3628631834068330_6252299390237773315_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEburLOfdqESXC9l7ydDtrYYfdslC7QSLlh92yULtBIua7hYHYTeF4KNh-826A6jQDayVgylxPs2gEJJthUwnPN&_nc_ohc=j6Olv1QeoocQ7kNvgH2PcMW&_nc_ht=scontent.fhan14-1.fna&oh=00_AYCmf8it4LpxIyb18XV4FqYprHHqk6F0tID8Vt0O5Ui9qw&oe=669EFA01"
+            avatar={previewedImage ?? wAvatar}
           />
-          <Button size="sm" variant="flat" color="primary" type="button">
-            Update Image
-          </Button>
+          {hasAvatar ? (
+            <Button size="sm" variant="flat" color="danger" type="button" onClick={onRemoveAvatar}>
+              <RiCloseLine size={16} />
+              Remove
+            </Button>
+          ) : (
+            <>
+              <FileUploadWrapper
+                onSelectedFile={handleSelectImage}
+                accept="image/*"
+                isSelected={selectedUserAvatar}
+              >
+                <Button size="sm" variant="flat" color="primary" type="button" form="image">
+                  Update Image
+                </Button>
+              </FileUploadWrapper>
+              {initAvatar && (
+                <Tooltip content="Reset avatar">
+                  <Button
+                    isIconOnly
+                    variant="shadow"
+                    color="primary"
+                    size="sm"
+                    onClick={() => {
+                      profileForm.setValue('avatar', initAvatar)
+                    }}
+                  >
+                    <RiArrowGoBackFill size={14} />
+                  </Button>
+                </Tooltip>
+              )}
+            </>
+          )}
         </div>
       </div>
       <div className="mt-8 flex items-center justify-between gap-2">
@@ -82,8 +137,7 @@ export function UpdateProfileOnboarding({ onContinue }: UpdateProfileOnboardingP
         <Button
           size="lg"
           disabled={
-            (profileForm.formState.isSubmitted && !profileForm.formState.isValid) ||
-            profileForm.formState.isSubmitting
+            !!profileForm.formState.errors.firstName || !!profileForm.formState.errors.lastName
           }
           variant="solid"
           color="primary"
