@@ -1,14 +1,10 @@
-'use client'
-
-import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, Switch } from '@nextui-org/react'
+import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react'
 import Link from 'next/link'
 import Typography from '../common/Typography'
 import { ROUTES } from '@/constants/routes'
-import { useTheme } from '@/hooks/useTheme'
+import { ThemeSwitch } from '../common/ThemeSwitch/ThemeSwitch'
 
 export const AuthHeader = () => {
-  const { setTheme, activeTheme } = useTheme()
-
   return (
     <Navbar
       classNames={{
@@ -25,14 +21,7 @@ export const AuthHeader = () => {
 
       <NavbarContent>
         <NavbarContent justify="end">
-          {activeTheme === 'dark' ? '🌙' : '☀️'}
-          <Switch
-            size="sm"
-            isSelected={activeTheme === 'dark'}
-            onValueChange={(isSelected) => {
-              setTheme(isSelected ? 'dark' : 'light')
-            }}
-          />
+          <ThemeSwitch />
         </NavbarContent>
         <NavbarItem>
           <Button color="primary" as={Link} href={ROUTES.SIGNIN_PAGE}>
