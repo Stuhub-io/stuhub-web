@@ -5,7 +5,7 @@ module.exports = {
     'scope-enum': [
       2,
       'always',
-      ['ui', 'auth', 'profile', 'landing', 'workspace', 'noti', 'all', 'common', 'husky'],
+      ['ui', 'auth', 'profile', 'landing', 'org', 'project', 'noti', 'all', 'common', 'husky'],
     ],
     'scope-empty': [2, 'never'],
     'scope-case': [2, 'always', ['lower-case']],

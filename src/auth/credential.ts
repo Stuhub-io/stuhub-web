@@ -20,9 +20,6 @@ const credentialConfig = {
         accessToken: access,
       };
     } catch (err: any) {
-     setTimeout(() => {
-      console.log("credential provider", err)
-    }, 100)     
       throw new Error(err.message);
     }
   }, 

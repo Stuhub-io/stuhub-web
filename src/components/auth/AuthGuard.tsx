@@ -5,12 +5,12 @@ import { ROUTES } from '@/constants/routes'
 import { useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { PropsWithChildren, useEffect } from 'react'
-import { AppLogo } from '../common/AppLogo'
 import { AnimatePresence, motion } from 'framer-motion'
+import { SplashAppLogo } from '../common/SplashAppLogo'
+import { useQueryClient } from '@tanstack/react-query'
 
 const publicRoutes = [
   ROUTES.SIGNIN_PAGE,
-  ROUTES.ONBOARDING,
   ROUTES.AUTH_EMAIL,
   ROUTES.LANDING_PAGE,
   ROUTES.CHANGELOG_PAGE,
@@ -24,6 +24,8 @@ export const AuthGuard = (props: AuthGuardProps) => {
   const { children } = props
   const { data, status } = useSession()
   const searchParams = useSearchParams()
+  const queryClient = useQueryClient()
+
   const router = useRouter()
   const pathName = usePathname()
   const from = searchParams.get('from')
@@ -38,6 +40,7 @@ export const AuthGuard = (props: AuthGuardProps) => {
     if (status === 'unauthenticated' && !publicRoutes.includes(pathName)) {
       router.push(`${ROUTES.SIGNIN_PAGE}?from=${pathName}`)
       servicesGuard.clearAuthToken()
+      queryClient.clear()
       return
     }
     if (status === 'authenticated' && authRoutes.includes(pathName)) {
@@ -48,7 +51,7 @@ export const AuthGuard = (props: AuthGuardProps) => {
       router.push(ROUTES.HOME_PAGE)
       return
     }
-  }, [from, pathName, router, status])
+  }, [from, pathName, queryClient, router, status])
 
   const isLoading =
     status === 'loading' ||
@@ -67,7 +70,7 @@ export const AuthGuard = (props: AuthGuardProps) => {
               exit={{ opacity: 0 }}
               className="fixed flex h-[100dvh] w-full flex-col items-center justify-center"
             >
-              <AppLogo />
+              <SplashAppLogo />
             </motion.div>
           )}
         </AnimatePresence>

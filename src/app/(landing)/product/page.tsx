@@ -2,7 +2,6 @@
 import Typography from '@/components/common/Typography'
 import { ROUTES } from '@/constants/routes'
 import { cn } from '@/libs/utils'
-import { useSession } from 'next-auth/react'
 import { Button, Spacer } from '@nextui-org/react'
 import {
   RiArrowRightLine,
@@ -16,8 +15,6 @@ import { useState } from 'react'
 
 export default function Home() {
   const [selectedTab, setSelectedTab] = useState(0)
-  const { data } = useSession()
-  console.log({ data })
 
   return (
     <>
