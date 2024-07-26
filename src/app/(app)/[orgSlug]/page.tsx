@@ -1,30 +1,31 @@
 'use client'
 
-import { PageParams, ROUTES } from '@/constants/routes'
+import { useOrganization } from '@/components/providers/organization'
+import { ROUTES } from '@/constants/routes'
 import { Button } from '@nextui-org/react'
-import { useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
-interface OrganizationHomeParams {
-  orgID: string
-}
-
-export default function OrganizationHome({
-  params: { orgID },
-}: PageParams<OrganizationHomeParams>) {
+export default function OrganizationHome() {
   const router = useRouter()
-  const { data } = useSession()
-
-  console.log({ data, orgID })
+  const { organization } = useOrganization()
 
   return (
     <div>
+      <p>{organization?.name}</p>
       <Button
         onClick={() => {
           router.push(ROUTES.HOME_PAGE)
         }}
       >
         Home
+      </Button>
+      <Button
+        onClick={() => {
+          signOut({ redirect: false })
+        }}
+      >
+        Sign out
       </Button>
     </div>
   )

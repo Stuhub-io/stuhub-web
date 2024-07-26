@@ -39,10 +39,8 @@ export function UpdateProfileOnboarding(props: UpdateProfileOnboardingProps) {
   const hasAvatar = !!wAvatar || !!selectedUserAvatar
 
   const handleSelectImage = (image: Blob) => {
-    console.log('image', image)
     onSelectedUserAvatar(image)
   }
-  console.log('selectedUserAvatar', selectedUserAvatar)
 
   const onRemoveAvatar = () => {
     if (selectedUserAvatar) {

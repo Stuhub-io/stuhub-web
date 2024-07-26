@@ -17,7 +17,6 @@ export const FileUploadWrapper = (props: FileUploadWrapperProps) => {
   }
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    console.log('e.target.files', e.target.files)
     if ((e.target.files?.length ?? 0) > 1) {
       onSelectedMultipleFiles?.(e.target.files as FileList)
       return

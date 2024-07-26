@@ -14,6 +14,7 @@ interface CreateFirstOrgOnboardingProps {
   onBack?: () => void
   selectedOrgAvatar?: Blob
   onSelectedOrgAvatar?: (image?: Blob) => void
+  loading?: boolean
 }
 
 export const CreateFirstOrgOnboarding = ({
@@ -21,6 +22,7 @@ export const CreateFirstOrgOnboarding = ({
   onBack,
   selectedOrgAvatar,
   onSelectedOrgAvatar,
+  loading,
 }: CreateFirstOrgOnboardingProps) => {
   const form = useFormContext<OnboardingFormValues>()
 
@@ -112,6 +114,8 @@ export const CreateFirstOrgOnboarding = ({
           onClick={() => {
             onBack?.()
           }}
+          disabled={loading}
+          isLoading={loading}
         >
           <RiArrowLeftLine size={16} />
           Back
@@ -119,12 +123,15 @@ export const CreateFirstOrgOnboarding = ({
         <Button
           size="lg"
           disabled={
-            (form.formState.isSubmitted && !form.formState.isValid) || form.formState.isSubmitting
+            (form.formState.isSubmitted && !form.formState.isValid) ||
+            form.formState.isSubmitting ||
+            loading
           }
           variant="solid"
           color="primary"
           type="submit"
           form="create-first-org-onboarding"
+          isLoading={loading}
         >
           Continue
           <RiArrowRightLine size={18} />

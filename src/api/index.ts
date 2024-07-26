@@ -1,10 +1,13 @@
 import { Client } from "@/libs/client";
 import { authService } from "./auth";
+import { organizationService } from "./organization";
+import { userService } from "./user";
 
 
 const privateServices: Client[] = [
     // NOTE: add services ... 
-    authService
+    organizationService,
+    userService
 ]
 
 const servicesGuard = {

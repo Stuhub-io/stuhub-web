@@ -1,4 +1,6 @@
 
+
+// Entities
 export interface User {
   pk_id: number
   id: string
@@ -10,4 +12,11 @@ export interface User {
   oauth_gmail: string
   created_at: string
   updated_at: string
+}
+
+// Body, Params, ...
+export interface UpdateUserInfoBody {
+  first_name: string
+  last_name: string
+  avatar: string
 }
