@@ -5,6 +5,7 @@ import { organizationService } from "@/api/organization"
 export interface UseFetchJoinedOrgsArgs {
     allowFetch?: boolean
 }
+
 export const useFetchJoinedOrgs = (args: UseFetchJoinedOrgsArgs) => {
     return useQuery({
         queryKey: QUERY_KEYS.GET_JOIN_ORGS,

@@ -7,5 +7,5 @@ export const QUERY_KEYS = {
 
 export const MUTATION_KEYS = {
     CREATE_ORG: ['CREATE_ORG'],
-    UPDATE_USER_INFO: ['UPDATE_USER_INFO']
+    UPDATE_USER_INFO: ['UPDATE_USER_INFO'],
 }
