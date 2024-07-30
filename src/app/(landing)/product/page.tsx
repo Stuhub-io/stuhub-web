@@ -3,15 +3,10 @@ import Typography from '@/components/common/Typography'
 import { ROUTES } from '@/constants/routes'
 import { cn } from '@/libs/utils'
 import { Button, Spacer } from '@nextui-org/react'
-import {
-  RiArrowRightLine,
-  RiCalendar2Fill,
-  RiFileTextFill,
-  RiKanbanView,
-  RiMessage3Fill,
-} from 'react-icons/ri'
+import { RiCalendar2Fill, RiFileTextFill, RiKanbanView, RiMessage3Fill } from 'react-icons/ri'
 import Link from 'next/link'
 import { useState } from 'react'
+import { AiOutlineArrowRight } from 'react-icons/ai'
 
 export default function Home() {
   const [selectedTab, setSelectedTab] = useState(0)
@@ -37,7 +32,7 @@ export default function Home() {
         <div className="mx-auto w-fit space-x-4">
           <Button variant="solid" color="primary" size="lg">
             Start trial now
-            <RiArrowRightLine size={18} />
+            <AiOutlineArrowRight size={18} />
           </Button>
           <Button
             variant="flat"
@@ -106,7 +101,7 @@ export default function Home() {
           Simple, powerful, beautiful. Next-gen notes & docs.{' '}
           <span className="ml-1 inline-flex items-center gap-2 text-primary">
             <Link href={ROUTES.CHANGELOG_PAGE}>Learn more</Link>
-            <RiArrowRightLine size={14} />
+            <AiOutlineArrowRight size={14} />
           </span>
         </Typography>
       </div>
