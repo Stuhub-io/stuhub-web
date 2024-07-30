@@ -20,11 +20,13 @@ export interface Organization {
     members: OrgMember[]
 }
 
+export type OrgRole = 'owner' | 'member'
+
 export interface OrgMember {
     pk_id: number
     organization_pkid: number
     user_pkid: number
-    role: string
+    role: OrgRole
     created_at: string
     updated_at: string
     user: User | null

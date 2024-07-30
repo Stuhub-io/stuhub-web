@@ -14,10 +14,10 @@ export const SidebarIconButton = forwardRef<
       isIconOnly
       size="lg"
       className={cn(
-        'h-6 w-6 min-w-0 shrink-0 cursor-pointer !rounded-small',
+        'h-6 w-6 min-w-0 shrink-0 cursor-pointer !rounded-small text-inherit',
         {
-          'hidden group-hover:flex': showOnGroupHoverOnly,
-          'flex group-hover:hidden': hideOnGroupHover,
+          'hidden group-hover:flex group-focus-visible:flex': showOnGroupHoverOnly,
+          'flex group-hover:hidden group-focus-visible:hidden': hideOnGroupHover,
         },
         className,
       )}

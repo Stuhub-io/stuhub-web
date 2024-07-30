@@ -1,7 +1,15 @@
 'use client'
 import { cn } from '@/libs/utils'
-import { Listbox, ListboxItem } from '@nextui-org/react'
-import { RiAddLine, RiArrowDownSLine, RiFile2Fill, RiMoreFill } from 'react-icons/ri'
+import {
+  RiAddLine,
+  RiArrowDownSLine,
+  RiChat1Line,
+  RiFile2Fill,
+  RiFile2Line,
+  RiHomeLine,
+  RiMoreFill,
+  RiSearchLine,
+} from 'react-icons/ri'
 import { SidebarIconButton } from './SidebarIconbutton'
 import {
   Collapsible,
@@ -9,20 +17,61 @@ import {
   CollapsibleTrigger,
 } from '@/components/common/Collapsible'
 import { SidebarItemLeftSpacer } from './SidebarItemLeftSpacer'
+import { SidebarItem } from './SidebarItem'
+import { SidebarOrgSwitcher } from './SidebarOrgSwitcher'
 
 export const SideBar = () => {
   return (
-    <div className={cn('h-full w-full', 'border-r border-r-divider', 'bg-content1', 'px-2')}>
-      <div className={cn('h-[200px]')} />
-      <Collapsible>
-        <Listbox>
-          <ListboxItem
+    <div className={cn('h-full w-full', 'border-r border-r-divider', 'p-2')}>
+      <div className="mb-2 w-full">
+        <SidebarOrgSwitcher />
+      </div>
+      <div className="mb-4 w-full space-y-1">
+        <SidebarItem
+          startContent={
+            <SidebarIconButton>
+              <RiSearchLine />
+            </SidebarIconButton>
+          }
+        >
+          Search
+        </SidebarItem>
+        <SidebarItem
+          startContent={
+            <SidebarIconButton>
+              <RiHomeLine />
+            </SidebarIconButton>
+          }
+        >
+          Home
+        </SidebarItem>
+        <SidebarItem
+          startContent={
+            <SidebarIconButton>
+              <RiChat1Line />
+            </SidebarIconButton>
+          }
+        >
+          Chats
+        </SidebarItem>
+        <SidebarItem
+          startContent={
+            <SidebarIconButton>
+              <RiChat1Line />
+            </SidebarIconButton>
+          }
+        >
+          Settings & Members
+        </SidebarItem>
+      </div>
+      <div className="space-y-1">
+        <Collapsible>
+          <SidebarItem
             key="item1"
-            variant="flat"
             startContent={
               <>
                 <SidebarIconButton hideOnGroupHover>
-                  <RiFile2Fill />
+                  <RiFile2Line />
                 </SidebarIconButton>
                 <CollapsibleTrigger asChild>
                   <SidebarIconButton
@@ -46,14 +95,11 @@ export const SideBar = () => {
             }
           >
             Item 1
-          </ListboxItem>
-        </Listbox>
-        <CollapsibleContent asChild>
-          <Collapsible>
-            <Listbox>
-              <ListboxItem
+          </SidebarItem>
+          <CollapsibleContent asChild>
+            <Collapsible>
+              <SidebarItem
                 key="item1"
-                variant="flat"
                 startContent={
                   <>
                     <SidebarItemLeftSpacer level={1} />
@@ -82,13 +128,10 @@ export const SideBar = () => {
                 }
               >
                 Item 1
-              </ListboxItem>
-            </Listbox>
-            <CollapsibleContent>
-              <Listbox>
-                <ListboxItem
+              </SidebarItem>
+              <CollapsibleContent>
+                <SidebarItem
                   key="item1"
-                  variant="flat"
                   startContent={
                     <>
                       <SidebarItemLeftSpacer level={2} />
@@ -115,12 +158,12 @@ export const SideBar = () => {
                   }
                 >
                   Item 1
-                </ListboxItem>
-              </Listbox>
-            </CollapsibleContent>
-          </Collapsible>
-        </CollapsibleContent>
-      </Collapsible>
+                </SidebarItem>
+              </CollapsibleContent>
+            </Collapsible>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
     </div>
   )
 }
