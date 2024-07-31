@@ -3,17 +3,18 @@ import { OrganizationParams, ROUTES } from '@/constants/routes'
 import { usePrevious } from '@/hooks/usePrev'
 import createContext from '@/libs/context'
 import { useFetchJoinedOrgs } from '@/mutation/querier/useFetchJoinedOrgs'
-import { Organization } from '@/schema/organization'
+import { Organization, OrgRole } from '@/schema/organization'
 import { getUserOrgPermission } from '@/utils/organization'
 import { useSession } from 'next-auth/react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
 interface OrganizationProviderValues {
   organization?: Organization
   isLoadingOrganization: boolean
   isNavigating?: boolean
   organizations?: Organization[]
+  currentUserRole?: OrgRole
   refetchOrgs: () => void
 }
 
@@ -34,6 +35,15 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
   const [loadingOrganization, setLoadingOrganization] = useState(allowFetchOrgs)
   const [selectedOrg, setOrg] = useState<Organization>()
   const [isNavigating, setIsNavigating] = useState(false)
+
+  const currentUserRole = useMemo(
+    () =>
+      loadingOrganization || !selectedOrg
+        ? undefined
+        : getUserOrgPermission(selectedOrg, data?.user.pk_id ?? -1),
+    [data?.user.pk_id, loadingOrganization, selectedOrg],
+  )
+  console.log('currentUserRole', selectedOrg, data?.user.pk_id)
 
   const {
     data: { data: joinOrgs } = {},
@@ -118,6 +128,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
         isLoadingOrganization: loadingOrganization,
         refetchOrgs: refetch,
         isNavigating,
+        currentUserRole,
       }}
     >
       {children}

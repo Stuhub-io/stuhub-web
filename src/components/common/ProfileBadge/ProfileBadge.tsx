@@ -2,11 +2,13 @@ import { Avatar, Button, ButtonProps } from '@nextui-org/react'
 import Typography from '@/components/common/Typography'
 import { ComponentRef, forwardRef, ReactNode, useMemo } from 'react'
 import { cva } from 'class-variance-authority'
+import { cn } from '@/libs/utils'
 
 interface ProfileBadgeProps extends ButtonProps {
   avatar?: string
   fullName?: string
   rightEl?: ReactNode
+  description?: string
 }
 
 const profileBadgeCva = cva(['flex justify-start'], {
@@ -31,7 +33,7 @@ const profileBadgeTextWrapperCva = cva(['overflow-hidden pr-2 text-left flex fle
 
 export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadgeProps>(
   (props, ref) => {
-    const { fullName, avatar, className, size = 'md', rightEl, ...restProps } = props
+    const { fullName, avatar, className, size = 'md', rightEl, description, ...restProps } = props
     const titleLevel = useMemo(() => {
       if (size === 'sm') return 'p6'
       if (size === 'md') return 'p5'
@@ -50,7 +52,7 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
         type="button"
         color="default"
         variant="bordered"
-        className={profileBadgeCva({ size, className })}
+        className={profileBadgeCva({ size, className: cn(className, 'w-full max-w-full') })}
         {...restProps}
         ref={ref}
       >
@@ -69,7 +71,7 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
             {fullName}
           </Typography>
           <Typography noWrap level={descriptionLevel} className="opacity-65">
-            Admin
+            {description}
           </Typography>
         </div>
         <span className="opacity-60">{rightEl}</span>
