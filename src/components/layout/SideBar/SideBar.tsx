@@ -204,7 +204,8 @@ export const SideBar = () => {
         ))}
       </div>
       <div className="flex-1" />
-      <div className="shrink-0">
+      <Divider />
+      <div className="shrink-0 pt-4">
         <Card shadow="sm" radius="sm">
           <CardHeader className="p-2" />
           <CardBody className="pt-0 text-small">
