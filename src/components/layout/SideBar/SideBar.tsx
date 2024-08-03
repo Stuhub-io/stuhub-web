@@ -20,7 +20,7 @@ import {
   AiOutlineSearch,
   AiOutlineTeam,
 } from 'react-icons/ai'
-import { Card, CardHeader, CardBody, CardFooter, Button, Divider } from '@nextui-org/react'
+import { Card, CardHeader, CardBody, CardFooter, Button, Divider, Kbd } from '@nextui-org/react'
 import { useTheme } from '@/hooks/useTheme'
 import { LuSparkle } from 'react-icons/lu'
 import Typography from '@/components/common/Typography'
@@ -47,6 +47,11 @@ export const SideBar = () => {
               <AiOutlineSearch />
             </SidebarIconButton>
           }
+          endContent={
+            <Kbd className="text-xs" keys={['command']}>
+              K
+            </Kbd>
+          }
         >
           Search
         </SidebarItem>
@@ -56,6 +61,11 @@ export const SideBar = () => {
               <AiFillHome />
             </SidebarIconButton>
           }
+          endContent={
+            <Kbd className="text-xs" keys={['command', 'shift']}>
+              H
+            </Kbd>
+          }
         >
           Home
         </SidebarItem>
@@ -64,6 +74,11 @@ export const SideBar = () => {
             <SidebarIconButton>
               <AiFillMail />
             </SidebarIconButton>
+          }
+          endContent={
+            <Kbd className="text-xs" keys={['command', 'shift']}>
+              I
+            </Kbd>
           }
         >
           Inboxes
@@ -83,6 +98,11 @@ export const SideBar = () => {
               <AiFillSetting />
             </SidebarIconButton>
           }
+          endContent={
+            <Kbd className="text-xs" keys={['command', 'shift']}>
+              P
+            </Kbd>
+          }
         >
           Settings & Members
         </SidebarItem>
@@ -94,6 +114,11 @@ export const SideBar = () => {
             <SidebarIconButton>
               {activeTheme === 'dark' ? <AiFillMoon size={20} /> : <AiFillSun size={20} />}
             </SidebarIconButton>
+          }
+          endContent={
+            <Kbd className="text-xs" keys={['command', 'shift']}>
+              \
+            </Kbd>
           }
         >
           Switch Theme

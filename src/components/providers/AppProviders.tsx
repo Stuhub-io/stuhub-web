@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
 import { PropsWithChildren } from 'react'
 import { OrganizationProvider } from './organization'
+import { SidebarProvider } from './sidebar'
 
 const queryClient = new QueryClient()
 
@@ -13,7 +14,9 @@ export function AppProviders({ children }: PropsWithChildren) {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <NextUIProvider>
-          <OrganizationProvider>{children}</OrganizationProvider>
+          <OrganizationProvider>
+            <SidebarProvider>{children}</SidebarProvider>
+          </OrganizationProvider>
         </NextUIProvider>
       </QueryClientProvider>
     </ThemeProvider>
