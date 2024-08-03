@@ -20,7 +20,15 @@ import {
   AiOutlineSearch,
   AiOutlineTeam,
 } from 'react-icons/ai'
-import { Card, CardHeader, CardBody, CardFooter, Button, Divider } from '@nextui-org/react'
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Button,
+  Divider,
+  useDisclosure,
+} from '@nextui-org/react'
 import { useTheme } from '@/hooks/useTheme'
 import { LuSparkle } from 'react-icons/lu'
 import Typography from '@/components/common/Typography'
@@ -29,16 +37,25 @@ import { useSession } from 'next-auth/react'
 import { getUserFullName } from '@/utils/user'
 import { useOrganization } from '@/components/providers/organization'
 import { getPermissionText } from '@/utils/organization'
+import { InviteMembersModal } from './InviteMembersModal'
 
 export const SideBar = () => {
   const { activeTheme, setTheme } = useTheme()
   const { data } = useSession()
   const { currentUserRole } = useOrganization()
+
+  const {
+    isOpen: isInviteMembersOpen,
+    onOpen: openInviteMembers,
+    onClose: closeInviteMembers,
+  } = useDisclosure()
+
   const user = data?.user
   return (
     <div className={cn('h-full w-full', 'border-r border-r-divider', 'flex flex-col p-2')}>
       <div className="mb-2 w-full">
-        <SidebarOrgSwitcher />
+        <SidebarOrgSwitcher openInviteMembers={openInviteMembers} />
+        <InviteMembersModal isOpen={isInviteMembersOpen} onClose={closeInviteMembers} />
       </div>
       <div className="w-full space-y-1 pb-2">
         <SidebarItem
