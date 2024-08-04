@@ -8,4 +8,5 @@ export const QUERY_KEYS = {
 export const MUTATION_KEYS = {
     CREATE_ORG: ['CREATE_ORG'],
     UPDATE_USER_INFO: ['UPDATE_USER_INFO'],
+    FIND_USER_BY_EMAIL: ['FIND_USER_BY_EMAIL'],
 }

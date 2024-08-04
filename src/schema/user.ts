@@ -15,6 +15,10 @@ export interface User {
 }
 
 // Body, Params, ...
+export interface FindUserByEmail {
+  email: string
+}
+
 export interface UpdateUserInfoBody {
   first_name: string
   last_name: string

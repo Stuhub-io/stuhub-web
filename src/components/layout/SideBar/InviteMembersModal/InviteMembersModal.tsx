@@ -1,8 +1,9 @@
+import { useOrganization } from '@/components/providers/organization'
 import { ORG_ROLES } from '@/constants/organization'
 import { OrgRole } from '@/schema/organization'
-import { checkIsEmailValid } from '@/utils/user'
+import { User } from '@/schema/user'
 import { Divider, Modal, ModalBody, ModalContent, ModalFooter } from '@nextui-org/react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { SearchActions } from './SearchActions'
 import { SearchForm } from './SearchForm'
 import { SearchResults } from './SearchResults'
@@ -14,16 +15,18 @@ type InviteMembersModalProps = {
 
 export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps) => {
   const [role, setRole] = useState<OrgRole>(ORG_ROLES.OWNER)
-  const [emailValue, setEmailValue] = useState('')
   const [emails, setEmails] = useState<string[]>([])
-  const [searchedEmails] = useState<string[]>(['khoa2@gmail.com'])
+  const [searchedUser, setSearchedUser] = useState<User | null>(null)
+
+  const { organization } = useOrganization()
+
+  const invitedEmails = useMemo(
+    () => [...(organization?.members.map((m) => m.user?.email ?? '') ?? []), ...emails],
+    [organization, emails],
+  )
 
   const handleAddEmail = (email: string) => {
-    const existingEmail = emails.find((e) => e === email)
-    if (!email || !checkIsEmailValid(email) || !!existingEmail) return
-
     setEmails((prev) => [...prev, email])
-    setEmailValue('')
   }
 
   const handleRemoveEmail = (email: string) => {
@@ -44,17 +47,21 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
         <ModalBody className="flex flex-col gap-0 px-0 pt-0">
           <div className="flex w-full items-start justify-between">
             <SearchForm
-              emailValue={emailValue}
               emails={emails}
-              setEmailValue={setEmailValue}
+              invitedEmails={invitedEmails}
+              searchedUser={searchedUser}
+              setSearchedUser={setSearchedUser}
               addEmail={handleAddEmail}
               removeEmail={handleRemoveEmail}
             />
-
             <SearchActions role={role} setRole={setRole} submitInvite={() => {}} />
           </div>
           <Divider />
-          <SearchResults results={searchedEmails} />
+          <SearchResults
+            invitedEmails={invitedEmails}
+            results={searchedUser ? [searchedUser] : []}
+            addEmail={handleAddEmail}
+          />
         </ModalBody>
         <ModalFooter />
       </ModalContent>
