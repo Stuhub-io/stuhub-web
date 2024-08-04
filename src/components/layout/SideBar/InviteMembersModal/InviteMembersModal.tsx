@@ -7,6 +7,8 @@ import { useMemo, useState } from 'react'
 import { SearchActions } from './SearchActions'
 import { SearchForm } from './SearchForm'
 import { SearchResults } from './SearchResults'
+import { useInviteOrgMembers } from '@/mutation/mutator/useInviteOrgMembers'
+import { useToast } from '@/hooks/useToast'
 
 type InviteMembersModalProps = {
   isOpen: boolean
@@ -18,12 +20,15 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
   const [emails, setEmails] = useState<string[]>([])
   const [searchedUser, setSearchedUser] = useState<User | null>(null)
 
-  const { organization } = useOrganization()
+  const { toast } = useToast()
 
+  const { organization } = useOrganization()
   const invitedEmails = useMemo(
     () => [...(organization?.members.map((m) => m.user?.email ?? '') ?? []), ...emails],
     [organization, emails],
   )
+
+  const { mutate: inviteOrgMembersMutate } = useInviteOrgMembers()
 
   const handleAddEmail = (email: string) => {
     setEmails((prev) => [...prev, email])
@@ -32,6 +37,46 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
   const handleRemoveEmail = (email: string) => {
     const newEmails = [...emails].filter((e) => e !== email)
     setEmails(newEmails)
+  }
+
+  const handleSubmitInvitations = () => {
+    if (!organization) return
+    inviteOrgMembersMutate(
+      {
+        org_info: {
+          pkid: organization.pk_id,
+          name: organization.name,
+          slug: organization.slug,
+          avatar: organization.avatar,
+          members: organization.members.length,
+        },
+        infos: emails.map((email) => ({ email, role })),
+      },
+      {
+        onSuccess: ({ data: { failed_emails }, message }) => {
+          if (failed_emails) {
+            toast({
+              variant: 'danger',
+              title: 'Oops! Something wrong.',
+              description: `${failed_emails.join(' ')} are not sent!`,
+            })
+            return
+          }
+
+          toast({
+            variant: 'success',
+            title: message,
+          })
+        },
+        onError: (error) => {
+          toast({
+            variant: 'danger',
+            title: 'Oops! Something wrong.',
+            description: error.message,
+          })
+        },
+      },
+    )
   }
 
   return (
@@ -54,7 +99,11 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
               addEmail={handleAddEmail}
               removeEmail={handleRemoveEmail}
             />
-            <SearchActions role={role} setRole={setRole} submitInvite={() => {}} />
+            <SearchActions
+              role={role}
+              setRole={setRole}
+              submitInvitations={handleSubmitInvitations}
+            />
           </div>
           <Divider />
           <SearchResults

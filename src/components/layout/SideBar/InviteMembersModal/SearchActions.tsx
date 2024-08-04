@@ -7,10 +7,10 @@ import { RiCheckLine } from 'react-icons/ri'
 type SearchActionsProps = {
   role: string
   setRole: (value: OrgRole) => void
-  submitInvite: () => void
+  submitInvitations: () => void
 }
 
-export const SearchActions = ({ role, setRole, submitInvite }: SearchActionsProps) => {
+export const SearchActions = ({ role, setRole, submitInvitations }: SearchActionsProps) => {
   return (
     <div className="flex w-fit py-1 pl-1 pr-2">
       <Dropdown>
@@ -41,7 +41,7 @@ export const SearchActions = ({ role, setRole, submitInvite }: SearchActionsProp
           ))}
         </DropdownMenu>
       </Dropdown>
-      <Button color="primary" className="my-auto ml-2" radius="sm" onClick={submitInvite}>
+      <Button color="primary" className="my-auto ml-2" radius="sm" onClick={submitInvitations}>
         Invite
       </Button>
     </div>
