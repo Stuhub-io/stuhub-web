@@ -9,6 +9,7 @@ export interface CreateOrgnizationRequestBody {
 
 // Body, Params, ...
 export interface Organization {
+    pk_id: number
     id: string
     owner_id: number
     name: string
@@ -34,4 +35,23 @@ export interface OrgMember {
 
 export interface GetOrgBySlugParams {
     slug: string
+}
+
+export interface InviteOrgMembersRequestBody {
+    org_info: {
+        pkid: number;
+        name: string;
+        slug: string;
+        avatar: string;
+        members: number;
+    }
+    infos: { 
+        email: string;
+        role: string;
+    }[]
+}
+
+export interface InviteOrgMembersResponse {
+    sent_emails: string[] | null
+    failed_emails: string[] | null
 }

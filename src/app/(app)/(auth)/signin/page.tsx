@@ -30,7 +30,7 @@ const emailSchema = z.object({
 })
 
 const passwordSchema = z.object({
-  password: z.string().min(6),
+  password: z.string().min(3),
 })
 
 export default function LoginPage() {

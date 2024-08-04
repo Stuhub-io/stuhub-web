@@ -43,7 +43,6 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
         : getUserOrgPermission(selectedOrg, data?.user.pk_id ?? -1),
     [data?.user.pk_id, loadingOrganization, selectedOrg],
   )
-  console.log('currentUserRole', selectedOrg, data?.user.pk_id)
 
   const {
     data: { data: joinOrgs } = {},

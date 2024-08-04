@@ -1,17 +1,28 @@
 import { ProfileBadge } from '@/components/common/ProfileBadge'
 import Typography from '@/components/common/Typography'
 import { useOrganization } from '@/components/providers/organization'
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import { Avatar, Button, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { RiCheckLine, RiExpandUpDownLine, RiLogoutBoxLine, RiMoreLine } from 'react-icons/ri'
+import { LuSettings } from 'react-icons/lu'
+import { PiUserCirclePlusDuotone } from 'react-icons/pi'
 import { SidebarIconButton } from './SidebarIconbutton'
 import { SidebarItem } from './SidebarItem'
-import { signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
+import { useRef } from 'react'
 
-export const SidebarOrgSwitcher = () => {
+type SidebarOrgSwitcherProps = {
+  openInviteMembers: () => void
+}
+
+export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProps) => {
+  const { data } = useSession()
+
   const { organization } = useOrganization()
 
+  const triggerRef = useRef<HTMLElement>(null)
+
   return (
-    <Popover placement="bottom">
+    <Popover placement="bottom" radius="sm" triggerRef={triggerRef}>
       <PopoverTrigger>
         <ProfileBadge
           disableRipple
@@ -23,17 +34,54 @@ export const SidebarOrgSwitcher = () => {
           rightEl={<RiExpandUpDownLine size={16} />}
         />
       </PopoverTrigger>
-      <PopoverContent className="min-w-[300px] space-y-1 py-3">
-        <div className="flex w-full text-text-tertiary">
-          <Typography level="p5" className="ml-3 flex-1 truncate" color="textTertiary">
-            Joined organizations
-          </Typography>
-          <SidebarIconButton>
-            <RiMoreLine />
-          </SidebarIconButton>
+      <PopoverContent className="w-[270px] space-y-1 px-0 py-2">
+        <div className="mb-2 flex w-full items-center gap-2.5 px-3 text-text-tertiary">
+          <Avatar src={organization?.avatar} radius="sm" />
+          <div>
+            <Typography level="h6" className="flex-1 truncate">
+              {organization?.name}
+            </Typography>
+            <div className="mt-[-5px]">
+              <Typography
+                level="p6"
+                color="textTertiary"
+              >{`${organization?.members.length} members`}</Typography>
+            </div>
+          </div>
         </div>
-        <div className="w-full space-y-1">
+        <div className="flex w-full items-start gap-2 px-3">
+          <Button
+            size="sm"
+            variant="ghost"
+            startContent={<LuSettings size={14} />}
+            className="border-1"
+          >
+            Settings
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            startContent={<PiUserCirclePlusDuotone size={14} />}
+            className="border-1"
+            onClick={() => {
+              triggerRef.current?.click()
+              openInviteMembers()
+            }}
+          >
+            Invite members
+          </Button>
+        </div>
+        <div className="!mt-2.5 w-full space-y-1 bg-content2 px-3 pb-2 pt-1.5">
+          <div className="flex items-center justify-between">
+            <Typography level="p6" className="truncate">
+              {data?.user.email}
+            </Typography>
+            <SidebarIconButton>
+              <RiMoreLine />
+            </SidebarIconButton>
+          </div>
           <ProfileBadge
+            size="sm"
             variant="light"
             fullWidth
             disableRipple

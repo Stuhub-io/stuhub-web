@@ -3,7 +3,7 @@
 import { Client } from "@/libs/client";
 import fetcher from "@/libs/fetcher";
 import { BaseResponse } from "@/schema/base";
-import { CreateOrgnizationRequestBody, GetOrgBySlugParams, Organization } from "@/schema/organization";
+import { CreateOrgnizationRequestBody, GetOrgBySlugParams, InviteOrgMembersRequestBody, InviteOrgMembersResponse, Organization } from "@/schema/organization";
 import qs from 'querystring'
 
 class OrganizationService extends Client {
@@ -25,6 +25,14 @@ class OrganizationService extends Client {
         const params = {slug}
         return fetcher<BaseResponse<Organization>>(`${this.baseUrl}/v1/organization-services/get-by-slug?${qs.stringify(params)}`, {
             headers: this.privateHeaders
+        })
+    }
+
+    public inviteOrgMembers(body: InviteOrgMembersRequestBody){
+        return fetcher<BaseResponse<InviteOrgMembersResponse>>(`${this.baseUrl}/v1/organization-services/invite-by-emails`, {
+            method: 'POST',
+            headers: this.privateHeaders,
+            body: JSON.stringify(body)
         })
     }
 }
