@@ -8,6 +8,7 @@ export interface Space {
     name: string
     slug: string
     description: string
+    is_private: boolean
     avatar: string
     created_at: string
     updated_at: string
