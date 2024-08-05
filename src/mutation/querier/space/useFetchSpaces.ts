@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { QUERY_KEYS } from "../keys"
+import { QUERY_KEYS } from "../../keys"
 import { spaceService } from '@/api/space'
 import { OrganizationPkIDParams } from "@/schema/space"
 

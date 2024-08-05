@@ -3,6 +3,7 @@ import { authService } from "./auth";
 import { organizationService } from "./organization";
 import { userService } from "./user";
 import { spaceService } from "./space";
+import { pageService } from "./page";
 
 
 const privateServices: Client[] = [
@@ -10,6 +11,7 @@ const privateServices: Client[] = [
     organizationService,
     spaceService,
     userService,
+    pageService
 ]
 
 const servicesGuard = {
