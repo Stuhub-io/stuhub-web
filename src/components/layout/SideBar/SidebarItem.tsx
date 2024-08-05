@@ -15,7 +15,7 @@ export const SidebarItem = forwardRef<ComponentRef<'button'>, SidebarItemProps>(
       fullWidth
       variant={variant}
       className={cn(
-        'justify-start truncate px-2 py-1 text-small text-opacity-70 transition-all',
+        'justify-start truncate px-2 py-1 !text-small text-text-tertiary transition-all hover:text-text-secondary',
         className,
       )}
       color={color}

@@ -10,6 +10,7 @@ export interface CreateOrgnizationRequestBody {
 // Body, Params, ...
 export interface Organization {
     id: string
+    pk_id: number
     owner_id: number
     name: string
     slug: string
