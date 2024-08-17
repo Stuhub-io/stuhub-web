@@ -37,3 +37,7 @@ export interface CreateSpaceRequestBody {
 export interface OrganizationPkIDParams extends Record<string, any> {
     organization_pkid: number
 }
+
+export interface SpacePkIDParams extends Record<string, any> {
+    space_pk_id: number
+}

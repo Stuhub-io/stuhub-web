@@ -1,15 +1,19 @@
 'use client'
 
 import createContext from '@/libs/context'
-import { useFetchOrgSpaces } from '@/mutation/querier/useFetchSpaces'
+import { useFetchOrgSpaces } from '@/mutation/querier/space/useFetchSpaces'
 import { PropsWithChildren, useMemo } from 'react'
 import { useOrganization } from './organization'
 import { Space } from '@/schema/space'
+import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
+import { Page } from '@/schema/page'
 
 interface SidebarContextValue {
   isPendingSpaces: boolean
   privateSpace?: Space
+  privatePages?: Page[]
   publicSpaces?: Space[]
+  refreshPrivatePages: () => void
 }
 
 const [Provider, useSidebar] = createContext<SidebarContextValue>({
@@ -24,6 +28,7 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     organization_pkid: organization?.pk_id ?? -1,
     allowFetch: Boolean(organization),
   })
+
   const privateSpace = useMemo(() => {
     return spaces?.find((space) => space.is_private)
   }, [spaces])
@@ -32,12 +37,19 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     return spaces?.filter((space) => !space.is_private)
   }, [spaces])
 
+  const { data: { data: privatePages } = {}, refetch: refreshPrivatePages } = useFetchPages({
+    allowFetch: Boolean(privateSpace),
+    space_pk_id: privateSpace?.pk_id ?? -1,
+  })
+
   return (
     <Provider
       value={{
         isPendingSpaces,
         privateSpace,
         publicSpaces,
+        privatePages,
+        refreshPrivatePages,
       }}
     >
       {children}
