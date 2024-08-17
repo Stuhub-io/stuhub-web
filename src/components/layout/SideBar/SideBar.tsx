@@ -1,16 +1,24 @@
 'use client'
 import { cn } from '@/libs/utils'
-import { SidebarOrgSwitcher } from './SidebarOrgSwitcher'
-import { Divider } from '@nextui-org/react'
-import { SidebarToolItems } from './SidebarToolItems'
+import { Divider, useDisclosure } from '@nextui-org/react'
+import { InviteMembersModal } from './InviteMembersModal'
 import { SidebarFooter } from './SidebarFooterTool'
+import { SidebarOrgSwitcher } from './SidebarOrgSwitcher'
+import { SidebarToolItems } from './SidebarToolItems'
 import { SidebarSpaces } from './space/SidebarSpaces'
 
 export const SideBar = () => {
+  const {
+    isOpen: isInviteMembersOpen,
+    onOpen: openInviteMembers,
+    onClose: closeInviteMembers,
+  } = useDisclosure()
+
   return (
     <div className={cn('h-full w-full', 'border-r border-r-divider', 'flex flex-col p-2')}>
       <div className="mb-2 w-full">
-        <SidebarOrgSwitcher />
+        <SidebarOrgSwitcher openInviteMembers={openInviteMembers} />
+        <InviteMembersModal isOpen={isInviteMembersOpen} onClose={closeInviteMembers} />
       </div>
       <div className="w-full space-y-1 pb-2">
         <SidebarToolItems />
