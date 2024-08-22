@@ -2,7 +2,7 @@ import { useOrganization } from '@/components/providers/organization'
 import { ORG_ROLES } from '@/constants/organization'
 import { OrgRole } from '@/schema/organization'
 import { User } from '@/schema/user'
-import { Divider, Modal, ModalBody, ModalContent, ModalFooter } from '@nextui-org/react'
+import { Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
 import { useMemo, useState } from 'react'
 import { SearchActions } from './SearchActions'
 import { SearchForm } from './SearchForm'
@@ -83,13 +83,12 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      radius="sm"
       size="lg"
       hideCloseButton
       className="h-[800px]"
     >
       <ModalContent>
-        <ModalBody className="flex flex-col gap-0 px-0 pt-0">
+        <ModalHeader>
           <div className="flex w-full items-start justify-between">
             <SearchForm
               emails={emails}
@@ -105,7 +104,9 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
               submitInvitations={handleSubmitInvitations}
             />
           </div>
-          <Divider />
+        </ModalHeader>
+        <Divider />
+        <ModalBody className="flex flex-col gap-0">
           <SearchResults
             invitedEmails={invitedEmails}
             results={searchedUser ? [searchedUser] : []}

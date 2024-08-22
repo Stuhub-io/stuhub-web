@@ -70,15 +70,16 @@ export const SearchForm = ({
       {renderSelectedEmails()}
       <form onSubmit={handleSubmitInvite}>
         <Input
-          classNames={{
-            inputWrapper: [
-              'bg-transparent',
-              'shadow-none',
-              'group-hover:bg-transparent',
-              'rounded-sm',
-            ],
-            input: ['placeholder:text-text-primary'],
-          }}
+        variant="flat"
+          // classNames={{
+          //   inputWrapper: [
+          //     'bg-transparent',
+          //     'shadow-none',
+          //     'group-hover:bg-transparent',
+          //     'rounded-sm',
+          //   ],
+          //   input: ['placeholder:text-text-primary'],
+          // }}
           placeholder="Search name or emails"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

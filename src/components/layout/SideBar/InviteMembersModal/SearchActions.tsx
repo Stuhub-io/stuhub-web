@@ -24,19 +24,18 @@ export const SearchActions = ({ role, setRole, submitInvitations }: SearchAction
             {role}
           </Button>
         </DropdownTrigger>
-        <DropdownMenu className="p-0">
+        <DropdownMenu
+          className="p-0"
+        >
           {Object.values(ORG_ROLES).map((item) => (
-            <DropdownItem key={item}>
-              <Button
-                fullWidth
-                variant="light"
-                radius="sm"
-                className="justify-between capitalize"
-                endContent={item === role ? <RiCheckLine /> : null}
-                onClick={() => setRole(item)}
-              >
+            <DropdownItem key={item} as={Button}
+              className="capitalize text-left"
+              variant="light"
+              endContent={item === role ? <RiCheckLine /> : null}
+              onClick={() => setRole(item)}
+            >
                 {item}
-              </Button>
+              {/* </Button> */}
             </DropdownItem>
           ))}
         </DropdownMenu>
