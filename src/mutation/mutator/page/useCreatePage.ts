@@ -3,9 +3,9 @@ import { MUTATION_KEYS } from "@/mutation/keys"
 import { useMutation } from "@tanstack/react-query"
 
 
-export const useCreatePage = () => {
+export const useCreatePage = (keys: Parameters<typeof MUTATION_KEYS.CREATE_PAGE>[0]) => {
     return useMutation({
-        mutationKey: MUTATION_KEYS.CREATE_PAGE,
+        mutationKey: MUTATION_KEYS.CREATE_PAGE(keys),
         mutationFn: pageService.createPage.bind(pageService),
     })
 }

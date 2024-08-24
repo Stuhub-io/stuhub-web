@@ -3,37 +3,44 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@radix-ui/r
 import { SidebarItem } from '../SidebarItem'
 import { SidebarItemSkeleton } from '../SidebarItemSkeleton'
 import { SidebarIconButton } from '../SidebarIconbutton'
-import { RiAddFill, RiArrowDownSLine, RiFileLine } from 'react-icons/ri'
+import { RiAddFill, RiArrowDownSLine, RiFileFill } from 'react-icons/ri'
 import { useCreatePage } from '@/mutation/mutator/page/useCreatePage'
 import { useToast } from '@/hooks/useToast'
 import { useSidebar } from '@/components/providers/sidebar'
 import { useMemo, useState } from 'react'
 import { Page } from '@/schema/page'
 import { SidebarItemLeftSpacer } from '../SidebarItemLeftSpacer'
+import { CreateNewPageModal } from '@/components/page/CreateNewPageModal'
 
 interface SpaceItemProps {
-  space?: Space
+  space: Space
 }
 
 export const SpaceItem = (props: SpaceItemProps) => {
   const { space } = props
   const isLoading = !space
-  const { mutateAsync: createPage, isPending: isCreatingPage } = useCreatePage()
+
+  const { mutateAsync: createPage, isPending: isCreatingPage } = useCreatePage({
+    space_pk_id: space.pk_id ?? -1,
+  })
   const { refreshPrivatePages, privatePages } = useSidebar()
   const { toast } = useToast()
 
   const outerPages = useMemo(() => {
-    return privatePages?.filter(
-      (page) => page.space_pkid === space?.pk_id && !page.parent_page_pkid,
-    )
-  }, [privatePages, space?.pk_id])
-  console.log('outerPages', outerPages)
+    if (space.is_private) {
+      return privatePages?.list?.filter(
+        (page) => page.space_pkid === space.pk_id && !page.parent_page_pkid,
+      )
+    }
+    // FIXME: add handle pages
+    return []
+  }, [privatePages, space?.is_private, space.pk_id])
 
   const onAddNewPage = async () => {
     try {
       await createPage({
         name: 'Untitled',
-        space_pk_id: space?.pk_id ?? -1,
+        space_pk_id: space.pk_id ?? -1,
         view_type: 'document',
       })
       refreshPrivatePages()
@@ -89,33 +96,13 @@ interface SidebarPageItemProps {
 }
 
 export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps) => {
-  const { mutateAsync: createPage, isPending: isCreatingPage } = useCreatePage()
-  const { refreshPrivatePages, privatePages } = useSidebar()
+  const { privatePages, setSelectPage, selectPage } = useSidebar()
   const [isExpanded, setIsExpanded] = useState(false)
-  const { toast } = useToast()
 
   const childPages = useMemo(() => {
-    return privatePages?.filter((p) => p.parent_page_pkid === page.pk_id)
+    return privatePages?.list.filter((p) => p.parent_page_pkid === page.pk_id)
   }, [page.pk_id, privatePages])
 
-  const onAddNewPage = async () => {
-    setIsExpanded(true)
-    try {
-      await createPage({
-        name: 'Untitled',
-        space_pk_id: space?.pk_id ?? -1,
-        parent_page_pk_id: page.pk_id,
-        view_type: 'document',
-      })
-      refreshPrivatePages()
-    } catch (error) {
-      toast({
-        variant: 'danger',
-        title: 'Failed to create page',
-        description: "We couldn't create a new page. Please try again later.",
-      })
-    }
-  }
   return (
     <Collapsible
       open={isExpanded}
@@ -124,11 +111,15 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
       }}
     >
       <SidebarItem
+        isSelected={page.pk_id === selectPage?.pk_id}
+        onClick={() => {
+            setSelectPage(page)
+        }}
         startContent={
           <>
             <SidebarItemLeftSpacer level={level} />
             <SidebarIconButton hideOnGroupHover>
-              <RiFileLine />
+              <RiFileFill />
             </SidebarIconButton>
             <CollapsibleTrigger asChild>
               <SidebarIconButton showOnGroupHoverOnly className="data-[state=closed]:-rotate-90">
@@ -138,9 +129,15 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
           </>
         }
         endContent={
-          <SidebarIconButton showOnGroupHoverOnly onClick={onAddNewPage} isLoading={isCreatingPage}>
-            <RiAddFill />
-          </SidebarIconButton>
+          <CreateNewPageModal
+            renderTrigger={({ onOpen }) => (
+              <SidebarIconButton showOnGroupHoverOnly 
+                onClick={() => onOpen()}
+              >
+                <RiAddFill />
+              </SidebarIconButton>
+            )}
+          />
         }
       >
         {page.name}
