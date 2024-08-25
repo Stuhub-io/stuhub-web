@@ -78,7 +78,7 @@ export const BlockBasedEditor = () => {
             handleDrop: (view, event, _slice, moved) => handleImageDrop(view, event, moved, () => {}),
             attributes: {
               class:
-                "prose prose-lg dark:prose-invert focus:outline-none max-w-full",
+                "prose prose-neutral focus:outline-none max-w-full",
             },
           }}
           onUpdate={({ editor }) => {
@@ -87,38 +87,38 @@ export const BlockBasedEditor = () => {
           }}
           slotAfter={<ImageResizer />}
         >
-          <EditorCommand className="z-50 h-[500px] max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
-            <EditorCommandEmpty className="px-2 text-muted-foreground">No results</EditorCommandEmpty>
+          <EditorCommand className="z-50 h-fit max-h-[330px] overflow-y-auto rounded-medium px-1 py-2 shadow-small transition-all dark:border dark:border-divider bg-content1">
+            <EditorCommandEmpty className="px-2 text-text-tertiary text-small">No results</EditorCommandEmpty>
             <EditorCommandList>
               {suggestionItems.map((item) => (
                 <EditorCommandItem
                   value={item.title}
                   onCommand={(val) => item.command?.(val)}
-                  className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent"
+                  className="flex w-full items-center space-x-2 rounded-small px-2 py-1 text-left text-sm aria-selected:bg-default/40"
                   key={item.title}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-muted bg-background">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md bg-default/20">
                     {item.icon}
                   </div>
                   <div>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{item.description}</p>
+                    <p className="font-medium text-text-secondary">{item.title}</p>
+                    <p className="text-xs text-text-tertiary">{item.description}</p>
                   </div>
                 </EditorCommandItem>
               ))}
             </EditorCommandList>
             <EditorBubble>
-            <Divider  orientation="vertical" />
-            <NodeSelector open={openNode} onOpenChange={setOpenNode} />
-            <Divider  orientation="vertical" />
+              <Divider  orientation="vertical" />
+              <NodeSelector open={openNode} onOpenChange={setOpenNode} />
+              <Divider  orientation="vertical" />
 
-            <LinkSelector open={openLink} onOpenChange={setOpenLink} />
-            <Divider  orientation="vertical" />
-            <MathSelector />
-            <Divider  orientation="vertical" />
-            <TextButtons />
-            <Divider  orientation="vertical" />
-            <ColorSelector open={openColor} onOpenChange={setOpenColor} />
+              <LinkSelector open={openLink} onOpenChange={setOpenLink} />
+              <Divider  orientation="vertical" />
+              <MathSelector />
+              <Divider  orientation="vertical" />
+              <TextButtons />
+              <Divider  orientation="vertical" />
+              <ColorSelector open={openColor} onOpenChange={setOpenColor} />
             </EditorBubble>
           </EditorCommand>
         </EditorContent>

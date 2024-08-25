@@ -22,19 +22,19 @@ export const CreateNewPageModal = (props:  CreateNewPageModalProps) => {
             onClose,
             isOpen
         })}
-        <Modal isOpen={isOpen}
+        <Modal
+            size="4xl"
+            isOpen={isOpen}
             hideCloseButton
             onOpenChange={open => {
-                console.log(open)
                 return open ? onOpen() : onClose()
             }}
-            size="4xl"
             scrollBehavior="outside"
-            isDismissable={false}
         >
-            <ModalContent >
+            <ModalContent>
                 <ModalBody
-                className="min-h-[80vh] px-3 py-3"
+                    className="min-h-[80vh] px-3 py-3"
+                    role="dialog"
                 >
                     <div className="flex items-center mb-3 gap-2">
                         <div className="flex items-center gap-1">
@@ -78,10 +78,10 @@ export const CreateNewPageModal = (props:  CreateNewPageModalProps) => {
                                 minRows={1}
                                 placeholder="Untitled"
                                 classNames={{
-                                    input: "text-4xl"
+                                    input: "text-4xl font-bold"
                                 }}
                             />
-                            <div>
+                            <div className="mt-2 pb-10 -mx-3">
                                 <BlockBasedEditor/>
                             </div>
                         </div>

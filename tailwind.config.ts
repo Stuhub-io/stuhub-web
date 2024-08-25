@@ -30,6 +30,7 @@ const config: Config = {
   },
   darkMode: 'class',
   plugins: [
+    require('@tailwindcss/typography'),
     require('tailwindcss-animate'),
     nextui({
       themes: {
