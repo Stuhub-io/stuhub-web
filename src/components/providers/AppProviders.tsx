@@ -6,6 +6,7 @@ import { ThemeProvider } from 'next-themes'
 import { PropsWithChildren } from 'react'
 import { OrganizationProvider } from './organization'
 import { SidebarProvider } from './sidebar'
+import { CreatePageProvider } from './newpage'
 
 const queryClient = new QueryClient()
 
@@ -14,9 +15,11 @@ export function AppProviders({ children }: PropsWithChildren) {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <NextUIProvider>
-          <OrganizationProvider>
-            <SidebarProvider>{children}</SidebarProvider>
-          </OrganizationProvider>
+          <CreatePageProvider>
+            <OrganizationProvider>
+              <SidebarProvider>{children}</SidebarProvider>
+            </OrganizationProvider>
+          </CreatePageProvider>
         </NextUIProvider>
       </QueryClientProvider>
     </ThemeProvider>

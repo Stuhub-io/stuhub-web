@@ -1,40 +1,23 @@
 import { TextAreaNoBackground } from "@/components/common/TextAreaNoBackground"
-import { Button, Modal, ModalBody, ModalContent, Spacer, useDisclosure } from "@nextui-org/react"
+import { Button, Modal, ModalBody, ModalContent, Spacer } from "@nextui-org/react"
 import { RiArrowDropDownLine, RiExpandDiagonal2Line, RiImage2Fill, RiMoreFill, RiShareFill, RiStarFill, RiUserSmileFill } from "react-icons/ri"
 import { BlockBasedEditor } from "@/components/common/BlockBasedEditor"
-
-export interface CreateNewPageModalProps {
-    renderTrigger: ({onOpen, onClose, isOpen}: {
-        onOpen: () => void
-        onClose: () => void
-        isOpen: boolean
-    }) => React.ReactNode
-}
+import { useCreatePageContext } from "@/components/providers/newpage"
 
 
-export const CreateNewPageModal = (props:  CreateNewPageModalProps) => {
-    const { renderTrigger }= props
-    const { onClose, onOpen, isOpen } = useDisclosure()
+export const CreateNewPageModal = () => {
+    const { isOpenCreatePage, onCloseCreatePage }= useCreatePageContext()
     return (
-        <>
-        {renderTrigger({
-            onOpen,
-            onClose,
-            isOpen
-        })}
         <Modal
             size="4xl"
-            isOpen={isOpen}
+            isOpen={isOpenCreatePage}
             hideCloseButton
-            onOpenChange={open => {
-                return open ? onOpen() : onClose()
-            }}
+            onClose={onCloseCreatePage}
             scrollBehavior="outside"
         >
             <ModalContent>
                 <ModalBody
                     className="min-h-[80vh] px-3 py-3"
-                    role="dialog"
                 >
                     <div className="flex items-center mb-3 gap-2">
                         <div className="flex items-center gap-1">
@@ -78,10 +61,12 @@ export const CreateNewPageModal = (props:  CreateNewPageModalProps) => {
                                 minRows={1}
                                 placeholder="Untitled"
                                 classNames={{
-                                    input: "text-4xl font-bold"
+                                    input: "text-5xl font-semibold"
                                 }}
                             />
-                            <div className="mt-2 pb-10 -mx-3">
+                            <div className="mt-2 pb-10 -mx-3"
+                                role="dialog"
+                            >
                                 <BlockBasedEditor/>
                             </div>
                         </div>
@@ -89,6 +74,5 @@ export const CreateNewPageModal = (props:  CreateNewPageModalProps) => {
                 </ModalBody>
             </ModalContent>
         </Modal>
-        </>
     )
 }

@@ -4,13 +4,11 @@ import { SidebarItem } from '../SidebarItem'
 import { SidebarItemSkeleton } from '../SidebarItemSkeleton'
 import { SidebarIconButton } from '../SidebarIconbutton'
 import { RiAddFill, RiArrowDownSLine, RiFileFill } from 'react-icons/ri'
-import { useCreatePage } from '@/mutation/mutator/page/useCreatePage'
-import { useToast } from '@/hooks/useToast'
 import { useSidebar } from '@/components/providers/sidebar'
 import { useMemo, useState } from 'react'
 import { Page } from '@/schema/page'
 import { SidebarItemLeftSpacer } from '../SidebarItemLeftSpacer'
-import { CreateNewPageModal } from '@/components/page/CreateNewPageModal'
+import { useCreatePageContext } from '@/components/providers/newpage'
 
 interface SpaceItemProps {
   space: Space
@@ -20,11 +18,8 @@ export const SpaceItem = (props: SpaceItemProps) => {
   const { space } = props
   const isLoading = !space
 
-  const { mutateAsync: createPage, isPending: isCreatingPage } = useCreatePage({
-    space_pk_id: space.pk_id ?? -1,
-  })
-  const { refreshPrivatePages, privatePages } = useSidebar()
-  const { toast } = useToast()
+  const { privatePages } = useSidebar()
+  const { onOpenCreatePage } = useCreatePageContext()
 
   const outerPages = useMemo(() => {
     if (space.is_private) {
@@ -35,23 +30,6 @@ export const SpaceItem = (props: SpaceItemProps) => {
     // FIXME: add handle pages
     return []
   }, [privatePages, space?.is_private, space.pk_id])
-
-  const onAddNewPage = async () => {
-    try {
-      await createPage({
-        name: 'Untitled',
-        space_pk_id: space.pk_id ?? -1,
-        view_type: 'document',
-      })
-      refreshPrivatePages()
-    } catch (error) {
-      toast({
-        variant: 'danger',
-        title: 'Failed to create page',
-        description: "We couldn't create a new page. Please try again later.",
-      })
-    }
-  }
 
   if (isLoading) {
     return (
@@ -70,8 +48,7 @@ export const SpaceItem = (props: SpaceItemProps) => {
           endContent={
             <SidebarIconButton
               showOnGroupHoverOnly
-              onClick={onAddNewPage}
-              isLoading={isCreatingPage}
+              onClick={() => onOpenCreatePage()}
             >
               <RiAddFill />
             </SidebarIconButton>
@@ -113,7 +90,7 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
       <SidebarItem
         isSelected={page.pk_id === selectPage?.pk_id}
         onClick={() => {
-            setSelectPage(page)
+          setSelectPage(page)
         }}
         startContent={
           <>
@@ -129,15 +106,9 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
           </>
         }
         endContent={
-          <CreateNewPageModal
-            renderTrigger={({ onOpen }) => (
-              <SidebarIconButton showOnGroupHoverOnly 
-                onClick={() => onOpen()}
-              >
-                <RiAddFill />
-              </SidebarIconButton>
-            )}
-          />
+          <SidebarIconButton showOnGroupHoverOnly>
+            <RiAddFill />
+          </SidebarIconButton>
         }
       >
         {page.name}

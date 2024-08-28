@@ -78,7 +78,7 @@ export const BlockBasedEditor = () => {
             handleDrop: (view, event, _slice, moved) => handleImageDrop(view, event, moved, () => {}),
             attributes: {
               class:
-                "prose prose-neutral focus:outline-none max-w-full",
+                "focus:outline-none max-w-full",
             },
           }}
           onUpdate={({ editor }) => {

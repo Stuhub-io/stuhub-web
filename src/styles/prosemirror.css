@@ -1,5 +1,8 @@
 .ProseMirror {
-  @apply px-4 sm:px-6;
+  @apply px-4 sm:px-6 prose prose-neutral;
+}
+[data-theme='dark'] .ProseMirror {
+  @apply prose-invert;
 }
 
 .prosemirror-dropcursor-block {
