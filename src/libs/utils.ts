@@ -22,3 +22,5 @@ export default function callAllHandlers<T extends (event: any) => void>(
     })
   }
 }
+
+export type FirstFuncParamType<T extends (...args: any) => any> = Parameters<T>[0]
