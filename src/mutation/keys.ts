@@ -1,4 +1,5 @@
 import { GetOrgBySlugParams } from "@/schema/organization"
+import { CreatePageRequestBody } from "@/schema/page"
 import { OrganizationPkIDParams, SpacePkIDParams } from "@/schema/space"
 
 export const QUERY_KEYS = {
@@ -13,5 +14,9 @@ export const MUTATION_KEYS = {
     UPDATE_USER_INFO: ['UPDATE_USER_INFO'],
     FIND_USER_BY_EMAIL: ['FIND_USER_BY_EMAIL'] ,
     INVITE_ORG_MEMBERS: ['INVITE_ORG_MEMBERS'] ,
-    CREATE_PAGE: ['CREATE_PAGE'],
+    CREATE_PAGE: ({
+        parent_page_pk_id,
+        space_pk_id,
+        id
+    }: {id?: string} & Pick<CreatePageRequestBody, 'parent_page_pk_id'|'space_pk_id'>) => ['CREATE_PAGE', parent_page_pk_id, space_pk_id, id],
 }

@@ -2,18 +2,21 @@
 
 import createContext from '@/libs/context'
 import { useFetchOrgSpaces } from '@/mutation/querier/space/useFetchSpaces'
-import { PropsWithChildren, useMemo } from 'react'
+import { PropsWithChildren, useMemo, useState } from 'react'
 import { useOrganization } from './organization'
 import { Space } from '@/schema/space'
-import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
+import { IPageData, useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { Page } from '@/schema/page'
 
 interface SidebarContextValue {
   isPendingSpaces: boolean
   privateSpace?: Space
-  privatePages?: Page[]
   publicSpaces?: Space[]
+  privatePages?: IPageData
+  isPendingPrivatePages: boolean
   refreshPrivatePages: () => void
+  selectPage?: Page
+  setSelectPage: (page: Page) => void
 }
 
 const [Provider, useSidebar] = createContext<SidebarContextValue>({
@@ -36,11 +39,13 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
   const publicSpaces = useMemo(() => {
     return spaces?.filter((space) => !space.is_private)
   }, [spaces])
-
-  const { data: { data: privatePages } = {}, refetch: refreshPrivatePages } = useFetchPages({
+  
+  const { data: { data: privatePages } = {}, refetch: refreshPrivatePages, isPending: isPendingPrivatePages } = useFetchPages({
     allowFetch: Boolean(privateSpace),
     space_pk_id: privateSpace?.pk_id ?? -1,
   })
+
+  const [selectPage, setSelectPage ] = useState<Page>()
 
   return (
     <Provider
@@ -50,6 +55,9 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
         publicSpaces,
         privatePages,
         refreshPrivatePages,
+        selectPage,
+        setSelectPage,
+        isPendingPrivatePages
       }}
     >
       {children}

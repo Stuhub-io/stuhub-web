@@ -6,27 +6,34 @@ export const SidebarIconButton = forwardRef<
   ButtonProps & { showOnGroupHoverOnly?: boolean; hideOnGroupHover?: boolean }
 >(
   (
-    { children, hideOnGroupHover, showOnGroupHoverOnly, className, variant = 'light', ...props },
+    { children, onClick, hideOnGroupHover, showOnGroupHoverOnly, className, variant = 'light', ...props },
     ref,
-  ) => (
-    <Button
-      ref={ref}
-      isIconOnly
-      size="lg"
-      className={cn(
-        'h-6 w-6 min-w-0 shrink-0 cursor-pointer !rounded-small text-inherit',
-        {
-          'hidden group-hover:flex group-focus-visible:flex': showOnGroupHoverOnly,
-          'flex group-hover:hidden group-focus-visible:hidden': hideOnGroupHover,
-        },
-        className,
-      )}
-      variant={variant}
-      {...props}
-    >
-      {children}
-    </Button>
-  ),
+  ) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation()
+      onClick?.(e)
+    }
+    return (
+      <Button
+        ref={ref}
+        isIconOnly
+        size="lg"
+        className={cn(
+          'h-6 w-6 min-w-0 shrink-0 cursor-pointer !rounded-small text-inherit',
+          {
+            'hidden group-hover:flex group-focus-visible:flex': showOnGroupHoverOnly,
+            'flex group-hover:hidden group-focus-visible:hidden': hideOnGroupHover,
+          },
+          className,
+        )}
+        variant={variant}
+        onClick={handleClick}
+        {...props}
+      >
+        {children}
+      </Button>
+    )
+  },
 )
 
 SidebarIconButton.displayName = 'SidebarIconButton'

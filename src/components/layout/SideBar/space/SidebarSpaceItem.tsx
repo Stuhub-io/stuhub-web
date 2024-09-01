@@ -3,48 +3,44 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@radix-ui/r
 import { SidebarItem } from '../SidebarItem'
 import { SidebarItemSkeleton } from '../SidebarItemSkeleton'
 import { SidebarIconButton } from '../SidebarIconbutton'
-import { RiAddFill, RiArrowDownSLine, RiFileLine } from 'react-icons/ri'
-import { useCreatePage } from '@/mutation/mutator/page/useCreatePage'
-import { useToast } from '@/hooks/useToast'
+import { RiAddFill, RiArrowDownSLine, RiFileFill } from 'react-icons/ri'
 import { useSidebar } from '@/components/providers/sidebar'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Page } from '@/schema/page'
 import { SidebarItemLeftSpacer } from '../SidebarItemLeftSpacer'
+import { ICreatingPage, useCreatePageContext } from '@/components/providers/newpage'
 
 interface SpaceItemProps {
-  space?: Space
+  space: Space
 }
 
 export const SpaceItem = (props: SpaceItemProps) => {
   const { space } = props
   const isLoading = !space
-  const { mutateAsync: createPage, isPending: isCreatingPage } = useCreatePage()
-  const { refreshPrivatePages, privatePages } = useSidebar()
-  const { toast } = useToast()
+
+  const { privatePages } = useSidebar()
+  const { onOpenCreatePage, creatingPages, selectedParent, selectedSpace } = useCreatePageContext()
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const isRenderCreatingPage =
+    selectedParent === undefined && selectedSpace?.pk_id === space.pk_id
+
+  const creatPagesData = useMemo(() => {
+    return creatingPages.filter(
+      (page) =>
+        page.input.space_pk_id === space.pk_id && page.input.parent_page_pk_id === undefined,
+    )
+  }, [creatingPages, space.pk_id])
 
   const outerPages = useMemo(() => {
-    return privatePages?.filter(
-      (page) => page.space_pkid === space?.pk_id && !page.parent_page_pkid,
-    )
-  }, [privatePages, space?.pk_id])
-  console.log('outerPages', outerPages)
-
-  const onAddNewPage = async () => {
-    try {
-      await createPage({
-        name: 'Untitled',
-        space_pk_id: space?.pk_id ?? -1,
-        view_type: 'document',
-      })
-      refreshPrivatePages()
-    } catch (error) {
-      toast({
-        variant: 'danger',
-        title: 'Failed to create page',
-        description: "We couldn't create a new page. Please try again later.",
-      })
+    if (space.is_private) {
+      return privatePages?.list?.filter(
+        (page) => page.space_pkid === space.pk_id && !page.parent_page_pkid,
+      )
     }
-  }
+    // FIXME: add handle pages
+    return []
+  }, [privatePages, space?.is_private, space.pk_id])
 
   if (isLoading) {
     return (
@@ -57,14 +53,16 @@ export const SpaceItem = (props: SpaceItemProps) => {
   }
 
   return (
-    <Collapsible open={isLoading || undefined}>
+    <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <CollapsibleTrigger asChild>
         <SidebarItem
           endContent={
             <SidebarIconButton
               showOnGroupHoverOnly
-              onClick={onAddNewPage}
-              isLoading={isCreatingPage}
+              onClick={() => {
+                onOpenCreatePage(space, undefined)
+                setIsExpanded(true)
+              }}
             >
               <RiAddFill />
             </SidebarIconButton>
@@ -74,9 +72,18 @@ export const SpaceItem = (props: SpaceItemProps) => {
         </SidebarItem>
       </CollapsibleTrigger>
       <CollapsibleContent>
+        <ActiveCreatingPageItem spacePkID={space.pk_id} />
+        {creatPagesData?.map((toCreate) => (
+          <CreatingSidebarPageItem key={toCreate.id} data={toCreate} />
+        ))}
         {outerPages?.map((page) => (
           <SidebarPageItem space={space} key={page.id} page={page} level={0} />
         ))}
+        {!isRenderCreatingPage && !creatPagesData.length && !outerPages?.length && (
+          <SidebarItem startContent={<SidebarItemLeftSpacer level={0} />}>
+            <span className="text-sm text-gray-500">No pages inside</span>
+          </SidebarItem>
+        )}
       </CollapsibleContent>
     </Collapsible>
   )
@@ -89,33 +96,24 @@ interface SidebarPageItemProps {
 }
 
 export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps) => {
-  const { mutateAsync: createPage, isPending: isCreatingPage } = useCreatePage()
-  const { refreshPrivatePages, privatePages } = useSidebar()
+  const { privatePages, setSelectPage, selectPage } = useSidebar()
   const [isExpanded, setIsExpanded] = useState(false)
-  const { toast } = useToast()
+  const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
+
+  const isRenderCreatingPage =
+    selectedParent?.pk_id === page.pk_id &&
+    selectedSpace?.pk_id === space.pk_id
+
+  const toCreatPages = useMemo(() => {
+    return creatingPages.filter(
+      (p) => p.input.parent_page_pk_id === page.pk_id && p.input.space_pk_id === space.pk_id,
+    )
+  }, [creatingPages, page.pk_id, space.pk_id])
 
   const childPages = useMemo(() => {
-    return privatePages?.filter((p) => p.parent_page_pkid === page.pk_id)
+    return privatePages?.list.filter((p) => p.parent_page_pkid === page.pk_id)
   }, [page.pk_id, privatePages])
 
-  const onAddNewPage = async () => {
-    setIsExpanded(true)
-    try {
-      await createPage({
-        name: 'Untitled',
-        space_pk_id: space?.pk_id ?? -1,
-        parent_page_pk_id: page.pk_id,
-        view_type: 'document',
-      })
-      refreshPrivatePages()
-    } catch (error) {
-      toast({
-        variant: 'danger',
-        title: 'Failed to create page',
-        description: "We couldn't create a new page. Please try again later.",
-      })
-    }
-  }
   return (
     <Collapsible
       open={isExpanded}
@@ -124,11 +122,15 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
       }}
     >
       <SidebarItem
+        isSelected={page.pk_id === selectPage?.pk_id}
+        onClick={() => {
+          setSelectPage(page)
+        }}
         startContent={
           <>
             <SidebarItemLeftSpacer level={level} />
             <SidebarIconButton hideOnGroupHover>
-              <RiFileLine />
+              <RiFileFill />
             </SidebarIconButton>
             <CollapsibleTrigger asChild>
               <SidebarIconButton showOnGroupHoverOnly className="data-[state=closed]:-rotate-90">
@@ -138,7 +140,13 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
           </>
         }
         endContent={
-          <SidebarIconButton showOnGroupHoverOnly onClick={onAddNewPage} isLoading={isCreatingPage}>
+          <SidebarIconButton
+            showOnGroupHoverOnly
+            onClick={() => {
+              onOpenCreatePage(space, page)
+              setIsExpanded(true)
+            }}
+          >
             <RiAddFill />
           </SidebarIconButton>
         }
@@ -146,15 +154,111 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
         {page.name}
       </SidebarItem>
       <CollapsibleContent>
+        <ActiveCreatingPageItem
+          level={level + 1}
+          parentPagePkID={page.pk_id}
+          spacePkID={space.pk_id}
+        />
+        {toCreatPages.map((p) => (
+          <CreatingSidebarPageItem key={p.id} data={p} level={level + 1} />
+        ))}
         {childPages?.map((childPage) => (
           <SidebarPageItem space={space} key={childPage.id} page={childPage} level={level + 1} />
         ))}
-        {childPages?.length === 0 && (
+        {!isRenderCreatingPage && !toCreatPages.length && childPages?.length === 0 && (
           <SidebarItem startContent={<SidebarItemLeftSpacer level={level + 1} />}>
             <span className="text-sm text-gray-500">No pages inside</span>
           </SidebarItem>
         )}
       </CollapsibleContent>
     </Collapsible>
+  )
+}
+
+interface CreatingSidebarPageItemProps {
+  data: ICreatingPage
+  level?: number
+}
+
+export const CreatingSidebarPageItem = (props: CreatingSidebarPageItemProps) => {
+  const { data, level = 0 } = props
+
+  const { doneCreatingPage } = useCreatePageContext()
+  const { privatePages } = useSidebar()
+
+  const isRenderedOnScreen = useMemo(() => {
+    return Boolean(data.result) && privatePages?.map[data.result?.pk_id ?? -1]
+  }, [data.result, privatePages?.map])
+
+  useEffect(() => {
+    if (isRenderedOnScreen) {
+      doneCreatingPage(data.id)
+    }
+  })
+
+  if (isRenderedOnScreen) {
+    return null
+  }
+
+  return (
+    <SidebarItem
+      disabled
+      startContent={
+        <>
+          <SidebarItemLeftSpacer level={level} />
+          <SidebarIconButton>
+            <RiFileFill />
+          </SidebarIconButton>
+        </>
+      }
+    >
+      {data.input.name}
+    </SidebarItem>
+  )
+}
+
+export const ActiveCreatingPageItem = (props: {
+  level?: number
+  parentPagePkID?: number
+  spacePkID: number
+}) => {
+  const { level = 0, parentPagePkID, spacePkID } = props
+  const {
+    createPageData,
+    creatingPages,
+    createID,
+    isOpenCreatePage,
+    selectedParent,
+    selectedSpace,
+  } = useCreatePageContext()
+
+  const isModifying = useMemo(
+    () => !creatingPages.find((p) => p.id === createID),
+    [createID, creatingPages],
+  )
+
+  if (selectedParent?.pk_id !== parentPagePkID || selectedSpace?.pk_id !== spacePkID) {
+    return null
+  }
+
+  if (!isOpenCreatePage || !isModifying) {
+    return null
+  }
+
+  return (
+    <SidebarItem
+      className='!opacity-70'
+      disabled
+      startContent={
+        <>
+          <SidebarItemLeftSpacer level={level} />
+          <SidebarIconButton>
+            <RiFileFill />
+          </SidebarIconButton>
+        </>
+      }
+    >
+      {createPageData?.name || 'Untitled'}
+    </SidebarItem>
   )
 }

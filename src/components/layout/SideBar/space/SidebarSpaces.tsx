@@ -28,7 +28,7 @@ export const SidebarSpaces = () => {
           })}
         </CollapsibleContent>
       </Collapsible>
-      <SpaceItem space={privateSpace} />
+      {privateSpace && <SpaceItem space={privateSpace} />}
     </div>
   )
 }
