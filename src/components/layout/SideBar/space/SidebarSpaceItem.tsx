@@ -8,10 +8,7 @@ import { useSidebar } from '@/components/providers/sidebar'
 import { useEffect, useMemo, useState } from 'react'
 import { Page } from '@/schema/page'
 import { SidebarItemLeftSpacer } from '../SidebarItemLeftSpacer'
-import { IToCreatePage, useCreatePageContext } from '@/components/providers/newpage'
-import { useCreatePage } from '@/mutation/mutator/page/useCreatePage'
-import { useQueryClient } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/mutation/keys'
+import { ICreatingPage, useCreatePageContext } from '@/components/providers/newpage'
 
 interface SpaceItemProps {
   space: Space
@@ -22,14 +19,18 @@ export const SpaceItem = (props: SpaceItemProps) => {
   const isLoading = !space
 
   const { privatePages } = useSidebar()
-  const { onOpenCreatePage, toCreatePages } = useCreatePageContext()
+  const { onOpenCreatePage, creatingPages, selectedParent, selectedSpace } = useCreatePageContext()
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const pageToCreate = useMemo(() => {
-    return toCreatePages.filter(
-      (page) => page.space_pk_id === space.pk_id && page.parent_page_pk_id === undefined,
+  const isRenderCreatingPage =
+    selectedParent === undefined && selectedSpace?.pk_id === space.pk_id
+
+  const creatPagesData = useMemo(() => {
+    return creatingPages.filter(
+      (page) =>
+        page.input.space_pk_id === space.pk_id && page.input.parent_page_pk_id === undefined,
     )
-  }, [space.pk_id, toCreatePages])
+  }, [creatingPages, space.pk_id])
 
   const outerPages = useMemo(() => {
     if (space.is_private) {
@@ -71,10 +72,18 @@ export const SpaceItem = (props: SpaceItemProps) => {
         </SidebarItem>
       </CollapsibleTrigger>
       <CollapsibleContent>
+        <ActiveCreatingPageItem spacePkID={space.pk_id} />
+        {creatPagesData?.map((toCreate) => (
+          <CreatingSidebarPageItem key={toCreate.id} data={toCreate} />
+        ))}
         {outerPages?.map((page) => (
           <SidebarPageItem space={space} key={page.id} page={page} level={0} />
         ))}
-        {pageToCreate?.map((page) => <CreatingSidebarPageItem key={page.uniqID} data={page} />)}
+        {!isRenderCreatingPage && !creatPagesData.length && !outerPages?.length && (
+          <SidebarItem startContent={<SidebarItemLeftSpacer level={0} />}>
+            <span className="text-sm text-gray-500">No pages inside</span>
+          </SidebarItem>
+        )}
       </CollapsibleContent>
     </Collapsible>
   )
@@ -89,13 +98,17 @@ interface SidebarPageItemProps {
 export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps) => {
   const { privatePages, setSelectPage, selectPage } = useSidebar()
   const [isExpanded, setIsExpanded] = useState(false)
-  const { toCreatePages, onOpenCreatePage } = useCreatePageContext()
+  const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
 
-  const pagesToCreate = useMemo(() => {
-    return toCreatePages.filter(
-      (p) => p.parent_page_pk_id === page.pk_id && p.space_pk_id === space.pk_id,
+  const isRenderCreatingPage =
+    selectedParent?.pk_id === page.pk_id &&
+    selectedSpace?.pk_id === space.pk_id
+
+  const toCreatPages = useMemo(() => {
+    return creatingPages.filter(
+      (p) => p.input.parent_page_pk_id === page.pk_id && p.input.space_pk_id === space.pk_id,
     )
-  }, [page.pk_id, space.pk_id, toCreatePages])
+  }, [creatingPages, page.pk_id, space.pk_id])
 
   const childPages = useMemo(() => {
     return privatePages?.list.filter((p) => p.parent_page_pkid === page.pk_id)
@@ -141,13 +154,18 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
         {page.name}
       </SidebarItem>
       <CollapsibleContent>
+        <ActiveCreatingPageItem
+          level={level + 1}
+          parentPagePkID={page.pk_id}
+          spacePkID={space.pk_id}
+        />
+        {toCreatPages.map((p) => (
+          <CreatingSidebarPageItem key={p.id} data={p} level={level + 1} />
+        ))}
         {childPages?.map((childPage) => (
           <SidebarPageItem space={space} key={childPage.id} page={childPage} level={level + 1} />
         ))}
-        {pagesToCreate.map((p) => (
-          <CreatingSidebarPageItem key={p.uniqID} data={p} level={level + 1} />
-        ))}
-        {!pagesToCreate.length && childPages?.length === 0 && (
+        {!isRenderCreatingPage && !toCreatPages.length && childPages?.length === 0 && (
           <SidebarItem startContent={<SidebarItemLeftSpacer level={level + 1} />}>
             <span className="text-sm text-gray-500">No pages inside</span>
           </SidebarItem>
@@ -158,54 +176,23 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
 }
 
 interface CreatingSidebarPageItemProps {
-  data: IToCreatePage
+  data: ICreatingPage
   level?: number
 }
 
 export const CreatingSidebarPageItem = (props: CreatingSidebarPageItemProps) => {
   const { data, level = 0 } = props
-  const { mutateAsync: createPageAsync } = useCreatePage({
-    parent_page_pk_id: data.parent_page_pk_id,
-    space_pk_id: data.space_pk_id,
-  })
 
-  const { doneCreatePage } = useCreatePageContext()
+  const { doneCreatingPage } = useCreatePageContext()
   const { privatePages } = useSidebar()
-  const [page, setPage] = useState<Page>()
-  const queryClient = useQueryClient()
 
   const isRenderedOnScreen = useMemo(() => {
-    return Boolean(page) && privatePages?.map[page?.pk_id ?? -1]
-  }, [page, privatePages])
-
-  useEffect(() => {
-    if (!page) {
-      (async () => {
-        const resp = await createPageAsync({
-          name: data.name,
-          parent_page_pk_id: data.parent_page_pk_id,
-          space_pk_id: data.space_pk_id,
-          view_type: 'document',
-        })
-        setPage(resp.data)
-        queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.GET_SPACE_PAGES({ space_pk_id: data.space_pk_id }),
-        })
-      })()
-    }
-  }, [
-    createPageAsync,
-    data.name,
-    data.parent_page_pk_id,
-    data.space_pk_id,
-    data.status,
-    page,
-    queryClient,
-  ])
+    return Boolean(data.result) && privatePages?.map[data.result?.pk_id ?? -1]
+  }, [data.result, privatePages?.map])
 
   useEffect(() => {
     if (isRenderedOnScreen) {
-      doneCreatePage(data.uniqID)
+      doneCreatingPage(data.id)
     }
   })
 
@@ -225,7 +212,53 @@ export const CreatingSidebarPageItem = (props: CreatingSidebarPageItemProps) => 
         </>
       }
     >
-      {data.name}
+      {data.input.name}
+    </SidebarItem>
+  )
+}
+
+export const ActiveCreatingPageItem = (props: {
+  level?: number
+  parentPagePkID?: number
+  spacePkID: number
+}) => {
+  const { level = 0, parentPagePkID, spacePkID } = props
+  const {
+    createPageData,
+    creatingPages,
+    createID,
+    isOpenCreatePage,
+    selectedParent,
+    selectedSpace,
+  } = useCreatePageContext()
+
+  const isModifying = useMemo(
+    () => !creatingPages.find((p) => p.id === createID),
+    [createID, creatingPages],
+  )
+
+  if (selectedParent?.pk_id !== parentPagePkID || selectedSpace?.pk_id !== spacePkID) {
+    return null
+  }
+
+  if (!isOpenCreatePage || !isModifying) {
+    return null
+  }
+
+  return (
+    <SidebarItem
+      className='!opacity-70'
+      disabled
+      startContent={
+        <>
+          <SidebarItemLeftSpacer level={level} />
+          <SidebarIconButton>
+            <RiFileFill />
+          </SidebarIconButton>
+        </>
+      }
+    >
+      {createPageData?.name || 'Untitled'}
     </SidebarItem>
   )
 }

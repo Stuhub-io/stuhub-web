@@ -11,7 +11,10 @@ import {
 } from 'react-icons/ri'
 import { BlockBasedEditor } from '@/components/common/BlockBasedEditor'
 import { useCreatePageContext } from '@/components/providers/newpage'
-import { useId, useState } from 'react'
+import { useCreatePage } from '@/mutation/mutator/page/useCreatePage'
+import { useToast } from '@/hooks/useToast'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/mutation/keys'
 
 export const CreateNewPageModal = () => {
   const {
@@ -19,28 +22,77 @@ export const CreateNewPageModal = () => {
     onCloseCreatePage,
     selectedParent,
     selectedSpace,
-    appendToCreatePages,
+    appendCreatingPages,
+    createPageData,
+    setCreatePageData,
+    updateCreatingPages,
+    createID
   } = useCreatePageContext()
 
-  const [title, setTitle] = useState<string>('')
-  const uniqId = useId()
+  const queryClient = useQueryClient()
+  const { toast } = useToast()
+  const title = createPageData?.name
+
+  const setTitle = (value: string) => {
+    if (!selectedSpace) return
+    setCreatePageData?.({
+      name: value,
+      parent_page_pk_id: selectedParent?.pk_id,
+      space_pk_id: selectedSpace?.pk_id,
+      view_type: 'document',
+    })
+  }
+
+  const { mutateAsync } = useCreatePage({
+    parent_page_pk_id: selectedParent?.pk_id ?? -1,
+    space_pk_id: selectedSpace?.pk_id ?? -1,
+    id: createID,
+  })
 
   const handleOnClose = () => {
-    if (!selectedSpace) return
-    // FIXME: check if emptt content
+    if (!selectedSpace) {
+      onCloseCreatePage()
+      return
+    }
+    // FIXME: check if empty content
     if (!title) {
       onCloseCreatePage()
       return
     }
-    appendToCreatePages({
+    const data = {
       name: title || 'Untitled',
       parent_page_pk_id: selectedParent?.pk_id,
       space_pk_id: selectedSpace.pk_id,
       view_type: 'document',
-      uniqID: uniqId,
-      status: 'loading',
-    })
-    onCloseCreatePage()
+    } as const;
+
+    onCloseCreatePage();
+
+    (async () => {
+      try {
+        console.log('data', data)
+        appendCreatingPages({
+          id: createID,
+          input: data,
+        })
+        const result = await mutateAsync(data)
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.GET_SPACE_PAGES({ space_pk_id: data.space_pk_id }),
+        })
+        updateCreatingPages(createID, {
+          id: createID,
+          input: data,
+          result: result.data,
+        })
+      }
+      catch(e) {
+        toast({
+          title: 'Some thing wrent wrong',
+          description: "Can't not create page, try again later",
+          variant: 'danger',
+        })
+      }
+    })()
   }
 
   return (
@@ -51,7 +103,7 @@ export const CreateNewPageModal = () => {
       onClose={handleOnClose}
       scrollBehavior="outside"
     >
-      <ModalContent>
+      <ModalContent role="dialog">
         <ModalBody className="min-h-[80vh] px-3 py-3">
           <div className="mb-3 flex items-center gap-2">
             <div className="flex items-center gap-1">
@@ -101,7 +153,7 @@ export const CreateNewPageModal = () => {
                   input: 'text-5xl font-semibold',
                 }}
               />
-              <div className="-mx-3 mt-2 pb-10" role="dialog">
+              <div className="-mx-3 mt-2 pb-10">
                 <BlockBasedEditor />
               </div>
             </div>
