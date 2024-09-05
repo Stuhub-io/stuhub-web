@@ -6,20 +6,24 @@ import { usePageContext } from '@/components/providers/page'
 import { useFetchDocument } from '@/mutation/querier/document/useFetchDocument'
 import { Button } from '@nextui-org/react'
 import { JSONContent } from 'novel'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RiUserSmileFill, RiImage2Fill } from 'react-icons/ri'
 
 export default function PageDetail() {
   const { currentPage } = usePageContext()
-  const { data: { data: document } = {} } = useFetchDocument({
+  const { data: { data: documentData } = {} } = useFetchDocument({
     allowFetch: !!currentPage,
     pagePkID: currentPage?.pk_id ?? -1,
   })
 
   const [title, setTitle] = useState(currentPage?.name)
-  const [content, setContent] = useState<JSONContent>(
-    JSON.parse(document?.document?.json_content ?? '{}'),
-  )
+  const [content, setContent] = useState<JSONContent>()
+
+  useEffect(() => {
+    if (document) {
+      setContent(documentData?.json_content ? JSON.parse( documentData?.json_content) : undefined)
+    }
+  }, [documentData])
 
   return (
     <>
@@ -46,7 +50,12 @@ export default function PageDetail() {
         />
       </div>
       <div className="-mx-3 mt-2 pb-10">
-        <BlockBasedEditor jsonContent={content} onJsonContentChange={(json) => setContent(json)} />
+        {content !== undefined && (
+          <BlockBasedEditor
+            jsonContent={content}
+            onJsonContentChange={(json) => setContent(json)}
+          />
+        )}
       </div>
     </>
   )

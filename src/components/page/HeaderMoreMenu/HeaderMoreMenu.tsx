@@ -41,7 +41,7 @@ export const HeaderMoreMenuContent = (props: HeaderMoreMenuContentProps) => {
           <ListboxItem key="move" startContent={<RiArrowRightUpLine />}>
             Move to
           </ListboxItem>
-          <ListboxItem key="edit" startContent={<RiDeleteBinLine />}>
+          <ListboxItem key="edit" startContent={<RiDeleteBinLine />} color="danger">
             Move to trash
           </ListboxItem>
         </Listbox>
