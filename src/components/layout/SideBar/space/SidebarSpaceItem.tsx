@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Page } from '@/schema/page'
 import { SidebarItemLeftSpacer } from '../SidebarItemLeftSpacer'
 import { ICreatingPage, useCreatePageContext } from '@/components/providers/newpage'
+import { usePageContext } from '@/components/providers/page'
 
 interface SpaceItemProps {
   space: Space
@@ -96,9 +97,10 @@ interface SidebarPageItemProps {
 }
 
 export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps) => {
-  const { privatePages, setSelectPage, selectPage } = useSidebar()
+  const { privatePages } = useSidebar()
   const [isExpanded, setIsExpanded] = useState(false)
   const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
+  const { onSelectPage, currentPage }= usePageContext()
 
   const isRenderCreatingPage =
     selectedParent?.pk_id === page.pk_id &&
@@ -122,10 +124,10 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
       }}
     >
       <SidebarItem
-        isSelected={page.pk_id === selectPage?.pk_id}
         onClick={() => {
-          setSelectPage(page)
+          onSelectPage(page)
         }}
+        isSelected={page.pk_id === currentPage?.pk_id}
         startContent={
           <>
             <SidebarItemLeftSpacer level={level} />

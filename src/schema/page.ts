@@ -19,3 +19,7 @@ export interface CreatePageRequestBody {
     view_type: PageViewType
     parent_page_pk_id?: number
 }
+
+export interface PagePkIDParams extends Record<string, any> {
+    
+}

@@ -6,6 +6,10 @@ export interface OrganizationParams extends Record<string, any> {
     orgSlug: string
 }
 
+export interface OrganizationPageParams extends OrganizationParams {
+    pageID: string
+}
+
 export const ROUTES = {
     // landing
     LANDING_PAGE: '/product',
@@ -16,4 +20,5 @@ export const ROUTES = {
     HOME_PAGE: '/',
     AUTH_EMAIL: '/auth-email',
     ORGANIZATION: ({orgSlug}: OrganizationParams) =>  `/${orgSlug}`,
+    ORGANIZATION_PAGE: ({orgSlug, pageID}: OrganizationPageParams) => `/${orgSlug}/${pageID}`,
 }

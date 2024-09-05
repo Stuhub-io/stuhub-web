@@ -7,14 +7,19 @@ import qs from 'querystring'
 
 class PageService extends Client {
     public createPage(body: CreatePageRequestBody){
-        return fetcher<BaseResponse<Page>>(`${this.baseUrl}/v1/page-services/create`, {
+        return fetcher<BaseResponse<Page>>(`${this.baseUrl}/v1/page-services/pages`, {
             method: 'POST',
             headers: this.privateHeaders,
             body: JSON.stringify(body)
         })
     }
     public getPagesBySpacePkID(params: SpacePkIDParams){
-        return fetcher<BaseResponse<Page[]>>(`${this.baseUrl}/v1/page-services/all?${qs.stringify(params)}`,{
+        return fetcher<BaseResponse<Page[]>>(`${this.baseUrl}/v1/page-services/pages?${qs.stringify(params)}`,{
+            headers: this.privateHeaders
+        })
+    }
+    public getPageByID(uuid: string){
+        return fetcher<BaseResponse<Page>>(`${this.baseUrl}/v1/page-services/pages/${uuid}`,{
             headers: this.privateHeaders
         })
     }

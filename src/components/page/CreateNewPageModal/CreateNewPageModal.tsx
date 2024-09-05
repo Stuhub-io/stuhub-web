@@ -70,17 +70,15 @@ export const CreateNewPageModal = () => {
     } as const
 
     onCloseCreatePage()
-
     ;(async () => {
       try {
-        console.log('data', data)
         appendCreatingPages({
           id: createID,
           input: data,
         })
         const result = await mutateAsync({
           page: data,
-          json_content: JSON.stringify(content) || "{}",
+          json_content: JSON.stringify(content) || '{}',
         })
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.GET_SPACE_PAGES({ space_pk_id: data.space_pk_id }),
@@ -164,12 +162,12 @@ export const CreateNewPageModal = () => {
                   input: 'text-5xl font-semibold',
                 }}
               />
-              <div className="-mx-3 mt-2 pb-10">
-                <BlockBasedEditor
-                  jsonContent={content}
-                  onJsonContentChange={(json) => setContent(json)}
-                />
-              </div>
+            </div>
+            <div className="-mx-3 mt-2 pb-10">
+              <BlockBasedEditor
+                jsonContent={content}
+                onJsonContentChange={(json) => setContent(json)}
+              />
             </div>
           </div>
         </ModalBody>
