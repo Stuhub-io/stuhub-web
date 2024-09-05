@@ -1,18 +1,13 @@
 'use client'
 
-import { useOrganization } from '@/components/providers/organization'
 import { usePageContext } from '@/components/providers/page'
-import { ROUTES } from '@/constants/routes'
 import { useSidebarBreadcrumb } from '@/hooks/breadcrumb/useSidebarBreadcrumb'
 import { BreadcrumbItem, Breadcrumbs, Skeleton } from '@nextui-org/react'
-import { useRouter } from 'next/navigation'
 
 // FIXME: Handle loading, selector sub Links
 export const PageBreadCrumbs = () => {
-  const { organization } = useOrganization()
   const pagePaths = useSidebarBreadcrumb()
-  const { isLoading } = usePageContext()
-  const { push } = useRouter()
+  const { isLoading, onSelectPage } = usePageContext()
 
   return (
     <Breadcrumbs separator="/" variant="light">
@@ -30,12 +25,7 @@ export const PageBreadCrumbs = () => {
             key={page.id}
             onClick={(e) => {
               e.preventDefault()
-              push(
-                ROUTES.ORGANIZATION_PAGE({
-                  orgSlug: organization?.slug ?? '',
-                  pageID: page.id,
-                }),
-              )
+              onSelectPage(page)
             }}
           >
             {page.name || 'Untitled'}

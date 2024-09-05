@@ -33,7 +33,7 @@ export const PageProvider = ({ children }: PropsWithChildren) => {
   })
 
   const activePage = useMemo(() => {
-    return data || selectedPage
+    return selectedPage || data
   }, [selectedPage, data])
 
   const onSelectPage = useCallback(
