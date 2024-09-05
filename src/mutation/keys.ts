@@ -19,4 +19,9 @@ export const MUTATION_KEYS = {
         space_pk_id,
         id
     }: {id?: string} & Pick<CreatePageRequestBody, 'parent_page_pk_id'|'space_pk_id'>) => ['CREATE_PAGE', parent_page_pk_id, space_pk_id, id],
+    CREATE_DOC: ({
+        parent_page_pk_id,
+        space_pk_id,
+        id
+    }: {id?: string} & Pick<CreatePageRequestBody,'parent_page_pk_id'|'space_pk_id'>)=> ["CREATE_DOC", parent_page_pk_id, space_pk_id, id],
 }

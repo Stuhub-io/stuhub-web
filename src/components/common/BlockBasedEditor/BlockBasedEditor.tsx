@@ -11,7 +11,7 @@ import {
   type JSONContent,
 } from "novel";
 import { ImageResizer, handleCommandNavigation } from "novel/extensions";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import { useDebouncedCallback } from "use-debounce";
 import { defaultExtensions } from "./extensions";
 import { handleImageDrop, handleImagePaste } from "novel/plugins";
@@ -29,8 +29,13 @@ import { Divider } from "@nextui-org/react";
 
 const extensions = [...defaultExtensions, slashCommand];
 
-export const BlockBasedEditor = () => {
-  const [initialContent, setInitialContent] = useState<null | JSONContent>(null);
+interface BlockBasedEditorProps { 
+  jsonContent?: JSONContent
+  onJsonContentChange: (jsonContent: JSONContent) => void
+}
+
+export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
+  const {jsonContent, onJsonContentChange } = props
 
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
@@ -47,28 +52,13 @@ export const BlockBasedEditor = () => {
 //     return new XMLSerializer().serializeToString(doc);
 //   };
 
-//   const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
-//     const json = editor.getJSON();
-//     setCharsCount(editor.storage.characterCount.words());
-//     window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
-//     window.localStorage.setItem("novel-content", JSON.stringify(json));
-//     window.localStorage.setItem("markdown", editor.storage.markdown.getMarkdown());
-//     setSaveStatus("Saved");
-//   }, 500);
-
-  useEffect(() => {
-    const content = window.localStorage.getItem("novel-content");
-    if (content) setInitialContent(JSON.parse(content));
-    else setInitialContent({});
-  }, []);
-
-  if (!initialContent) return null;
 
   return (
 
-      <EditorRoot>
+      <EditorRoot
+      >
         <EditorContent
-          initialContent={initialContent}
+          initialContent={jsonContent}
           extensions={extensions}
           editorProps={{
             handleDOMEvents: {
@@ -82,8 +72,7 @@ export const BlockBasedEditor = () => {
             },
           }}
           onUpdate={({ editor }) => {
-            console.log(editor.getJSON());
-            // debouncedUpdates(editor);
+            onJsonContentChange(editor.getJSON());
           }}
           slotAfter={<ImageResizer />}
         >

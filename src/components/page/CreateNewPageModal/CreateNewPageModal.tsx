@@ -11,10 +11,12 @@ import {
 } from 'react-icons/ri'
 import { BlockBasedEditor } from '@/components/common/BlockBasedEditor'
 import { useCreatePageContext } from '@/components/providers/newpage'
-import { useCreatePage } from '@/mutation/mutator/page/useCreatePage'
 import { useToast } from '@/hooks/useToast'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
+import { useCreateDocument } from '@/mutation/mutator/document/useCreateDocument'
+import { useState } from 'react'
+import { JSONContent } from 'novel'
 
 export const CreateNewPageModal = () => {
   const {
@@ -26,12 +28,13 @@ export const CreateNewPageModal = () => {
     createPageData,
     setCreatePageData,
     updateCreatingPages,
-    createID
+    createID,
   } = useCreatePageContext()
 
   const queryClient = useQueryClient()
   const { toast } = useToast()
   const title = createPageData?.name
+  const [content, setContent] = useState<JSONContent>()
 
   const setTitle = (value: string) => {
     if (!selectedSpace) return
@@ -43,7 +46,7 @@ export const CreateNewPageModal = () => {
     })
   }
 
-  const { mutateAsync } = useCreatePage({
+  const { mutateAsync } = useCreateDocument({
     parent_page_pk_id: selectedParent?.pk_id ?? -1,
     space_pk_id: selectedSpace?.pk_id ?? -1,
     id: createID,
@@ -64,28 +67,30 @@ export const CreateNewPageModal = () => {
       parent_page_pk_id: selectedParent?.pk_id,
       space_pk_id: selectedSpace.pk_id,
       view_type: 'document',
-    } as const;
+    } as const
 
-    onCloseCreatePage();
+    onCloseCreatePage()
 
-    (async () => {
+    ;(async () => {
       try {
         console.log('data', data)
         appendCreatingPages({
           id: createID,
           input: data,
         })
-        const result = await mutateAsync(data)
+        const result = await mutateAsync({
+          page: data,
+          json_content: JSON.stringify(content) || "{}",
+        })
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.GET_SPACE_PAGES({ space_pk_id: data.space_pk_id }),
         })
         updateCreatingPages(createID, {
           id: createID,
           input: data,
-          result: result.data,
+          result: result.data.page,
         })
-      }
-      catch(e) {
+      } catch (e) {
         toast({
           title: 'Some thing wrent wrong',
           description: "Can't not create page, try again later",
@@ -115,7 +120,12 @@ export const CreateNewPageModal = () => {
               <Button size="sm" variant="flat" endContent={<RiArrowDropDownLine size={16} />}>
                 {selectedSpace?.name}
               </Button>
-              <Button size="sm" variant="flat" endContent={<RiArrowDropDownLine size={16} />} disabled>
+              <Button
+                size="sm"
+                variant="flat"
+                endContent={<RiArrowDropDownLine size={16} />}
+                disabled
+              >
                 Unselected
               </Button>
             </div>
@@ -149,12 +159,16 @@ export const CreateNewPageModal = () => {
                 placeholder="Untitled"
                 value={title}
                 onValueChange={setTitle}
+                autoFocus
                 classNames={{
                   input: 'text-5xl font-semibold',
                 }}
               />
               <div className="-mx-3 mt-2 pb-10">
-                <BlockBasedEditor />
+                <BlockBasedEditor
+                  jsonContent={content}
+                  onJsonContentChange={(json) => setContent(json)}
+                />
               </div>
             </div>
           </div>
