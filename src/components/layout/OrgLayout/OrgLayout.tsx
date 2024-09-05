@@ -1,17 +1,14 @@
 import { PropsWithChildren, ReactNode } from "react"
 
-
-interface ContentLayoutProps extends PropsWithChildren {
-    breadCrumb?: ReactNode
+interface OrgLayoutProps extends PropsWithChildren {
     rightEl?: ReactNode
 }
 
-export const ContentLayout = (props: ContentLayoutProps) => {
-    const { children, breadCrumb, rightEl } = props
+export const OrgLayout = (props: OrgLayoutProps) => {
+    const { children, rightEl } = props
     return (
         <div className="h-full w-full flex flex-col px-4">
-            <header className="bg-transparent flex justify-between py-4">
-                {breadCrumb}
+            <header className="bg-transparent flex justify-between h-14 items-center w-full">
                 <div className=" flex items-center justify-end">
                     {rightEl}
                 </div>

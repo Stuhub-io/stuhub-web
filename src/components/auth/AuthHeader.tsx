@@ -2,7 +2,7 @@ import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-
 import Link from 'next/link'
 import Typography from '../common/Typography'
 import { ROUTES } from '@/constants/routes'
-import { ThemeSwitch } from '../common/ThemeSwitch/ThemeSwitch'
+import { ThemeButton } from '../common/ThemeButton'
 
 export const AuthHeader = () => {
   return (
@@ -21,7 +21,7 @@ export const AuthHeader = () => {
 
       <NavbarContent>
         <NavbarContent justify="end">
-          <ThemeSwitch />
+          <ThemeButton/>
         </NavbarContent>
         <NavbarItem>
           <Button color="primary" as={Link} href={ROUTES.SIGNIN_PAGE}>

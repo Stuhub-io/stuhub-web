@@ -7,6 +7,7 @@ import { PropsWithChildren } from 'react'
 import { OrganizationProvider } from './organization'
 import { SidebarProvider } from './sidebar'
 import { CreatePageProvider } from './newpage'
+import { PageProvider } from './page'
 
 const queryClient = new QueryClient()
 
@@ -17,7 +18,11 @@ export function AppProviders({ children }: PropsWithChildren) {
         <NextUIProvider>
           <CreatePageProvider>
             <OrganizationProvider>
-              <SidebarProvider>{children}</SidebarProvider>
+              <SidebarProvider>
+                <PageProvider>
+                {children}
+                </PageProvider>
+              </SidebarProvider>
             </OrganizationProvider>
           </CreatePageProvider>
         </NextUIProvider>

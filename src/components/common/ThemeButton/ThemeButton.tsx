@@ -1,3 +1,5 @@
+'use client'
+
 import { useTheme } from '@/hooks/useTheme'
 import { Button } from '@nextui-org/react'
 import { ComponentPropsWithRef, ComponentRef, forwardRef } from 'react'
