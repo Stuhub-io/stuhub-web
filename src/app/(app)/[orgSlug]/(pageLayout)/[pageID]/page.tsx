@@ -3,6 +3,8 @@
 import { BlockBasedEditor } from '@/components/common/BlockBasedEditor'
 import { TextAreaNoBackground } from '@/components/common/TextAreaNoBackground'
 import { usePageContext } from '@/components/providers/page'
+import { useDebounce } from '@/hooks/useDebounce'
+import { useUpdateDocumentContent } from '@/mutation/mutator/document/useUpdateDocumentContent'
 import { useFetchDocument } from '@/mutation/querier/document/useFetchDocument'
 import { Button } from '@nextui-org/react'
 import { JSONContent } from 'novel'
@@ -15,15 +17,32 @@ export default function PageDetail() {
     allowFetch: !!currentPage,
     pagePkID: currentPage?.pk_id ?? -1,
   })
+  const { mutate: updateDocumentContent } = useUpdateDocumentContent()
 
-  const [title, setTitle] = useState(currentPage?.name)
+  const [title, setTitle] = useState('')
   const [content, setContent] = useState<JSONContent>()
+
+  const debouncedContent = useDebounce(content)
 
   useEffect(() => {
     if (document) {
-      setContent(documentData?.json_content ? JSON.parse( documentData?.json_content) : undefined)
+      setTitle(currentPage?.name ?? '')
+      setContent(documentData?.json_content ? JSON.parse(documentData?.json_content) : undefined)
     }
-  }, [documentData])
+  }, [documentData, currentPage?.name])
+
+  useEffect(() => {
+    if (!debouncedContent || !currentPage) return
+    updateDocumentContent(
+      {
+        pk_id: currentPage.pk_id,
+        json_content: JSON.stringify(content ?? ''),
+      },
+      {
+        onError: (e) => console.log(e),
+      },
+    )
+  }, [debouncedContent])
 
   return (
     <>
