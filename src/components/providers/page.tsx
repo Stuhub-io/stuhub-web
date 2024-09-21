@@ -51,6 +51,12 @@ export const PageProvider = ({ children }: PropsWithChildren) => {
   )
 
   useEffect(() => {
+    if (!selectedPage && activePage) {
+      setSelectedPage(activePage)
+    }
+  }, [activePage, selectedPage])
+
+  useEffect(() => {
     if (isError) {
       setIsRedirecting(true)
       replace(ROUTES.ORGANIZATION({ orgSlug: organization?.slug ?? '' }))

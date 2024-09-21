@@ -114,3 +114,5 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
       </EditorRoot>
   );
 };
+
+export default BlockBasedEditor;
