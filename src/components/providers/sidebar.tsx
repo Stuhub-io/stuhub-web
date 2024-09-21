@@ -6,6 +6,7 @@ import { PropsWithChildren, useMemo } from 'react'
 import { useOrganization } from './organization'
 import { Space } from '@/schema/space'
 import { IPageData, useFetchPages } from '@/mutation/querier/page/useFetchPages'
+import { useThrottledCallback } from 'use-debounce'
 
 interface SidebarContextValue {
   isPendingSpaces: boolean
@@ -37,10 +38,18 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
   const publicSpaces = useMemo(() => {
     return spaces?.filter((space) => !space.is_private)
   }, [spaces])
-  
-  const { data: { data: privatePages } = {}, refetch: refreshPrivatePages, isPending: isPendingPrivatePages } = useFetchPages({
+
+  const {
+    data: { data: privatePages } = {},
+    refetch: refreshPrivatePages,
+    isPending: isPendingPrivatePages,
+  } = useFetchPages({
     allowFetch: Boolean(privateSpace),
     space_pk_id: privateSpace?.pk_id ?? -1,
+  })
+
+  const debounceRefreshPrivatePages = useThrottledCallback(refreshPrivatePages, 2000, {
+    trailing: true,
   })
 
   return (
@@ -50,8 +59,8 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
         privateSpace,
         publicSpaces,
         privatePages,
-        refreshPrivatePages,
-        isPendingPrivatePages
+        refreshPrivatePages: debounceRefreshPrivatePages,
+        isPendingPrivatePages,
       }}
     >
       {children}

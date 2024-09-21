@@ -1,5 +1,7 @@
 import { TextAreaNoBackground } from '@/components/common/TextAreaNoBackground'
-import { useDebounce } from '@/hooks/useDebounce'
+import { useSidebar } from '@/components/providers/sidebar'
+import { useThrottledCallback } from 'use-debounce'
+import { useToast } from '@/hooks/useToast'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { Page } from '@/schema/page'
 import { Button, Skeleton } from '@nextui-org/react'
@@ -14,24 +16,40 @@ export interface PageTitleProps {
 export const PageTitle = (props: PageTitleProps) => {
   const { page, loading } = props
   const [title, setTitle] = useState(page?.name ?? 'Untitled')
+  const { refreshPrivatePages, privateSpace } = useSidebar()
   const { mutateAsync: updatePage } = useUpdatePage({ id: page?.id ?? '' })
+  const { toast } = useToast()
 
-  const debouncedTitle = useDebounce(title)
+  const thorttleUpdateTitle = useThrottledCallback(
+    async () => {
+      if (!page) return
+      try {
+        await updatePage({
+          uuid: page.id,
+          name: title,
+          view_type: page.view_type,
+          parent_page_pk_id: page.parent_page_pkid,
+        })
+
+        if (page.space_pkid === privateSpace?.pk_id) {
+          refreshPrivatePages()
+        }
+      } catch (e) {
+        toast({
+          variant: 'danger',
+          title: 'Failed to update page',
+        })
+      }
+    },
+    1000,
+    {
+      trailing: true,
+    },
+  )
 
   useEffect(() => {
-    if (!debouncedTitle || !page) return
-    updatePage(
-      {
-        uuid: page.id,
-        name: title,
-        view_type: page.view_type,
-        parent_page_pk_id: page.parent_page_pkid,
-      },
-      {
-        onError: (e) => console.log(e),
-      },
-    )
-  }, [debouncedTitle])
+    thorttleUpdateTitle()
+  }, [thorttleUpdateTitle, title])
 
   return (
     <div>
