@@ -29,6 +29,7 @@ export const MUTATION_KEYS = {
     space_pk_id,
     id,
   ],
+  UPDATE_PAGE:({id}: {id: string}) => ['UPDATE_PAGE', id],
   CREATE_DOC: ({
     parent_page_pk_id,
     space_pk_id,

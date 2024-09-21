@@ -31,7 +31,7 @@ export default function Page() {
   const { isLoadingOrganization, refetchOrgs, isNavigating } = useOrganization()
   const { mutateAsync, isPending } = useCreateOrg()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { mutateAsync: mutateUserInfo, isPending: isPendingUserInfo } = useUpdateUserInfo()
+  const { isPending: isPendingUserInfo } = useUpdateUserInfo()
 
   const { toast } = useToast()
 

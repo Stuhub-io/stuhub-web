@@ -153,7 +153,7 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
           </SidebarIconButton>
         }
       >
-        {page.name}
+        {page.name || 'Untitled'}
       </SidebarItem>
       <CollapsibleContent>
         <ActiveCreatingPageItem

@@ -1,4 +1,4 @@
-import { useDebounce } from '@/hooks/useDebounce'
+import { useDebounce } from 'use-debounce'
 import { useFindUserByEmail } from '@/mutation/mutator/useFindUserByEmail'
 import { User } from '@/schema/user'
 import { checkIsEmailValid } from '@/utils/user'
@@ -23,7 +23,7 @@ export const SearchForm = ({
   removeEmail,
 }: SearchFormProps) => {
   const [email, setEmail] = useState('')
-  const debouncedEmail = useDebounce(email, 500)
+  const [debouncedEmail] = useDebounce(email, 500)
 
   const { mutate: findUserByEmailMutate } = useFindUserByEmail()
 
@@ -70,7 +70,7 @@ export const SearchForm = ({
       {renderSelectedEmails()}
       <form onSubmit={handleSubmitInvite}>
         <Input
-        variant="flat"
+          variant="flat"
           // classNames={{
           //   inputWrapper: [
           //     'bg-transparent',
