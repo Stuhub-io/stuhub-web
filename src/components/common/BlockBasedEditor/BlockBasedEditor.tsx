@@ -55,8 +55,7 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
 
   return (
 
-      <EditorRoot
-      >
+      <EditorRoot>
         <EditorContent
           initialContent={jsonContent}
           extensions={extensions}
