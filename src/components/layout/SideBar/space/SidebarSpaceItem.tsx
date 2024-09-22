@@ -1,7 +1,6 @@
 import { Space } from '@/schema/space'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@radix-ui/react-collapsible'
 import { SidebarItem } from '../SidebarItem'
-import { SidebarItemSkeleton } from '../SidebarItemSkeleton'
 import { SidebarIconButton } from '../SidebarIconbutton'
 import { RiAddFill, RiArrowDownSLine, RiFileFill } from 'react-icons/ri'
 import { useSidebar } from '@/components/providers/sidebar'
@@ -17,14 +16,12 @@ interface SpaceItemProps {
 
 export const SpaceItem = (props: SpaceItemProps) => {
   const { space } = props
-  const isLoading = !space
 
   const { privatePages } = useSidebar()
   const { onOpenCreatePage, creatingPages, selectedParent, selectedSpace } = useCreatePageContext()
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
 
-  const isRenderCreatingPage =
-    selectedParent === undefined && selectedSpace?.pk_id === space.pk_id
+  const isRenderCreatingPage = selectedParent === undefined && selectedSpace?.pk_id === space.pk_id
 
   const creatPagesData = useMemo(() => {
     return creatingPages.filter(
@@ -42,16 +39,6 @@ export const SpaceItem = (props: SpaceItemProps) => {
     // FIXME: add handle pages
     return []
   }, [privatePages, space?.is_private, space.pk_id])
-
-  if (isLoading) {
-    return (
-      <>
-        <SidebarItemSkeleton className="w-14" />
-        <SidebarItemSkeleton hasIcon />
-        <SidebarItemSkeleton hasIcon delay={1000} />
-      </>
-    )
-  }
 
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
@@ -100,11 +87,10 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
   const { privatePages } = useSidebar()
   const [isExpanded, setIsExpanded] = useState(false)
   const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
-  const { onSelectPage, currentPage }= usePageContext()
+  const { onSelectPage, currentPage } = usePageContext()
 
   const isRenderCreatingPage =
-    selectedParent?.pk_id === page.pk_id &&
-    selectedSpace?.pk_id === space.pk_id
+    selectedParent?.pk_id === page.pk_id && selectedSpace?.pk_id === space.pk_id
 
   const toCreatPages = useMemo(() => {
     return creatingPages.filter(
@@ -249,7 +235,7 @@ export const ActiveCreatingPageItem = (props: {
 
   return (
     <SidebarItem
-      className='!opacity-70'
+      className="!opacity-70"
       disabled
       startContent={
         <>

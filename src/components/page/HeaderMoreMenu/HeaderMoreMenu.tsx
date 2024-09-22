@@ -9,17 +9,32 @@ import {
   PopoverTrigger,
 } from '@nextui-org/react'
 import { ReactNode } from 'react'
-import { RiArrowRightUpLine, RiDeleteBinLine, RiLink, RiMore2Fill } from 'react-icons/ri'
+import {
+  RiArrowRightUpLine,
+  RiDeleteBinLine,
+  RiLink,
+  RiMore2Fill,
+  RiShareFill,
+  RiStarLine,
+} from 'react-icons/ri'
 
 export const HeaderMoreMenu = () => {
   return (
-    <HeaderMoreMenuContent
-      triggerRender={
-        <Button isIconOnly size="sm" variant="flat">
-          <RiMore2Fill size={20} />
-        </Button>
-      }
-    />
+    <div className="flex items-center gap-3">
+      <Button size='sm' variant="light" isIconOnly>
+        <RiShareFill size={20}/>
+      </Button>
+      <Button size="sm" variant="light" isIconOnly>
+        <RiStarLine size={20} />
+      </Button>
+      <HeaderMoreMenuContent
+        triggerRender={
+          <Button isIconOnly size="sm" variant="flat">
+            <RiMore2Fill size={20} />
+          </Button>
+        }
+      />
+    </div>
   )
 }
 

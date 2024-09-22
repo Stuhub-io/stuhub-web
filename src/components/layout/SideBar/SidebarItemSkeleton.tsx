@@ -1,6 +1,6 @@
 import { cn } from '@/libs/utils'
 import { Skeleton, SkeletonProps } from '@nextui-org/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export interface SidebarItemSkeletonProps extends SkeletonProps {
   hasIcon?: boolean
@@ -13,6 +13,8 @@ export const SidebarItemSkeleton = ({
   ...props
 }: SidebarItemSkeletonProps) => {
   const [show, setShow] = useState(delay === 0)
+  const width = useRef(Math.random() * 300)
+  
   useEffect(() => {
     if (delay) {
       const timerId = setTimeout(() => {
@@ -30,6 +32,9 @@ export const SidebarItemSkeleton = ({
         'h-6 opacity-100': show,
         'h-0 opacity-0': !show,
       })}
+      style={{
+        width: width.current < 150 ? 100 : width.current,
+      }}
     >
       {hasIcon && <Skeleton className="h-5 w-5 flex-shrink-0 rounded-sm" />}
       <Skeleton className={cn('h-3 w-full rounded-small', className)} {...props} />
