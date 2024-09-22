@@ -1,16 +1,63 @@
 'use client'
 
+import Typography from '@/components/common/Typography'
 import { usePageContext } from '@/components/providers/page'
+import { useSidebar } from '@/components/providers/sidebar'
 import { useSidebarBreadcrumb } from '@/hooks/breadcrumb/useSidebarBreadcrumb'
-import { BreadcrumbItem, Breadcrumbs, Skeleton } from '@nextui-org/react'
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Skeleton,
+} from '@nextui-org/react'
+import { RiArrowRightDownLine } from 'react-icons/ri'
 
-// FIXME: Handle loading, selector sub Links
 export const PageBreadCrumbs = () => {
   const pagePaths = useSidebarBreadcrumb()
-  const { isLoading, onSelectPage } = usePageContext()
+  const { isLoading: isPageLoading, onSelectPage } = usePageContext()
+  const { isPendingPrivatePages, isPendingSpaces } = useSidebar()
 
+  const isLoading = isPageLoading || isPendingSpaces || isPendingPrivatePages
   return (
-    <Breadcrumbs separator="/" variant="light">
+    <Breadcrumbs
+      separator="/"
+      variant="light"
+      classNames={{
+        base: 'flex-1',
+        list: 'flex-nowrap overflow-hidden'
+      }}
+      maxItems={3}
+      itemsBeforeCollapse={1}
+      itemsAfterCollapse={2}
+      renderEllipsis={({ items, ellipsisIcon, separator }) => (
+        <div className="flex items-center">
+          <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly className="h-6 w-6 min-w-6" size="sm" variant="flat">
+                {ellipsisIcon}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Routes">
+              {items.map(({ key, ...itemProps }, index) => (
+                <DropdownItem
+                  key={String(key) ?? `item${index}`}
+                  href={itemProps.href}
+                  onClick={itemProps.onClick}
+                  startContent={index !== 0 && <RiArrowRightDownLine size={16} />}
+                >
+                  {itemProps.children}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+          {separator}
+        </div>
+      )}
+    >
       {isLoading && [
         <BreadcrumbItem key="loading1">
           <Skeleton className="h-4 w-20 rounded-medium" />
@@ -23,12 +70,14 @@ export const PageBreadCrumbs = () => {
         return (
           <BreadcrumbItem
             key={page.id}
-            onClick={(e) => {
-              e.preventDefault()
-              onSelectPage(page)
+            className="max-w-[200px] truncate text-nowrap"
+            onClick={() => {
+              onSelectPage(page || 'Untitled')
             }}
           >
-            {page.name || 'Untitled'}
+            <Typography noWrap level="p5" className="text-inherit">
+              {page.name || 'Untitled'}
+            </Typography>
           </BreadcrumbItem>
         )
       })}
