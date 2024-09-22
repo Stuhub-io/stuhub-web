@@ -32,7 +32,7 @@ export const SidebarSpaces = () => {
               <SidebarItemSkeleton className="w-14" />
               <SidebarItemSkeleton hasIcon />
               {[1, 2, 3, 4].map((i) => (
-                <SidebarItemSkeleton hasIcon delay={300 + 100 * i} key={i} />
+                <SidebarItemSkeleton hasIcon delay={200 + 100 * i} key={i} />
               ))}
             </>
           )}
