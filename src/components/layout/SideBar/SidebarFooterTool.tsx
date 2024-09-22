@@ -2,7 +2,6 @@ import { ProfileBadge } from '@/components/common/ProfileBadge'
 import Typography from '@/components/common/Typography'
 import { useOrganization } from '@/components/providers/organization'
 import { getPermissionText } from '@/utils/organization'
-import { getUserFullName } from '@/utils/user'
 import { Card, CardHeader, CardBody, CardFooter, Button } from '@nextui-org/react'
 import { useSession } from 'next-auth/react'
 import { AiOutlineTeam } from 'react-icons/ai'
@@ -33,12 +32,8 @@ export const SidebarFooter = () => {
       <div className="mt-2 flex gap-2">
         <ProfileBadge
           variant="light"
-          fullName={
-            getUserFullName({
-              firstName: user?.first_name,
-              lastName: user?.last_name,
-            }) || user?.email
-          }
+          firstName={user?.first_name}
+          lastName={user?.last_name}
           description={getPermissionText(currentUserRole ?? 'other')}
           size="sm"
         />

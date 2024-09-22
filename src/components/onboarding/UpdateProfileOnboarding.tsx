@@ -3,7 +3,6 @@
 import { FormInput } from '@/components/common/Form/FormInput'
 import { ProfileBadge } from '@/components/common/ProfileBadge'
 import Typography from '@/components/common/Typography'
-import { getUserFullName } from '@/utils/user'
 import { Button, Tooltip } from '@nextui-org/react'
 import { signOut, useSession } from 'next-auth/react'
 import { FormEventHandler, useEffect, useState } from 'react'
@@ -30,11 +29,6 @@ export function UpdateProfileOnboarding(props: UpdateProfileOnboardingProps) {
   const wLastName = profileForm.watch('lastName')
   const wAvatar = profileForm.watch('avatar')
   const [previewedImage, setPreviewedImage] = useState<string>()
-
-  const fullName = getUserFullName({
-    firstName: wFirstName,
-    lastName: wLastName,
-  })
 
   const hasAvatar = !!wAvatar || !!selectedUserAvatar
 
@@ -81,7 +75,8 @@ export function UpdateProfileOnboarding(props: UpdateProfileOnboardingProps) {
         <div className="flex items-center gap-4">
           <ProfileBadge
             size="lg"
-            fullName={fullName || 'Your Name'}
+            firstName={wFirstName}
+            lastName={wLastName}
             avatar={previewedImage ?? wAvatar}
           />
           {hasAvatar ? (

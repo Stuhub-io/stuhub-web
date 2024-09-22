@@ -6,7 +6,8 @@ import { cn } from '@/libs/utils'
 
 interface ProfileBadgeProps extends ButtonProps {
   avatar?: string
-  fullName?: string
+  firstName?: string
+  lastName?: string
   rightEl?: ReactNode
   description?: string
 }
@@ -33,7 +34,16 @@ const profileBadgeTextWrapperCva = cva(['overflow-hidden pr-2 text-left flex fle
 
 export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadgeProps>(
   (props, ref) => {
-    const { fullName, avatar, className, size = 'md', rightEl, description, ...restProps } = props
+    const {
+      firstName,
+      lastName,
+      avatar,
+      className,
+      size = 'md',
+      rightEl,
+      description,
+      ...restProps
+    } = props
     const titleLevel = useMemo(() => {
       if (size === 'sm') return 'p6'
       if (size === 'md') return 'p5'
@@ -45,6 +55,7 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
       if (size === 'md') return 'p6'
       if (size === 'lg') return 'p5'
     }, [size])
+    const fullName = [firstName, lastName].filter(Boolean).join(' ')
 
     return (
       <Button
@@ -58,7 +69,7 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
       >
         <Avatar
           src={avatar}
-          fallback="NA"
+          fallback={`${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`}
           className="shrink-0"
           size={size === 'lg' ? 'md' : 'sm'}
         />

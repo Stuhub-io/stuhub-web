@@ -1,6 +1,5 @@
 import { useFormContext } from 'react-hook-form'
 import { ProfileBadge } from '../common/ProfileBadge'
-import { getUserFullName } from '@/utils/user'
 import { RiExpandUpDownLine, RiNotification2Fill } from 'react-icons/ri'
 import {
   Avatar,
@@ -99,7 +98,8 @@ export const PreviewOnboardingDashboard = (props: PreviewOnboardingDashboardProp
             variant="light"
             className="w-full max-w-full"
             size="md"
-            fullName={getUserFullName({ firstName: wFirstName, lastName: wLastName })}
+            firstName={wFirstName}
+            lastName={wLastName}
             avatar={userAvatarUrl}
             rightEl={<RiExpandUpDownLine size={16} />}
           />
