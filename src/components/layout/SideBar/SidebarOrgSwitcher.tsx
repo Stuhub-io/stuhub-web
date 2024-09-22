@@ -28,15 +28,18 @@ export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProp
           disableRipple
           fullWidth
           variant="flat"
-          fullName={organization?.name}
+          firstName={organization?.name}
           avatar={organization?.avatar}
           description={`${organization?.members.length} members`}
           rightEl={<RiExpandUpDownLine size={16} />}
         />
       </PopoverTrigger>
-      <PopoverContent className="w-[270px] space-y-1 px-0 py-2">
-        <div className="mb-2 flex w-full items-center gap-2.5 px-3 text-text-tertiary">
-          <Avatar src={organization?.avatar} radius="sm" />
+      <PopoverContent className="w-[270px] gap-3 py-2 px-3">
+        <div className="flex w-full items-center gap-3 text-text-tertiary">
+          <Avatar
+            src={organization?.avatar}
+            radius="sm"
+          />
           <div>
             <Typography level="h6" className="flex-1 truncate">
               {organization?.name}
@@ -49,7 +52,7 @@ export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProp
             </div>
           </div>
         </div>
-        <div className="flex w-full items-start gap-2 px-3">
+        <div className="flex w-full items-start gap-2">
           <Button
             size="sm"
             variant="ghost"
@@ -71,7 +74,7 @@ export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProp
             Invite members
           </Button>
         </div>
-        <div className="!mt-2.5 w-full space-y-1 bg-content2 px-3 pb-2 pt-1.5">
+        <div className="space-y-1 bg-content2 w-[calc(100%+24px)] px-3 py-2">
           <div className="flex items-center justify-between">
             <Typography level="p6" className="truncate">
               {data?.user.email}
@@ -85,7 +88,7 @@ export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProp
             variant="light"
             fullWidth
             disableRipple
-            fullName={organization?.name}
+            firstName={organization?.name}
             description={`${organization?.members.length} members`}
             rightEl={<RiCheckLine size={16} />}
           />

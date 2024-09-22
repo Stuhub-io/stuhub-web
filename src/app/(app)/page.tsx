@@ -54,13 +54,6 @@ export default function Page() {
 
   const handleSubmit = onboardingForm.handleSubmit(async (values) => {
     try {
-      // const updateUserInfo = mutateUserInfo({
-      //   first_name: values.firstName,
-      //   last_name: values.lastName,
-      //   avatar: `https://source.boringavatars.com/beam/120/${encodeURI(
-      //     getUserFullName({ firstName: values.firstName, lastName: values.lastName }),
-      //   )}?colors=665c52,74b3a7,a3ccaf,E6E1CF,CC5B14`,
-      // })
       const createOrg = mutateAsync({
         name: values.orgName ?? '',
         description: values.orgDescription,

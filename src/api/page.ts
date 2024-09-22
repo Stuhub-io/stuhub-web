@@ -19,6 +19,7 @@ class PageService extends Client {
         })
     }
     public getPageByID(uuid: string){
+        console.log('geting page', uuid)
         return fetcher<BaseResponse<Page>>(`${this.baseUrl}/v1/page-services/pages/${uuid}`,{
             headers: this.privateHeaders
         })

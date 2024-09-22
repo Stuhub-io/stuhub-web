@@ -17,16 +17,16 @@ export default function PageDetail() {
   })
 
   return (
-    <>
-      <div className="group flex flex-col">
+    <div className="flex flex-col py-8">
+      <div className="flex flex-col">
         <PageTitle page={currentPage} key={currentPage?.id} />
       </div>
-      <div className="-mx-3 mt-2 pb-10">
+      <div className="-mx-3 pb-10">
         <PageContent
           documentData={documentData}
           key={isRefetching ? 'refetching' : documentData?.pk_id}
         />
       </div>
-    </>
+    </div>
   )
 }

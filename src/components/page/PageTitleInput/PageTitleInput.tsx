@@ -52,15 +52,15 @@ export const PageTitle = (props: PageTitleProps) => {
   }, [thorttleUpdateTitle, title])
 
   return (
-    <div>
+    <div className='group'>
       <div className="h-8 opacity-0 transition duration-200 group-hover:opacity-100">
         {!loading && (
           <div className="hidden gap-1 opacity-60 group-hover:flex">
             <Button startContent={<RiUserSmileFill size={16} />} size="sm" variant="light">
-              Icons
+              Add icons
             </Button>
             <Button startContent={<RiImage2Fill size={16} />} size="sm" variant="light">
-              Icons
+              Add cover
             </Button>
           </div>
         )}

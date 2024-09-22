@@ -33,6 +33,7 @@ export const AuthGuard = (props: AuthGuardProps) => {
   useEffect(() => {
     if (data?.user.accessToken) {
       servicesGuard.setAuthToken(data.user.accessToken)
+      console.log('setAuthToken')
     }
   }, [data?.user.accessToken])
 
