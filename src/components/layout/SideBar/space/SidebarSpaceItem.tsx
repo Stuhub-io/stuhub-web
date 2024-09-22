@@ -9,6 +9,7 @@ import { Page } from '@/schema/page'
 import { SidebarItemLeftSpacer } from '../SidebarItemLeftSpacer'
 import { ICreatingPage, useCreatePageContext } from '@/components/providers/newpage'
 import { usePageContext } from '@/components/providers/page'
+import { usePersistCollapseContext } from '@/components/providers/collapse'
 
 interface SpaceItemProps {
   space: Space
@@ -85,7 +86,9 @@ interface SidebarPageItemProps {
 
 export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps) => {
   const { privatePages } = useSidebar()
-  const [isExpanded, setIsExpanded] = useState(false)
+  const { getCollapseState, persistCollapseData} = usePersistCollapseContext()
+  const [isExpanded, setIsExpanded] = useState(getCollapseState(`page-${page.pk_id}`))
+
   const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
   const { onSelectPage, currentPage } = usePageContext()
 
@@ -101,6 +104,10 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
   const childPages = useMemo(() => {
     return privatePages?.list.filter((p) => p.parent_page_pkid === page.pk_id)
   }, [page.pk_id, privatePages])
+
+  useEffect(() => {
+    persistCollapseData(`page-${page.pk_id}`, isExpanded )
+  }, [isExpanded, page.pk_id, persistCollapseData])
 
   return (
     <Collapsible

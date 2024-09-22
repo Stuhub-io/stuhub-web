@@ -8,6 +8,7 @@ import { OrganizationProvider } from './organization'
 import { SidebarProvider } from './sidebar'
 import { CreatePageProvider } from './newpage'
 import { PageProvider } from './page'
+import { CollapsePersistProvider } from './collapse'
 
 const queryClient = new QueryClient()
 
@@ -18,11 +19,11 @@ export function AppProviders({ children }: PropsWithChildren) {
         <NextUIProvider>
           <CreatePageProvider>
             <OrganizationProvider>
-              <SidebarProvider>
-                <PageProvider>
-                {children}
-                </PageProvider>
-              </SidebarProvider>
+              <CollapsePersistProvider>
+                <SidebarProvider>
+                  <PageProvider>{children}</PageProvider>
+                </SidebarProvider>
+              </CollapsePersistProvider>
             </OrganizationProvider>
           </CreatePageProvider>
         </NextUIProvider>
