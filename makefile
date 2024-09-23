@@ -15,7 +15,7 @@ release: sync-release
 		git merge $(BETA_BRANCH) --no-edit --no-ff && \
 		git push origin $(RELEASE_BRANCH) && \
 		git push $(PROD_REPO) $(RELEASE_BRANCH) && \
-		git checkout $(DEVELOP_BRANCH) && git push origin $(DEVELOP_BRANCH) && \
+		git checkout $(DEVELOP_BRANCH) && git push origin $(DEVELOP_BRANCH)
 
 .PHONY: sync-release
 sync-release:

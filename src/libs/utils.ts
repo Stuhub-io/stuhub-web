@@ -32,3 +32,7 @@ export const newIdGenerator = () => {
     return String(Id++)
   }
 }
+
+export const isSSR = () => {
+  return typeof window === 'undefined'
+}

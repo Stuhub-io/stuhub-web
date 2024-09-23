@@ -2,6 +2,7 @@
 
 import { SIDEBAR_PERSIST_COLLAPSE_KEY } from '@/constants/keys'
 import createContext from '@/libs/context'
+import { isSSR } from '@/libs/utils'
 import { PropsWithChildren, useEffect, useState } from 'react'
 import { useThrottledCallback } from 'use-debounce'
 
@@ -17,9 +18,16 @@ const [Provider, usePersistCollapseContext] = createContext<CollapsePersistConte
 export { usePersistCollapseContext }
 
 export const CollapsePersistProvider = ({ children }: PropsWithChildren) => {
-  const [collapses, setCollapses] = useState<Record<string, boolean>>(
-    JSON.parse(localStorage.getItem(SIDEBAR_PERSIST_COLLAPSE_KEY) || '{}'),
-  )
+  const [collapses, setCollapses] = useState<Record<string, boolean>>(() => {
+    if (isSSR()) return {}
+    try {
+      const persistData = JSON.parse(localStorage.getItem(SIDEBAR_PERSIST_COLLAPSE_KEY) || '{}')
+      return persistData
+    } catch (error) {
+      localStorage.setItem(SIDEBAR_PERSIST_COLLAPSE_KEY, '{}')
+      return {}
+    }
+  })
 
   const persistCollapseData = useThrottledCallback((key: string, state: boolean) => {
     setCollapses((prev) => ({ ...prev, [key]: state }))
