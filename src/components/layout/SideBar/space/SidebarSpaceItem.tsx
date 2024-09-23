@@ -70,7 +70,7 @@ export const SpaceItem = (props: SpaceItemProps) => {
         {outerPages?.map((page) => (
           <SidebarPageItem space={space} key={page.id} page={page} level={0} />
         ))}
-        {!isRenderCreatingPage && !creatPagesData.length && !outerPages?.length && (
+        {!isRenderCreatingPage && !creatPagesData.length && outerPages?.length === 0 && (
           <SidebarItem startContent={<SidebarItemLeftSpacer level={0} />}>
             <span className="text-sm text-gray-500">No pages inside</span>
           </SidebarItem>
