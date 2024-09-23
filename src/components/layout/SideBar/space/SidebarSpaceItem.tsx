@@ -2,7 +2,7 @@ import { Space } from '@/schema/space'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@radix-ui/react-collapsible'
 import { SidebarItem } from '../SidebarItem'
 import { SidebarIconButton } from '../SidebarIconbutton'
-import { RiAddFill, RiArrowDownSLine, RiFileFill } from 'react-icons/ri'
+import { RiAddFill, RiArrowDownSLine, RiFileFill, RiMoreLine } from 'react-icons/ri'
 import { useSidebar } from '@/components/providers/sidebar'
 import { useEffect, useMemo, useState } from 'react'
 import { Page } from '@/schema/page'
@@ -10,6 +10,8 @@ import { SidebarItemLeftSpacer } from '../SidebarItemLeftSpacer'
 import { ICreatingPage, useCreatePageContext } from '@/components/providers/newpage'
 import { usePageContext } from '@/components/providers/page'
 import { usePersistCollapseContext } from '@/components/providers/collapse'
+import { PoperContentTrigger } from '@/components/common/PopoverTrigger'
+import { PageMoreMenuPopoverContent } from '@/components/page/PageMoreMenuPopover'
 
 interface SpaceItemProps {
   space: Space
@@ -86,7 +88,7 @@ interface SidebarPageItemProps {
 
 export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps) => {
   const { privatePages } = useSidebar()
-  const { getCollapseState, persistCollapseData} = usePersistCollapseContext()
+  const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
   const [isExpanded, setIsExpanded] = useState(getCollapseState(`page-${page.pk_id}`))
 
   const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
@@ -106,7 +108,7 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
   }, [page.pk_id, privatePages])
 
   useEffect(() => {
-    persistCollapseData(`page-${page.pk_id}`, isExpanded )
+    persistCollapseData(`page-${page.pk_id}`, isExpanded)
   }, [isExpanded, page.pk_id, persistCollapseData])
 
   return (
@@ -135,15 +137,23 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
           </>
         }
         endContent={
-          <SidebarIconButton
-            showOnGroupHoverOnly
-            onClick={() => {
-              onOpenCreatePage(space, page)
-              setIsExpanded(true)
-            }}
-          >
-            <RiAddFill />
-          </SidebarIconButton>
+          <>
+            <PoperContentTrigger>
+              <SidebarIconButton showOnGroupHoverOnly>
+                <RiMoreLine />
+              </SidebarIconButton>
+              <PageMoreMenuPopoverContent />
+            </PoperContentTrigger>
+            <SidebarIconButton
+              showOnGroupHoverOnly
+              onClick={() => {
+                onOpenCreatePage(space, page)
+                setIsExpanded(true)
+              }}
+            >
+              <RiAddFill />
+            </SidebarIconButton>
+          </>
         }
       >
         {page.name || 'Untitled'}

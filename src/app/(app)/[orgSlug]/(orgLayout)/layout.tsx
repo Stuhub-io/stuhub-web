@@ -1,4 +1,5 @@
 import { OrgLayout } from '@/components/layout/OrgLayout'
+import { HeaderMoreMenu } from '@/components/page/HeaderMoreMenu'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -6,5 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function OrgDashboardLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <OrgLayout>{children}</OrgLayout>
+  return <OrgLayout rightEl={<HeaderMoreMenu/>}>{children}</OrgLayout>
 }
