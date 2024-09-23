@@ -1,12 +1,14 @@
 import { TextAreaNoBackground } from '@/components/common/TextAreaNoBackground'
 import { useSidebar } from '@/components/providers/sidebar'
-import { useThrottledCallback } from 'use-debounce'
+import { useDebounce, useThrottledCallback } from 'use-debounce'
 import { useToast } from '@/hooks/useToast'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { Page } from '@/schema/page'
 import { Button, Skeleton } from '@nextui-org/react'
 import { useEffect, useState } from 'react'
 import { RiUserSmileFill, RiImage2Fill } from 'react-icons/ri'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/mutation/keys'
 
 export interface PageTitleProps {
   page?: Page
@@ -19,6 +21,7 @@ export const PageTitle = (props: PageTitleProps) => {
   const { refreshPrivatePages, privateSpace } = useSidebar()
   const { mutateAsync: updatePage } = useUpdatePage({ id: page?.id ?? '' })
   const { toast } = useToast()
+  const queryClient = useQueryClient()
 
   const thorttleUpdateTitle = useThrottledCallback(
     async () => {
@@ -34,6 +37,12 @@ export const PageTitle = (props: PageTitleProps) => {
         if (page.space_pkid === privateSpace?.pk_id) {
           refreshPrivatePages()
         }
+
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.GET_PAGE({
+            pageID: page.id,
+          }),
+        })
       } catch (e) {
         toast({
           variant: 'danger',
@@ -41,18 +50,26 @@ export const PageTitle = (props: PageTitleProps) => {
         })
       }
     },
-    1000,
+    1500,
     {
       trailing: true,
     },
   )
+
+  const [debounceTitle] = useDebounce(title, 1000)
+  const [debouncePageName] = useDebounce(page?.name, 1000)
+
+  useEffect(() => {
+    if (debounceTitle !== debouncePageName) return
+    setTitle(debouncePageName ?? 'Untitled')
+  }, [debouncePageName, debounceTitle])
 
   useEffect(() => {
     thorttleUpdateTitle()
   }, [thorttleUpdateTitle, title])
 
   return (
-    <div className='group'>
+    <div className="group">
       <div className="h-8 opacity-0 transition duration-200 group-hover:opacity-100">
         {!loading && (
           <div className="hidden gap-1 opacity-60 group-hover:flex">

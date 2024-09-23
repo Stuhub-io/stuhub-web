@@ -1,50 +1,59 @@
 import { Listbox, ListboxItem } from '@nextui-org/react'
-import {
-  RiArrowRightUpLine,
-  RiDeleteBinFill,
-  RiEditBoxFill,
-  RiFileCopyFill,
-  RiLink,
-  RiNewsFill,
-  RiStarFill,
-} from 'react-icons/ri'
+import { IPageMenuItem, MenuItems, PageItemKey } from './utits'
+import { Page } from '@/schema/page'
+import { ROUTES } from '@/constants/routes'
+import { useOrganization } from '@/components/providers/organization'
+import useCopy from 'use-copy'
+import { BASE_URL } from '@/constants/envs'
 
 interface PageMoreMenuPopoverContentProps {
   onClose?: () => void
+  onRename?: () => void
+  page: Page
 }
 
 export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProps) => {
-  const { onClose } = props
+  const { onClose, page, onRename } = props
+  const { organization } = useOrganization()
+
+  const pageHref =
+    BASE_URL +
+    ROUTES.ORGANIZATION_PAGE({
+      orgSlug: organization?.slug ?? '',
+      pageID: page.id,
+    })
+
+  const [, copy] = useCopy(pageHref)
+
   return (
-    <Listbox
-      onAction={() => {
-        onClose?.()
-      }}
-      classNames={{
-        list: 'min-w-[240px]',
-      }}
-    >
-      <ListboxItem key="star" startContent={<RiStarFill size={16} />} showDivider>
-        Add to Favorites
-      </ListboxItem>
-      <ListboxItem key="star" startContent={<RiLink size={16} />}>
-        Copy link
-      </ListboxItem>
-      <ListboxItem key="star" startContent={<RiFileCopyFill size={16} />}>
-        Duplicate
-      </ListboxItem>
-      <ListboxItem key="star" startContent={<RiEditBoxFill size={16} />}>
-        Rename
-      </ListboxItem>
-      <ListboxItem key="star" startContent={<RiArrowRightUpLine size={16} />} showDivider>
-        Move to
-      </ListboxItem>
-      <ListboxItem key="star" startContent={<RiDeleteBinFill size={16} />}>
-        Move to Trash
-      </ListboxItem>
-      <ListboxItem key="star" startContent={<RiNewsFill size={16} />}>
-        Open in new tab
-      </ListboxItem>
-    </Listbox>
+    <>
+      <Listbox<IPageMenuItem>
+        onAction={(key) => {
+          onClose?.()
+          switch (key as PageItemKey) {
+            case 'link':
+              copy()
+              break
+            case 'newtab':
+              window.open(pageHref)
+              break
+            case 'rename':
+              onRename?.()
+              break
+            default:
+              break
+          }
+        }}
+        classNames={{
+          list: 'min-w-[240px]',
+        }}
+      >
+        {MenuItems.map((item) => (
+          <ListboxItem key={item.key} startContent={item.icon} showDivider={item.bottomDivider}>
+            {item.title}
+          </ListboxItem>
+        ))}
+      </Listbox>
+    </>
   )
 }

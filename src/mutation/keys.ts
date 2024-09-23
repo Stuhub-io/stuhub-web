@@ -33,12 +33,12 @@ export const MUTATION_KEYS = {
   CREATE_DOC: ({
     parent_page_pk_id,
     space_pk_id,
-    id,
-  }: { id?: string } & Pick<CreatePageRequestBody, 'parent_page_pk_id' | 'space_pk_id'>) => [
+    tempId,
+  }: { tempId?: string } & Pick<CreatePageRequestBody, 'parent_page_pk_id' | 'space_pk_id'>) => [
     'CREATE_DOC',
     parent_page_pk_id,
     space_pk_id,
-    id,
+    tempId,
   ],
   UPDATE_DOC_CONTENT: ['UPDATE_DOC_CONTENT'],
 }

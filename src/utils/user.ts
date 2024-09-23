@@ -1,10 +1,11 @@
 interface IUserObj {
     lastName?: string
     firstName?: string
+    email?: string
 }
 
 export const getUserFullName = (user: IUserObj) => {
-    return [user.firstName, user.lastName].filter(Boolean).join(' ')
+    return [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email
 }
 
 /* eslint-disable no-useless-escape */
