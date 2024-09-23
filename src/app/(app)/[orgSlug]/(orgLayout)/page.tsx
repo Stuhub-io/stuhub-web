@@ -1,11 +1,23 @@
 'use client'
 
-import { useOrganization } from '@/components/providers/organization'
+import Typography from '@/components/common/Typography'
+import { getUserFullName } from '@/utils/user'
+import { useSession } from 'next-auth/react'
 
 export default function OrganizationHome() {
-  const { organization } = useOrganization()
+  const { data } = useSession()
+  const user = data?.user
 
   return (
-        <p>{organization?.name}</p>
+    <div className='container'>
+      <Typography className="mx-auto max-w-[800px] w-fit text-center" level="h4">
+        Welcome back,{' '}
+        {getUserFullName({
+          firstName: user?.first_name,
+          lastName: user?.last_name,
+          email: user?.email,
+        })}
+      </Typography>
+    </div>
   )
 }

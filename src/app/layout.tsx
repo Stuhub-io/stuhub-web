@@ -7,6 +7,7 @@ import '@/styles/prosemirror.css'
 import { AuthSessionProvider } from '@/components/auth/AuthSessionProvider'
 import Toaster from '@/components/common/Toast'
 import { AuthGuard } from '@/components/auth/AuthGuard'
+import { Suspense } from 'react'
 
 const inter = Outfit({ subsets: ['latin'] })
 
@@ -25,7 +26,9 @@ export default function RootLayout({
       <body className={cn(inter.className)}>
         <AuthSessionProvider>
           <AppProviders>
-            <AuthGuard>{children}</AuthGuard>
+            <Suspense>
+              <AuthGuard>{children}</AuthGuard>
+            </Suspense>
           </AppProviders>
         </AuthSessionProvider>
         <Toaster />

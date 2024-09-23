@@ -49,7 +49,7 @@ export const CreateNewPageModal = () => {
   const { mutateAsync } = useCreateDocument({
     parent_page_pk_id: selectedParent?.pk_id ?? -1,
     space_pk_id: selectedSpace?.pk_id ?? -1,
-    id: createID,
+    tempId: createID,
   })
 
   const handleOnClose = () => {

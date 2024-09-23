@@ -1,3 +1,4 @@
+import callAllHandlers from '@/libs/utils'
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { Children, cloneElement, ReactElement, useState } from 'react'
 
@@ -13,7 +14,7 @@ export const PoperContentTrigger = ({ children }: { children: React.ReactNode })
 
   const poperContent = cloneElement(poper, {
     ...poper.props,
-    onClose,
+    onClose: callAllHandlers(poper.props.onClose, onClose),
   })
 
   return (
