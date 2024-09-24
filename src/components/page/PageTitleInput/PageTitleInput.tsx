@@ -1,6 +1,6 @@
 import { TextAreaNoBackground } from '@/components/common/TextAreaNoBackground'
 import { useSidebar } from '@/components/providers/sidebar'
-import { useThrottledCallback } from 'use-debounce'
+import { useDebouncedCallback } from 'use-debounce'
 import { useToast } from '@/hooks/useToast'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { Page } from '@/schema/page'
@@ -19,7 +19,7 @@ export interface PageTitleProps {
 
 export const PageTitle = (props: PageTitleProps) => {
   const { page, loading } = props
-  console.log('PageTitle -> page', page)
+
   const [title, setTitle] = useState(page?.name ?? 'Untitled')
   const [isFocus, setFocus] = useState(false)
 
@@ -33,9 +33,9 @@ export const PageTitle = (props: PageTitleProps) => {
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  const thorttleUpdateTitle = useThrottledCallback(
+  const thorttleUpdateTitle = useDebouncedCallback(
     async () => {
-      if (!page) return
+      if (!page || !isFocus) return
       try {
         await updatePage({
           uuid: page.id,
@@ -60,14 +60,14 @@ export const PageTitle = (props: PageTitleProps) => {
         })
       }
     },
-    1500,
+    500,
     {
       trailing: true,
     },
   )
 
   useEffect(() => {
-    // user updating title
+    // reset title on page data changed
     if (!isFocus && prevRefetching) {
       setTitle(page?.name ?? 'Untitled')
     }
