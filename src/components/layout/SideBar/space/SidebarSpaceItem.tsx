@@ -14,6 +14,7 @@ import { PoperContentTrigger } from '@/components/common/PopoverTrigger'
 import { PageMoreMenuPopoverContent } from '@/components/page/PageMoreMenuPopover'
 import { RenamePageInput } from '@/components/page/RenamePageInput'
 import { PopperCard } from '@/components/common/PopperCard'
+import { PageCreateButton } from './PageCreateButton'
 
 interface SpaceItemProps {
   space: Space
@@ -73,9 +74,7 @@ export const SpaceItem = (props: SpaceItemProps) => {
           <SidebarPageItem space={space} key={page.id} page={page} level={0} />
         ))}
         {!isRenderCreatingPage && !creatPagesData.length && outerPages?.length === 0 && (
-          <SidebarItem startContent={<SidebarItemLeftSpacer level={0} />}>
-            <span className="text-sm text-gray-500">No pages inside</span>
-          </SidebarItem>
+          <PageCreateButton spacePkId={space.pk_id} />
         )}
       </CollapsibleContent>
     </Collapsible>
@@ -127,7 +126,9 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
     >
       <PopperCard
         isOpen={openRename}
-        renderContent={(setRef) => <RenamePageInput ref={setRef} page={page} onClose={onCloseRename} />}
+        renderContent={(setRef) => (
+          <RenamePageInput ref={setRef} page={page} onClose={onCloseRename} />
+        )}
         onClose={onCloseRename}
       >
         <SidebarItem
