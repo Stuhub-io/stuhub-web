@@ -17,7 +17,7 @@ export default function PageDetail() {
   return (
     <div className="flex flex-col py-8">
       <div className="flex flex-col">
-        <PageTitle page={currentPage} key={currentPage?.id} />
+        {currentPage && <PageTitle pageID={currentPage?.id} key={currentPage?.id} />}
       </div>
       <div className="-mx-3 pb-10">
         {documentData ? (
@@ -26,9 +26,9 @@ export default function PageDetail() {
             key={isRefetching ? 'refetching' : documentData?.pk_id}
           />
         ) : (
-          <div className="flex flex-col py-8 px-8 gap-4">
-            <Skeleton className="h-[44px] max-w-full w-[400px] rounded-small" />
-            <Skeleton className="h-[30px] max-w-full w-[600px] rounded-small" />
+          <div className="flex flex-col gap-4 px-8 py-8">
+            <Skeleton className="h-[44px] w-[400px] max-w-full rounded-small" />
+            <Skeleton className="h-[30px] w-[600px] max-w-full rounded-small" />
           </div>
         )}
       </div>
