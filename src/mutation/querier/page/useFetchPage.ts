@@ -13,7 +13,9 @@ export interface IPageData {
     map: Record<number, Page>
 }
 
-export const useFetchPage = (args: UseFetchPages) => {
+export const useFetchPage = (args: UseFetchPages, option?: {
+    refetchOnMount?: boolean
+}) => {
     const {allowFetch = true, pageID} = args
     return useQuery({
         queryKey: QUERY_KEYS.GET_PAGE({
@@ -21,5 +23,6 @@ export const useFetchPage = (args: UseFetchPages) => {
         }),
         queryFn: async () => pageService.getPageByID(pageID),
         enabled: allowFetch,
+        ...option
     })
 }

@@ -1,6 +1,6 @@
 import { TextAreaNoBackground } from '@/components/common/TextAreaNoBackground'
 import { useSidebar } from '@/components/providers/sidebar'
-import { useDebounce, useThrottledCallback } from 'use-debounce'
+import { useThrottledCallback } from 'use-debounce'
 import { useToast } from '@/hooks/useToast'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { Page } from '@/schema/page'
@@ -9,6 +9,8 @@ import { useEffect, useState } from 'react'
 import { RiUserSmileFill, RiImage2Fill } from 'react-icons/ri'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
+import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
+import { usePrevious } from '@/hooks/usePrev'
 
 export interface PageTitleProps {
   page?: Page
@@ -17,9 +19,17 @@ export interface PageTitleProps {
 
 export const PageTitle = (props: PageTitleProps) => {
   const { page, loading } = props
+  console.log('PageTitle -> page', page)
   const [title, setTitle] = useState(page?.name ?? 'Untitled')
+  const [isFocus, setFocus] = useState(false)
+
   const { refreshPrivatePages, privateSpace } = useSidebar()
   const { mutateAsync: updatePage } = useUpdatePage({ id: page?.id ?? '' })
+  const { isRefetching } = useFetchPage({
+    pageID: page?.id ?? '',
+  })
+  const prevRefetching = usePrevious(isRefetching)
+
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
@@ -56,13 +66,12 @@ export const PageTitle = (props: PageTitleProps) => {
     },
   )
 
-  const [debounceTitle] = useDebounce(title, 1000)
-  const [debouncePageName] = useDebounce(page?.name, 1000)
-
   useEffect(() => {
-    if (debounceTitle !== debouncePageName) return
-    setTitle(debouncePageName ?? 'Untitled')
-  }, [debouncePageName, debounceTitle])
+    // user updating title
+    if (!isFocus && prevRefetching) {
+      setTitle(page?.name ?? 'Untitled')
+    }
+  }, [isFocus, page?.name, prevRefetching, title])
 
   useEffect(() => {
     thorttleUpdateTitle()
@@ -88,6 +97,9 @@ export const PageTitle = (props: PageTitleProps) => {
         </div>
       ) : (
         <TextAreaNoBackground
+          disabled={isRefetching && !isFocus}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
           minRows={1}
           placeholder="Untitled"
           value={title}
