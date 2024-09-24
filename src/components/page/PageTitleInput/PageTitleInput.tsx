@@ -22,6 +22,7 @@ export const PageTitle = (props: PageTitleProps) => {
 
   const [title, setTitle] = useState(page?.name ?? 'Untitled')
   const [isFocus, setFocus] = useState(false)
+  const prevFocus = usePrevious(isFocus)
 
   const { refreshPrivatePages, privateSpace } = useSidebar()
   const { mutateAsync: updatePage } = useUpdatePage({ id: page?.id ?? '' })
@@ -35,7 +36,8 @@ export const PageTitle = (props: PageTitleProps) => {
 
   const thorttleUpdateTitle = useDebouncedCallback(
     async () => {
-      if (!page || !isFocus) return
+      if (!page) return
+      if (!focus && !prevFocus) return
       try {
         await updatePage({
           uuid: page.id,
@@ -68,10 +70,10 @@ export const PageTitle = (props: PageTitleProps) => {
 
   useEffect(() => {
     // reset title on page data changed
-    if (!isFocus && prevRefetching) {
+    if (!prevFocus && !isFocus && prevRefetching) {
       setTitle(page?.name ?? 'Untitled')
     }
-  }, [isFocus, page?.name, prevRefetching, title])
+  }, [isFocus, page?.name, prevFocus, prevRefetching, title])
 
   useEffect(() => {
     thorttleUpdateTitle()
