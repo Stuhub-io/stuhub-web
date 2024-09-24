@@ -1,7 +1,13 @@
 import { ProfileBadge } from '@/components/common/ProfileBadge'
 import Typography from '@/components/common/Typography'
 import { useOrganization } from '@/components/providers/organization'
-import { Avatar, Button, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import {
+  Avatar,
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@nextui-org/react'
 import { RiCheckLine, RiExpandUpDownLine, RiLogoutBoxLine, RiMoreLine } from 'react-icons/ri'
 import { LuSettings } from 'react-icons/lu'
 import { PiUserCirclePlusDuotone } from 'react-icons/pi'
@@ -17,14 +23,15 @@ type SidebarOrgSwitcherProps = {
 export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProps) => {
   const { data } = useSession()
 
-  const { organization } = useOrganization()
+  const { organization, isLoadingOrganization } = useOrganization()
 
   const triggerRef = useRef<HTMLElement>(null)
 
   return (
     <Popover placement="bottom" radius="sm" triggerRef={triggerRef}>
-      <PopoverTrigger>
+      <PopoverTrigger disabled={isLoadingOrganization}>
         <ProfileBadge
+          isLoading={isLoadingOrganization}
           disableRipple
           fullWidth
           variant="flat"
@@ -34,12 +41,9 @@ export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProp
           rightEl={<RiExpandUpDownLine size={16} />}
         />
       </PopoverTrigger>
-      <PopoverContent className="w-[270px] gap-3 py-2 px-3">
+      <PopoverContent className="w-[270px] gap-3 px-3 py-2">
         <div className="flex w-full items-center gap-3 text-text-tertiary">
-          <Avatar
-            src={organization?.avatar}
-            radius="sm"
-          />
+          <Avatar src={organization?.avatar} radius="sm" />
           <div>
             <Typography level="h6" className="flex-1 truncate">
               {organization?.name}
@@ -74,7 +78,7 @@ export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProp
             Invite members
           </Button>
         </div>
-        <div className="space-y-1 bg-content2 w-[calc(100%+24px)] px-3 py-2">
+        <div className="w-[calc(100%+24px)] space-y-1 bg-content2 px-3 py-2">
           <div className="flex items-center justify-between">
             <Typography level="p6" className="truncate">
               {data?.user.email}

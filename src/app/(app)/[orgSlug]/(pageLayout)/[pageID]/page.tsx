@@ -6,9 +6,6 @@ import { useFetchDocument } from '@/mutation/querier/document/useFetchDocument'
 import { PageContent } from '@/components/page/PageTitleInput/PageContent'
 import { Skeleton } from '@nextui-org/react'
 
-console.warn = () => {}
-console.error = () => {}
-
 export default function PageDetail() {
   const { currentPage } = usePageContext()
 
