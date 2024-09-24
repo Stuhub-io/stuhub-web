@@ -53,11 +53,13 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
         if (page.space_pkid === privateSpace?.pk_id) {
           refreshPrivatePages()
         }
+
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.GET_PAGE({
             pageID: page.id,
-          }),
+          })
         })
+
       } catch (e) {
         toast({
           variant: 'danger',

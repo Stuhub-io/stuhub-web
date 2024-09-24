@@ -3,45 +3,43 @@ import { useSidebar } from '@/components/providers/sidebar'
 import { useDebouncedCallback } from 'use-debounce'
 import { useToast } from '@/hooks/useToast'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
-import { Page } from '@/schema/page'
 import { Button, Skeleton } from '@nextui-org/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { RiUserSmileFill, RiImage2Fill } from 'react-icons/ri'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
-import { usePrevious } from '@/hooks/usePrev'
 
 export interface PageTitleProps {
-  page?: Page
   loading?: boolean
+  pageID: string
 }
 
 export const PageTitle = (props: PageTitleProps) => {
-  const { page, loading } = props
+  const { loading, pageID } = props
+
+  const { isRefetching, data: { data: page } = {} } = useFetchPage({
+    pageID,
+  })
 
   const [title, setTitle] = useState(page?.name ?? 'Untitled')
   const [isFocus, setFocus] = useState(false)
-  const prevFocus = usePrevious(isFocus)
 
   const { refreshPrivatePages, privateSpace } = useSidebar()
+  const willUpdatePage = useRef(false)
+
   const { mutateAsync: updatePage } = useUpdatePage({ id: page?.id ?? '' })
-  const { isRefetching } = useFetchPage({
-    pageID: page?.id ?? '',
-  })
-  const prevRefetching = usePrevious(isRefetching)
 
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  const thorttleUpdateTitle = useDebouncedCallback(
-    async () => {
+  const updatePageTitle = useCallback(
+    async (name: string) => {
       if (!page) return
-      if (!focus && !prevFocus) return
       try {
         await updatePage({
           uuid: page.id,
-          name: title,
+          name,
           view_type: page.view_type,
           parent_page_pk_id: page.parent_page_pkid,
         })
@@ -55,29 +53,36 @@ export const PageTitle = (props: PageTitleProps) => {
             pageID: page.id,
           }),
         })
+        // reset title after revalidate
       } catch (e) {
         toast({
           variant: 'danger',
           title: 'Failed to update page',
         })
       }
+      willUpdatePage.current = false
     },
-    500,
-    {
-      trailing: true,
-    },
+    [page, privateSpace?.pk_id, queryClient, refreshPrivatePages, toast, updatePage],
   )
 
-  useEffect(() => {
-    // reset title on page data changed
-    if (!prevFocus && !isFocus && prevRefetching) {
-      setTitle(page?.name ?? 'Untitled')
+  const thorttleUpdateTitle = useDebouncedCallback(updatePageTitle, 500, {
+    trailing: true,
+  })
+
+  const onTitleChange = (newTitle: string) => {
+    setTitle(newTitle)
+    if (!focus) {
+      return
     }
-  }, [isFocus, page?.name, prevFocus, prevRefetching, title])
+    willUpdatePage.current = true
+    thorttleUpdateTitle(newTitle)
+  }
 
   useEffect(() => {
-    thorttleUpdateTitle()
-  }, [thorttleUpdateTitle, title])
+    if (!isFocus && page && !isRefetching && !willUpdatePage.current) {
+      setTitle(page.name)
+    }
+  }, [isFocus, isRefetching, page])
 
   return (
     <div className="group">
@@ -101,11 +106,13 @@ export const PageTitle = (props: PageTitleProps) => {
         <TextAreaNoBackground
           disabled={isRefetching && !isFocus}
           onFocus={() => setFocus(true)}
-          onBlur={() => setFocus(false)}
+          onBlur={() => {
+            setFocus(false)
+          }}
           minRows={1}
           placeholder="Untitled"
           value={title}
-          onValueChange={setTitle}
+          onValueChange={onTitleChange}
           autoFocus
           classNames={{
             input: 'text-5xl font-semibold',
