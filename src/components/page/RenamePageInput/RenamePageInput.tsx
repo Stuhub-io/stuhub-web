@@ -57,9 +57,8 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.GET_PAGE({
             pageID: page.id,
-          })
+          }),
         })
-
       } catch (e) {
         toast({
           variant: 'danger',
@@ -69,6 +68,7 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
     })
     return (
       <form
+        tabIndex={0}
         className="flex items-center gap-2 rounded-medium bg-content1 p-2"
         onSubmit={handleSubmit}
         ref={ref}
