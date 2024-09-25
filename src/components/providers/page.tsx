@@ -35,13 +35,14 @@ export const PageProvider = ({ children }: PropsWithChildren) => {
   })
 
   const activePage = useMemo(() => {
+    if (!pageID) return undefined
     const dataUpdatedAt =  new Date(data?.updated_at ?? "")
     const selectedUpdatedAt = new Date(selectedPage?.updated_at ?? "")
     if (!selectedPage || dataUpdatedAt > selectedUpdatedAt) {
       return data
     }
     return selectedPage
-  }, [selectedPage, data])
+  }, [pageID, data, selectedPage])
 
   const onSelectPage = useCallback(
     (page: Page) => {
