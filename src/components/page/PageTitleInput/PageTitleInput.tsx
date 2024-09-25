@@ -11,14 +11,13 @@ import { QUERY_KEYS } from '@/mutation/keys'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 
 export interface PageTitleProps {
-  loading?: boolean
   pageID: string
 }
 
 export const PageTitle = (props: PageTitleProps) => {
-  const { loading, pageID } = props
+  const { pageID } = props
 
-  const { isRefetching, data: { data: page } = {} } = useFetchPage({
+  const { isRefetching, data: { data: page } = {}, isPending } = useFetchPage({
     pageID,
   })
 
@@ -87,7 +86,7 @@ export const PageTitle = (props: PageTitleProps) => {
   return (
     <div className="group">
       <div className="h-8 opacity-0 transition duration-200 group-hover:opacity-100">
-        {!loading && (
+        {!isPending && (
           <div className="hidden gap-1 opacity-60 group-hover:flex">
             <Button startContent={<RiUserSmileFill size={16} />} size="sm" variant="light">
               Add icons
@@ -98,9 +97,9 @@ export const PageTitle = (props: PageTitleProps) => {
           </div>
         )}
       </div>
-      {loading ? (
+      {isPending ? (
         <div>
-          <Skeleton className="h-[54px] w-[300px] rounded-medium" />
+          <Skeleton className="h-[54px] w-[300px] rounded-medium mx-3" />
         </div>
       ) : (
         <TextAreaNoBackground

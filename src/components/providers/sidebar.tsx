@@ -15,6 +15,7 @@ interface SidebarContextValue {
   privatePages?: IPageData
   isPendingPrivatePages: boolean
   refreshPrivatePages: () => void
+  refreshSpacePages: (pageID: string) => void
 }
 
 const [Provider, useSidebar] = createContext<SidebarContextValue>({
@@ -52,6 +53,12 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     trailing: true,
   })
 
+  const refreshSpacePages = (pageID: string) => {
+    // TODO: search for the space that contains the page and refresh it
+    console.log('refreshing space pages', pageID)
+    debounceRefreshPrivatePages()
+  }
+
   return (
     <Provider
       value={{
@@ -61,6 +68,7 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
         privatePages,
         refreshPrivatePages: debounceRefreshPrivatePages,
         isPendingPrivatePages,
+        refreshSpacePages
       }}
     >
       {children}

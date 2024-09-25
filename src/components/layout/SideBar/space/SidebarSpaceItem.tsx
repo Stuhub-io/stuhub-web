@@ -10,11 +10,8 @@ import { SidebarItemLeftSpacer } from '../SidebarItemLeftSpacer'
 import { ICreatingPage, useCreatePageContext } from '@/components/providers/newpage'
 import { usePageContext } from '@/components/providers/page'
 import { usePersistCollapseContext } from '@/components/providers/collapse'
-import { PoperContentTrigger } from '@/components/common/PopoverTrigger'
-import { PageMoreMenuPopoverContent } from '@/components/page/PageMoreMenuPopover'
-import { RenamePageInput } from '@/components/page/RenamePageInput'
-import { PopperCard } from '@/components/common/PopperCard'
 import { PageCreateButton } from './PageCreateButton'
+import { PageActionMenu } from '@/components/page/PageActionMenu/PageActionMenu'
 
 interface SpaceItemProps {
   space: Space
@@ -92,11 +89,6 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
   const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
   const [isExpanded, setIsExpanded] = useState(getCollapseState(`page-${page.pk_id}`))
 
-  const [openRename, setOpenRename] = useState(false)
-  const onCloseRename = () => {
-    setOpenRename(false)
-  }
-
   const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
   const { onSelectPage, currentPage } = usePageContext()
 
@@ -124,56 +116,48 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
         setIsExpanded(open)
       }}
     >
-      <PopperCard
-        isOpen={openRename}
-        renderContent={(setRef) => (
-          <RenamePageInput ref={setRef} page={page} onClose={onCloseRename} />
-        )}
-        onClose={onCloseRename}
+      <SidebarItem
+        onClick={(e) => {
+          e.stopPropagation()
+          e.preventDefault()
+          onSelectPage(page)
+        }}
+        isSelected={page.pk_id === currentPage?.pk_id}
+        startContent={
+          <>
+            <SidebarItemLeftSpacer level={level} />
+            <SidebarIconButton hideOnGroupHover>
+              <RiFileFill />
+            </SidebarIconButton>
+            <CollapsibleTrigger asChild>
+              <SidebarIconButton showOnGroupHoverOnly className="data-[state=closed]:-rotate-90">
+                <RiArrowDownSLine />
+              </SidebarIconButton>
+            </CollapsibleTrigger>
+          </>
+        }
+        endContent={
+          <>
+            <PageActionMenu page={page}>
+              <SidebarIconButton showOnGroupHoverOnly>
+                <RiMoreLine />
+              </SidebarIconButton>
+            </PageActionMenu>
+            <SidebarIconButton
+              showOnGroupHoverOnly
+              onClick={() => {
+                onOpenCreatePage(space, page)
+                setIsExpanded(true)
+              }}
+            >
+              <RiAddFill />
+            </SidebarIconButton>
+          </>
+        }
       >
-        <SidebarItem
-          onClick={(e) => {
-            e.stopPropagation()
-            e.preventDefault()
-            onSelectPage(page)
-          }}
-          isSelected={page.pk_id === currentPage?.pk_id}
-          startContent={
-            <>
-              <SidebarItemLeftSpacer level={level} />
-              <SidebarIconButton hideOnGroupHover>
-                <RiFileFill />
-              </SidebarIconButton>
-              <CollapsibleTrigger asChild>
-                <SidebarIconButton showOnGroupHoverOnly className="data-[state=closed]:-rotate-90">
-                  <RiArrowDownSLine />
-                </SidebarIconButton>
-              </CollapsibleTrigger>
-            </>
-          }
-          endContent={
-            <>
-              <PoperContentTrigger>
-                <SidebarIconButton showOnGroupHoverOnly>
-                  <RiMoreLine />
-                </SidebarIconButton>
-                <PageMoreMenuPopoverContent page={page} onRename={() => setOpenRename(true)} />
-              </PoperContentTrigger>
-              <SidebarIconButton
-                showOnGroupHoverOnly
-                onClick={() => {
-                  onOpenCreatePage(space, page)
-                  setIsExpanded(true)
-                }}
-              >
-                <RiAddFill />
-              </SidebarIconButton>
-            </>
-          }
-        >
-          {page.name || 'Untitled'}
-        </SidebarItem>
-      </PopperCard>
+        {page.name || 'Untitled'}
+      </SidebarItem>
+
       <CollapsibleContent>
         <ActiveCreatingPageItem
           level={level + 1}

@@ -9,11 +9,12 @@ import { BASE_URL } from '@/constants/envs'
 interface PageMoreMenuPopoverContentProps {
   onClose?: () => void
   onRename?: () => void
+  onOpenMove?: () => void
   page: Page
 }
 
 export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProps) => {
-  const { onClose, page, onRename } = props
+  const { onClose, page, onRename, onOpenMove } = props
   const { organization } = useOrganization()
 
   const pageHref =
@@ -39,6 +40,9 @@ export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProp
               break
             case 'rename':
               onRename?.()
+              break
+            case 'move':
+              onOpenMove?.()
               break
             default:
               break

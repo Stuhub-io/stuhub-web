@@ -1,66 +1,33 @@
 'use client'
 
-import {
-  Button,
-  Listbox,
-  ListboxItem,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@nextui-org/react'
-import { ReactNode } from 'react'
-import {
-  RiArrowRightUpLine,
-  RiDeleteBinLine,
-  RiLink,
-  RiMore2Fill,
-  RiShareFill,
-  RiStarLine,
-} from 'react-icons/ri'
+import { Button, Skeleton } from '@nextui-org/react'
+import { RiMore2Fill, RiShareFill, RiStarLine } from 'react-icons/ri'
+import { PageActionMenu } from '../PageActionMenu/PageActionMenu'
+import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
+import { useParams } from 'next/navigation'
+import { OrganizationPageParams } from '@/constants/routes'
 
 export const HeaderMoreMenu = () => {
+  const { pageID } = useParams<OrganizationPageParams>()
+  const { data: { data: page } = {}, isPending } = useFetchPage({
+    pageID,
+  })
   return (
     <div className="flex items-center gap-3">
-      <Button size='sm' variant="light" isIconOnly>
-        <RiShareFill size={20}/>
+      <Button size="sm" variant="light" isIconOnly>
+        <RiShareFill size={20} />
       </Button>
       <Button size="sm" variant="light" isIconOnly>
         <RiStarLine size={20} />
       </Button>
-      <HeaderMoreMenuContent
-        triggerRender={
+      {isPending && <Skeleton className=" h-6 w-6 rounded-md" />}
+      {!isPending && page && (
+        <PageActionMenu page={page}>
           <Button isIconOnly size="sm" variant="flat">
             <RiMore2Fill size={20} />
           </Button>
-        }
-      />
+        </PageActionMenu>
+      )}
     </div>
-  )
-}
-
-export interface HeaderMoreMenuContentProps {
-  triggerRender: ReactNode
-}
-
-export const HeaderMoreMenuContent = (props: HeaderMoreMenuContentProps) => {
-  const { triggerRender } = props
-
-  return (
-    <Popover>
-      <PopoverTrigger>{triggerRender}</PopoverTrigger>
-      <PopoverContent>
-        <Listbox aria-label="Actions" onAction={(key) => alert(key)}>
-          <ListboxItem key="copy" startContent={<RiLink />}>
-            Copy link
-          </ListboxItem>
-          <ListboxItem key="move" startContent={<RiArrowRightUpLine />}>
-            Move to
-          </ListboxItem>
-          <ListboxItem key="edit" startContent={<RiDeleteBinLine />} color="danger">
-            Move to trash
-          </ListboxItem>
-        </Listbox>
-      </PopoverContent>
-    </Popover>
   )
 }
