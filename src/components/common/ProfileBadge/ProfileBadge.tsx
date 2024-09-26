@@ -1,4 +1,4 @@
-import { Avatar, Button, ButtonProps } from '@nextui-org/react'
+import { Avatar, Button, ButtonProps, Skeleton } from '@nextui-org/react'
 import Typography from '@/components/common/Typography'
 import { ComponentRef, forwardRef, ReactNode, useMemo } from 'react'
 import { cva } from 'class-variance-authority'
@@ -10,6 +10,7 @@ interface ProfileBadgeProps extends ButtonProps {
   lastName?: string
   rightEl?: ReactNode
   description?: string
+  isLoading?: boolean
 }
 
 const profileBadgeCva = cva(['flex justify-start'], {
@@ -42,6 +43,7 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
       size = 'md',
       rightEl,
       description,
+      isLoading,
       ...restProps
     } = props
     const titleLevel = useMemo(() => {
@@ -78,12 +80,21 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
             size,
           })}
         >
-          <Typography noWrap level={titleLevel}>
-            {fullName}
-          </Typography>
-          <Typography noWrap level={descriptionLevel} className="opacity-65">
-            {description}
-          </Typography>
+          {isLoading ? (
+            <>
+              <Skeleton className="h-[16px] w-[140px] rounded-md" />
+              <Skeleton className="h-3 mt-0.5 w-[60px] rounded-md" />
+            </>
+          ) : (
+            <>
+              <Typography noWrap level={titleLevel}>
+                {fullName}
+              </Typography>
+              <Typography noWrap level={descriptionLevel} className="opacity-65">
+                {description}
+              </Typography>
+            </>
+          )}
         </div>
         <span className="opacity-60">{rightEl}</span>
       </Button>

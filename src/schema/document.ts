@@ -6,7 +6,7 @@ export interface CreateDocumentBody {
 }
 
 export interface Document {
-  pk_id: number
+  pkid: number
   page_pkid: number
   content: string
   json_content: string
@@ -19,4 +19,4 @@ export interface CreateDocumentData {
   document: Document
 }
 
-export interface UpdateDocumentContentInput extends Pick<Document, 'pk_id' | 'json_content'> {}
+export interface UpdateDocumentContentInput extends Pick<Document, 'pkid' | 'json_content'> {}

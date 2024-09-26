@@ -1,12 +1,21 @@
 import { cn } from '@/libs/utils'
 
-export const SidebarItemLeftSpacer = ({ level = 0 }: { level: number }) => {
+export const SidebarItemLeftSpacer = ({
+  level = 0,
+  size = 'sm',
+}: {
+  level: number
+  size?: 'sm' | 'xs'
+}) => {
   if (level === 0) return null
   return (
     <span
-      className={cn('h-6 shrink-0')}
+      className={cn('shrink-0', {
+        'h-6': size === 'sm',
+        'h-5': size === 'xs',
+      })}
       style={{
-        width: `${level * 16}px`,
+        width: size === 'sm' ? `${level * 16}px` : `${level * 12}px`,
       }}
     />
   )

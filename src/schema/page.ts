@@ -2,7 +2,7 @@ export type PageViewType = 'document' | 'table' // ...
 
 export interface Page {
     id: string
-    pk_id: number
+    pkid: number
     parent_page_pkid?: number
     space_pkid: number
     name: string
@@ -14,15 +14,15 @@ export interface Page {
 // Body, Params, ...
 
 export interface CreatePageRequestBody {
-    space_pk_id: number
+    space_pkid: number
     name: string
     view_type: PageViewType
-    parent_page_pk_id?: number
+    parent_page_pkid?: number
 }
 
 export interface UpdatePageRequestBody {
     name: string
-    parent_page_pk_id?: number
+    parent_page_pkid?: number
     view_type: PageViewType
 }
 

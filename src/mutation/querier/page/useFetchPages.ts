@@ -24,7 +24,7 @@ export const useFetchPages = (args: UseFetchPages) => {
                 data: {
                     list: resp.data,
                     map: resp.data.reduce((acc, page) => {
-                        acc[page.pk_id] = page
+                        acc[page.pkid] = page
                         return acc
                     }, {} as Record<number, Page>)
                 } as IPageData

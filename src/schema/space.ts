@@ -3,7 +3,7 @@ import { User } from "./user"
 // Entities
 export interface Space {
     id: string
-    pk_id: number
+    pkid: number
     owner_id: number
     name: string
     slug: string
@@ -18,7 +18,7 @@ export interface Space {
 export type SpaceRole = 'owner' | 'member' | 'guest'
 
 export interface SpaceMember {
-    pk_id: number
+    pkid: number
     space_pkid: number
     user_pkid: number
     role: SpaceRole
@@ -39,5 +39,5 @@ export interface OrganizationPkIDParams extends Record<string, any> {
 }
 
 export interface SpacePkIDParams extends Record<string, any> {
-    space_pk_id: number
+    space_pkid: number
 }

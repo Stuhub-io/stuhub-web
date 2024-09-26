@@ -9,9 +9,9 @@ export const QUERY_KEYS = {
     'GET_ORG_SPACES',
     organization_pkid,
   ],
-  GET_SPACE_PAGES: ({ space_pk_id }: SpacePkIDParams) => ['GET_SPACE_PAGES', space_pk_id],
+  GET_SPACE_PAGES: ({ space_pkid }: SpacePkIDParams) => ['GET_SPACE_PAGES', space_pkid],
   GET_PAGE: ({ pageID }: { pageID: string }) => ['GET_PAGE', pageID],
-  GET_PAGE_DOC: ({ page_pk_id }: { page_pk_id: number }) => ['GET_PAGE_DOCS', page_pk_id],
+  GET_PAGE_DOC: ({ page_pkid }: { page_pkid: number }) => ['GET_PAGE_DOCS', page_pkid],
 }
 
 export const MUTATION_KEYS = {
@@ -20,24 +20,24 @@ export const MUTATION_KEYS = {
   FIND_USER_BY_EMAIL: ['FIND_USER_BY_EMAIL'],
   INVITE_ORG_MEMBERS: ['INVITE_ORG_MEMBERS'],
   CREATE_PAGE: ({
-    parent_page_pk_id,
-    space_pk_id,
+    parent_page_pkid,
+    space_pkid,
     id,
-  }: { id?: string } & Pick<CreatePageRequestBody, 'parent_page_pk_id' | 'space_pk_id'>) => [
+  }: { id?: string } & Pick<CreatePageRequestBody, 'parent_page_pkid' | 'space_pkid'>) => [
     'CREATE_PAGE',
-    parent_page_pk_id,
-    space_pk_id,
+    parent_page_pkid,
+    space_pkid,
     id,
   ],
   UPDATE_PAGE:({id}: {id: string}) => ['UPDATE_PAGE', id],
   CREATE_DOC: ({
-    parent_page_pk_id,
-    space_pk_id,
+    parent_page_pkid,
+    space_pkid,
     tempId,
-  }: { tempId?: string } & Pick<CreatePageRequestBody, 'parent_page_pk_id' | 'space_pk_id'>) => [
+  }: { tempId?: string } & Pick<CreatePageRequestBody, 'parent_page_pkid' | 'space_pkid'>) => [
     'CREATE_DOC',
-    parent_page_pk_id,
-    space_pk_id,
+    parent_page_pkid,
+    space_pkid,
     tempId,
   ],
   UPDATE_DOC_CONTENT: ['UPDATE_DOC_CONTENT'],

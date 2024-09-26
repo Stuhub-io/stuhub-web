@@ -15,6 +15,7 @@ interface SidebarContextValue {
   privatePages?: IPageData
   isPendingPrivatePages: boolean
   refreshPrivatePages: () => void
+  refreshSpacePages: (pageID: string) => void
 }
 
 const [Provider, useSidebar] = createContext<SidebarContextValue>({
@@ -27,7 +28,7 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
   const { organization } = useOrganization()
 
   const { data: { data: spaces } = {}, isPending: isPendingSpaces } = useFetchOrgSpaces({
-    organization_pkid: organization?.pk_id ?? -1,
+    organization_pkid: organization?.pkid ?? -1,
     allowFetch: Boolean(organization),
   })
 
@@ -45,12 +46,18 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     isPending: isPendingPrivatePages,
   } = useFetchPages({
     allowFetch: Boolean(privateSpace),
-    space_pk_id: privateSpace?.pk_id ?? -1,
+    space_pkid: privateSpace?.pkid ?? -1,
   })
 
   const debounceRefreshPrivatePages = useThrottledCallback(refreshPrivatePages, 2000, {
     trailing: true,
   })
+
+  const refreshSpacePages = (pageID: string) => {
+    // TODO: search for the space that contains the page and refresh it
+    console.log('refreshing space pages', pageID)
+    debounceRefreshPrivatePages()
+  }
 
   return (
     <Provider
@@ -61,6 +68,7 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
         privatePages,
         refreshPrivatePages: debounceRefreshPrivatePages,
         isPendingPrivatePages,
+        refreshSpacePages
       }}
     >
       {children}
