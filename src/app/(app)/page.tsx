@@ -58,7 +58,7 @@ export default function Page() {
         name: values.orgName ?? '',
         description: values.orgDescription,
         avatar: `https://source.boringavatars.com/beam/120/${encodeURI(
-          getUserFullName({ firstName: values.firstName, lastName: values.lastName }),
+          getUserFullName({ firstName: values.firstName, lastName: values.lastName }) ?? '',
         )}?colors=665c52,74b3a7,a3ccaf,E6E1CF,CC5B14`,
       })
       await Promise.all([createOrg])
