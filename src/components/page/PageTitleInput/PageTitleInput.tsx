@@ -37,13 +37,11 @@ export const PageTitle = (props: PageTitleProps) => {
       if (!page) return
       try {
         await updatePage({
-          uuid: page.id,
+          ...page,
           name,
-          view_type: page.view_type,
-          parent_page_pk_id: page.parent_page_pkid,
         })
 
-        if (page.space_pkid === privateSpace?.pk_id) {
+        if (page.space_pkid === privateSpace?.pkid) {
           refreshPrivatePages()
         }
 
@@ -61,7 +59,7 @@ export const PageTitle = (props: PageTitleProps) => {
       }
       willUpdatePage.current = false
     },
-    [page, privateSpace?.pk_id, queryClient, refreshPrivatePages, toast, updatePage],
+    [page, privateSpace?.pkid, queryClient, refreshPrivatePages, toast, updatePage],
   )
 
   const thorttleUpdateTitle = useDebouncedCallback(updatePageTitle, 500, {

@@ -33,8 +33,8 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
 
   const childPages = useMemo(() => {
     if (!showChild) return []
-    return pages.filter((p) => p.parent_page_pkid === page.pk_id)
-  }, [page.pk_id, pages, showChild])
+    return pages.filter((p) => p.parent_page_pkid === page.pkid)
+  }, [page.pkid, pages, showChild])
 
   const handlePageClick = useCallback(() => {
     onClick?.(page)

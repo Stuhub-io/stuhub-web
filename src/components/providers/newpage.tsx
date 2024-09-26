@@ -64,8 +64,8 @@ export const CreatePageProvider = ({ children }: PropsWithChildren) => {
     setSelectedParent(parentPage)
     setCreatePageData({
       name: '',
-      space_pk_id: space.pk_id,
-      parent_page_pk_id: parentPage?.pk_id,
+      space_pkid: space.pkid,
+      parent_page_pkid: parentPage?.pkid,
       view_type: 'document',
     })
     setCreateID(genID())

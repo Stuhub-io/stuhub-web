@@ -36,10 +36,8 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
   const handleMove = async (selectedPage: Page) => {
     try {
       await updatePage({
-        name: page.name,
-        parent_page_pk_id: selectedPage.pk_id,
-        uuid: page.id,
-        view_type: page.view_type,
+        ...page,
+        parent_page_pkid: selectedPage.pkid,
       })
       refreshSpacePages(page.id)
       queryClient.invalidateQueries({

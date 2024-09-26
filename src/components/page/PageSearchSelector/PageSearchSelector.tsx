@@ -17,7 +17,7 @@ export const PageSearchSelector = forwardRef<ComponentRef<'div'>, PageSearchSele
   (props, ref) => {
     const { onSelected, spacePkID, excludePageIds = [] } = props
     const { data: { data: pages } = {}, isPending } = useFetchPages({
-      space_pk_id: spacePkID,
+      space_pkid: spacePkID,
     })
 
     const outerPages = useMemo(() => pages?.list?.filter((page) => !page.parent_page_pkid), [pages])

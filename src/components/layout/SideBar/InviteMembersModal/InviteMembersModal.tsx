@@ -44,7 +44,7 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
     inviteOrgMembersMutate(
       {
         org_info: {
-          pkid: organization.pk_id,
+          pkid: organization.pkid,
           name: organization.name,
           slug: organization.slug,
           avatar: organization.avatar,
