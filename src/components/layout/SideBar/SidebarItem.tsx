@@ -21,7 +21,7 @@ export const SidebarItem = forwardRef<ComponentRef<'button'>, SidebarItemProps>(
         'justify-start truncate px-2 py-1 !text-small text-text-tertiary transition-all hover:text-text-secondary',
         {
           'bg-default/40': isSelected,
-          'h-7 !text-xs': size === 'xs',
+          'h-7': size === 'xs',
         },
         className,
       )}

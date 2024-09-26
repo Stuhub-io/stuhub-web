@@ -11,7 +11,7 @@ export const useFetchDocument = (args: UseFetchDocument) => {
     const { allowFetch, pagePkID} = args
     return useQuery({
         queryKey: QUERY_KEYS.GET_PAGE_DOC({
-            page_pk_id: pagePkID,
+            page_pkid: pagePkID,
         }),
         queryFn: async () => documentService.getDocumentByPagePkID(pagePkID),
         enabled: allowFetch,

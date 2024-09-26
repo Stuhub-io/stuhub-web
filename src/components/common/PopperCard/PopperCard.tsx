@@ -39,11 +39,11 @@ export const PopperCard = forwardRef<ComponentRef<typeof Tooltip>, PopperCardPro
           onClose?.()
         }
       }
-      window.addEventListener('mousedown', handleOutSideClick)
+      window.addEventListener('mouseup', handleOutSideClick)
       document.addEventListener('keyup', handleEscape)
 
       return () => {
-        window.removeEventListener('mousedown', handleOutSideClick)
+        window.removeEventListener('mouseup', handleOutSideClick)
         document.removeEventListener('keyup', handleEscape)
       }
     }, [contentRef, id, onClose])

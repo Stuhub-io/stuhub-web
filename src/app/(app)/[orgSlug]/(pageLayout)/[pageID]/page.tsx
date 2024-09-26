@@ -11,7 +11,7 @@ export default function PageDetail() {
 
   const { data: { data: documentData } = {}, isRefetching } = useFetchDocument({
     allowFetch: !!currentPage,
-    pagePkID: currentPage?.pk_id ?? -1,
+    pagePkID: currentPage?.pkid ?? -1,
   })
 
   return (
@@ -23,7 +23,7 @@ export default function PageDetail() {
         {documentData ? (
           <PageContent
             documentData={documentData}
-            key={isRefetching ? 'refetching' : documentData?.pk_id}
+            key={isRefetching ? 'refetching' : documentData?.pkid}
           />
         ) : (
           <div className="flex flex-col gap-4 px-8 py-8">

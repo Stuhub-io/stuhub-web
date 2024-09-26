@@ -19,7 +19,7 @@ export const PageContent = (props: PageContentProps) => {
     (content: JSONContent) => {
       if (!documentData) return
       updateDocumentContent({
-        pk_id: documentData?.pk_id,
+        pkid: documentData?.pkid,
         json_content: JSON.stringify(content ?? ''),
       })
     },
@@ -43,7 +43,7 @@ export const PageContent = (props: PageContentProps) => {
     <BlockBasedEditor
       jsonContent={content}
       onJsonContentChange={onUpdateDocument}
-      key={documentData && initLoad ? documentData?.pk_id : 'loading'}
+      key={documentData && initLoad ? documentData?.pkid : 'loading'}
     />
   )
 }

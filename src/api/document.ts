@@ -28,9 +28,9 @@ class DocumentService extends Client {
     )
   }
   public updateDocumentContent(params: UpdateDocumentContentInput) {
-    const { pk_id, ...body } = params
+    const { pkid, ...body } = params
     return fetcher<BaseResponse<Document>>(
-      `${this.baseUrl}/v1/document-services/documents/${pk_id}`,
+      `${this.baseUrl}/v1/document-services/documents/${pkid}`,
       {
         method: 'PUT',
         headers: this.privateHeaders,

@@ -19,8 +19,8 @@ export const PageCreateButton = (props: PageCreateButtonProps) => {
   const { organization } = useOrganization()
 
   const { mutateAsync, isPending } = useCreateDocument({
-    parent_page_pk_id: parentPagePkId,
-    space_pk_id: spacePkId,
+    parent_page_pkid: parentPagePkId,
+    space_pkid: spacePkId,
     tempId: 'create-with-add-button',
   })
 
@@ -32,8 +32,8 @@ export const PageCreateButton = (props: PageCreateButtonProps) => {
         json_content: '{}',
         page: {
           name: '',
-          parent_page_pk_id: parentPagePkId,
-          space_pk_id: spacePkId,
+          parent_page_pkid: parentPagePkId,
+          space_pkid: spacePkId,
           view_type: 'document',
         },
       })

@@ -44,13 +44,11 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
       try {
         onClose()
         await updatePage({
+          ...page,
           name: data.name,
-          parent_page_pk_id: page.parent_page_pkid,
-          uuid: page.id,
-          view_type: page.view_type,
         })
 
-        if (page.space_pkid === privateSpace?.pk_id) {
+        if (page.space_pkid === privateSpace?.pkid) {
           refreshPrivatePages()
         }
 

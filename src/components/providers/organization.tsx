@@ -40,8 +40,8 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     () =>
       loadingOrganization || !selectedOrg
         ? undefined
-        : getUserOrgPermission(selectedOrg, data?.user.pk_id ?? -1),
-    [data?.user.pk_id, loadingOrganization, selectedOrg],
+        : getUserOrgPermission(selectedOrg, data?.user.pkid ?? -1),
+    [data?.user.pkid, loadingOrganization, selectedOrg],
   )
 
   const {
@@ -81,13 +81,13 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     const selectOrg =
       internalJoinedOrgs.find(
         (org) =>
-          org.slug === orgSlug && getUserOrgPermission(org, data?.user.pk_id ?? -1) !== undefined,
+          org.slug === orgSlug && getUserOrgPermission(org, data?.user.pkid ?? -1) !== undefined,
       ) ||
       internalJoinedOrgs.find((org) => {
-        return getUserOrgPermission(org, data?.user.pk_id ?? -1) === ORG_ROLES.OWNER
+        return getUserOrgPermission(org, data?.user.pkid ?? -1) === ORG_ROLES.OWNER
       }) ||
       internalJoinedOrgs.find((org) => {
-        return getUserOrgPermission(org, data?.user.pk_id ?? -1) !== ORG_ROLES.OWNER
+        return getUserOrgPermission(org, data?.user.pkid ?? -1) !== ORG_ROLES.OWNER
       })
     setOrg(selectOrg)
 
@@ -102,7 +102,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
       router.push(ROUTES.ORGANIZATION({ orgSlug: selectOrg?.slug ?? '' }))
       setIsNavigating(true)
     }
-  }, [data?.user.pk_id, internalJoinedOrgs, orgSlug, router, selectedOrg])
+  }, [data?.user.pkid, internalJoinedOrgs, orgSlug, router, selectedOrg])
 
   // Redirect back to org if already selected org
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { useDisclosure } from '@nextui-org/react'
 import { PropsWithChildren } from 'react'
 import { PoperContentTrigger } from '@/components/common/PopoverTrigger'
-import { PageMoreMenuPopoverContent } from '@/components/page/PageMoreMenuPopover'
+import { PageMoreMenuPopoverContent } from './PageMoreMenuPopover'
 import { RenamePageInput } from '@/components/page/RenamePageInput'
 import { PopperCard } from '@/components/common/PopperCard'
 import { PageSearchSelector } from '@/components/page/PageSearchSelector'
@@ -10,6 +10,8 @@ import { Page } from '@/schema/page'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { useSidebar } from '@/components/providers/sidebar'
 import { useToast } from '@/hooks/useToast'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/mutation/keys'
 
 interface PageActionMenuProps {
   page: Page
@@ -17,6 +19,8 @@ interface PageActionMenuProps {
 
 export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) => {
   const { children, page } = props
+
+  const queryClient = useQueryClient()
 
   const { isOpen: isOpenRename, onOpen: onOpenRename, onClose: onCloseRename } = useDisclosure()
 
@@ -32,12 +36,15 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
   const handleMove = async (selectedPage: Page) => {
     try {
       await updatePage({
-        name: page.name,
-        parent_page_pk_id: selectedPage.pk_id,
-        uuid: page.id,
-        view_type: page.view_type,
+        ...page,
+        parent_page_pkid: selectedPage.pkid,
       })
       refreshSpacePages(page.id)
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.GET_PAGE({
+          pageID: page.id,
+        }),
+      })
     } catch (e) {
       toast({
         variant: 'danger',

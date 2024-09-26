@@ -24,24 +24,24 @@ export const SpaceItem = (props: SpaceItemProps) => {
   const { onOpenCreatePage, creatingPages, selectedParent, selectedSpace } = useCreatePageContext()
   const [isExpanded, setIsExpanded] = useState(true)
 
-  const isRenderCreatingPage = selectedParent === undefined && selectedSpace?.pk_id === space.pk_id
+  const isRenderCreatingPage = selectedParent === undefined && selectedSpace?.pkid === space.pkid
 
   const creatPagesData = useMemo(() => {
     return creatingPages.filter(
       (page) =>
-        page.input.space_pk_id === space.pk_id && page.input.parent_page_pk_id === undefined,
+        page.input.space_pkid === space.pkid && page.input.parent_page_pkid === undefined,
     )
-  }, [creatingPages, space.pk_id])
+  }, [creatingPages, space.pkid])
 
   const outerPages = useMemo(() => {
     if (space.is_private) {
       return privatePages?.list?.filter(
-        (page) => page.space_pkid === space.pk_id && !page.parent_page_pkid,
+        (page) => page.space_pkid === space.pkid && !page.parent_page_pkid,
       )
     }
     // FIXME: add handle pages
     return []
-  }, [privatePages, space?.is_private, space.pk_id])
+  }, [privatePages, space?.is_private, space.pkid])
 
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
@@ -63,7 +63,7 @@ export const SpaceItem = (props: SpaceItemProps) => {
         </SidebarItem>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <ActiveCreatingPageItem spacePkID={space.pk_id} />
+        <ActiveCreatingPageItem spacePkID={space.pkid} />
         {creatPagesData?.map((toCreate) => (
           <CreatingSidebarPageItem key={toCreate.id} data={toCreate} />
         ))}
@@ -71,7 +71,7 @@ export const SpaceItem = (props: SpaceItemProps) => {
           <SidebarPageItem space={space} key={page.id} page={page} level={0} />
         ))}
         {!isRenderCreatingPage && !creatPagesData.length && outerPages?.length === 0 && (
-          <PageCreateButton spacePkId={space.pk_id} />
+          <PageCreateButton spacePkId={space.pkid} />
         )}
       </CollapsibleContent>
     </Collapsible>
@@ -87,27 +87,27 @@ interface SidebarPageItemProps {
 export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps) => {
   const { privatePages } = useSidebar()
   const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
-  const [isExpanded, setIsExpanded] = useState(getCollapseState(`page-${page.pk_id}`))
+  const [isExpanded, setIsExpanded] = useState(getCollapseState(`page-${page.pkid}`))
 
   const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
   const { onSelectPage, currentPage } = usePageContext()
 
   const isRenderCreatingPage =
-    selectedParent?.pk_id === page.pk_id && selectedSpace?.pk_id === space.pk_id
+    selectedParent?.pkid === page.pkid && selectedSpace?.pkid === space.pkid
 
   const toCreatPages = useMemo(() => {
     return creatingPages.filter(
-      (p) => p.input.parent_page_pk_id === page.pk_id && p.input.space_pk_id === space.pk_id,
+      (p) => p.input.parent_page_pkid === page.pkid && p.input.space_pkid === space.pkid,
     )
-  }, [creatingPages, page.pk_id, space.pk_id])
+  }, [creatingPages, page.pkid, space.pkid])
 
   const childPages = useMemo(() => {
-    return privatePages?.list.filter((p) => p.parent_page_pkid === page.pk_id)
-  }, [page.pk_id, privatePages])
+    return privatePages?.list.filter((p) => p.parent_page_pkid === page.pkid)
+  }, [page.pkid, privatePages])
 
   useEffect(() => {
-    persistCollapseData(`page-${page.pk_id}`, isExpanded)
-  }, [isExpanded, page.pk_id, persistCollapseData])
+    persistCollapseData(`page-${page.pkid}`, isExpanded)
+  }, [isExpanded, page.pkid, persistCollapseData])
 
   return (
     <Collapsible
@@ -122,7 +122,7 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
           e.preventDefault()
           onSelectPage(page)
         }}
-        isSelected={page.pk_id === currentPage?.pk_id}
+        isSelected={page.pkid === currentPage?.pkid}
         startContent={
           <>
             <SidebarItemLeftSpacer level={level} />
@@ -138,11 +138,13 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
         }
         endContent={
           <>
-            <PageActionMenu page={page}>
-              <SidebarIconButton showOnGroupHoverOnly>
-                <RiMoreLine />
-              </SidebarIconButton>
-            </PageActionMenu>
+            <div onClick={e => e.stopPropagation()}> {/* Prevents the click event from bubbling up to the parent */}
+              <PageActionMenu page={page}>
+                <SidebarIconButton showOnGroupHoverOnly>
+                  <RiMoreLine />
+                </SidebarIconButton>
+              </PageActionMenu>
+            </div>
             <SidebarIconButton
               showOnGroupHoverOnly
               onClick={() => {
@@ -161,8 +163,8 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
       <CollapsibleContent>
         <ActiveCreatingPageItem
           level={level + 1}
-          parentPagePkID={page.pk_id}
-          spacePkID={space.pk_id}
+          parentPagePkID={page.pkid}
+          spacePkID={space.pkid}
         />
         {toCreatPages.map((p) => (
           <CreatingSidebarPageItem key={p.id} data={p} level={level + 1} />
@@ -192,7 +194,7 @@ export const CreatingSidebarPageItem = (props: CreatingSidebarPageItemProps) => 
   const { privatePages } = useSidebar()
 
   const isRenderedOnScreen = useMemo(() => {
-    return Boolean(data.result) && privatePages?.map[data.result?.pk_id ?? -1]
+    return Boolean(data.result) && privatePages?.map[data.result?.pkid ?? -1]
   }, [data.result, privatePages?.map])
 
   useEffect(() => {
@@ -242,7 +244,7 @@ export const ActiveCreatingPageItem = (props: {
     [createID, creatingPages],
   )
 
-  if (selectedParent?.pk_id !== parentPagePkID || selectedSpace?.pk_id !== spacePkID) {
+  if (selectedParent?.pkid !== parentPagePkID || selectedSpace?.pkid !== spacePkID) {
     return null
   }
 

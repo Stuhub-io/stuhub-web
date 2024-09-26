@@ -40,15 +40,15 @@ export const CreateNewPageModal = () => {
     if (!selectedSpace) return
     setCreatePageData?.({
       name: value,
-      parent_page_pk_id: selectedParent?.pk_id,
-      space_pk_id: selectedSpace?.pk_id,
+      parent_page_pkid: selectedParent?.pkid,
+      space_pkid: selectedSpace?.pkid,
       view_type: 'document',
     })
   }
 
   const { mutateAsync } = useCreateDocument({
-    parent_page_pk_id: selectedParent?.pk_id ?? -1,
-    space_pk_id: selectedSpace?.pk_id ?? -1,
+    parent_page_pkid: selectedParent?.pkid ?? -1,
+    space_pkid: selectedSpace?.pkid ?? -1,
     tempId: createID,
   })
 
@@ -64,8 +64,8 @@ export const CreateNewPageModal = () => {
     }
     const data = {
       name: title || 'Untitled',
-      parent_page_pk_id: selectedParent?.pk_id,
-      space_pk_id: selectedSpace.pk_id,
+      parent_page_pkid: selectedParent?.pkid,
+      space_pkid: selectedSpace.pkid,
       view_type: 'document',
     } as const
 
@@ -81,7 +81,7 @@ export const CreateNewPageModal = () => {
           json_content: JSON.stringify(content) || '{}',
         })
         queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.GET_SPACE_PAGES({ space_pk_id: data.space_pk_id }),
+          queryKey: QUERY_KEYS.GET_SPACE_PAGES({ space_pkid: data.space_pkid }),
         })
         updateCreatingPages(createID, {
           id: createID,

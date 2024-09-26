@@ -33,8 +33,8 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
 
   const childPages = useMemo(() => {
     if (!showChild) return []
-    return pages.filter((p) => p.parent_page_pkid === page.pk_id)
-  }, [page.pk_id, pages, showChild])
+    return pages.filter((p) => p.parent_page_pkid === page.pkid)
+  }, [page.pkid, pages, showChild])
 
   const handlePageClick = useCallback(() => {
     onClick?.(page)
@@ -48,8 +48,8 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
         onClick={disabled ? undefined : handlePageClick}
         className={cn('rounded-none')}
         isDisabled={disabled}
-        fullWidth
         size="xs"
+        fullWidth
         startContent={
           <>
             <SidebarItemLeftSpacer level={level} size="xs" />
@@ -101,8 +101,12 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
           />
         ))}
       {expaned && showChild && childPages.length === 0 && (
-        <SidebarItem startContent={<SidebarItemLeftSpacer size="xs" level={level + 1} />} size="xs">
-          <span className="text-xs text-gray-500">No pages inside</span>
+        <SidebarItem
+          startContent={<SidebarItemLeftSpacer size="xs" level={level + 1} />}
+          size="xs"
+          isDisabled
+        >
+          No pages inside
         </SidebarItem>
       )}
     </>
