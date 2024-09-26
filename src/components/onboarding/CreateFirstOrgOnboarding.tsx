@@ -115,7 +115,6 @@ export const CreateFirstOrgOnboarding = ({
             onBack?.()
           }}
           disabled={loading}
-          isLoading={loading}
         >
           <RiArrowLeftLine size={16} />
           Back

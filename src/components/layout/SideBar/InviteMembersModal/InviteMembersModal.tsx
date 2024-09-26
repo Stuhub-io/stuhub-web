@@ -2,7 +2,14 @@ import { useOrganization } from '@/components/providers/organization'
 import { ORG_ROLES } from '@/constants/organization'
 import { OrgRole } from '@/schema/organization'
 import { User } from '@/schema/user'
-import { Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
+import {
+  Divider,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from '@nextui-org/react'
 import { useMemo, useState } from 'react'
 import { SearchActions } from './SearchActions'
 import { SearchForm } from './SearchForm'
@@ -28,7 +35,7 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
     [organization, emails],
   )
 
-  const { mutate: inviteOrgMembersMutate } = useInviteOrgMembers()
+  const { mutate: inviteOrgMembersMutate, isPending } = useInviteOrgMembers()
 
   const handleAddEmail = (email: string) => {
     setEmails((prev) => [...prev, email])
@@ -58,7 +65,7 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
             toast({
               variant: 'danger',
               title: 'Oops! Something wrong.',
-              description: `${failed_emails.join(' ')} are not sent!`,
+              description: `${failed_emails.join(', ')} are not sent!`,
             })
             return
           }
@@ -80,13 +87,7 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="lg"
-      hideCloseButton
-      className="h-[800px]"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" hideCloseButton className="h-[800px]">
       <ModalContent>
         <ModalHeader>
           <div className="flex w-full items-start justify-between">
@@ -100,6 +101,8 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
             />
             <SearchActions
               role={role}
+              isLoading={isPending}
+              disableSubmit={emails.length === 0}
               setRole={setRole}
               submitInvitations={handleSubmitInvitations}
             />

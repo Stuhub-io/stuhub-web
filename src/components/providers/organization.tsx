@@ -1,4 +1,3 @@
-import { ORG_ROLES } from '@/constants/organization'
 import { OrganizationParams, ROUTES } from '@/constants/routes'
 import { usePrevious } from '@/hooks/usePrev'
 import createContext from '@/libs/context'
@@ -31,37 +30,30 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter()
   const prevStatus = usePrevious(status)
 
-  const allowFetchOrgs = status === 'authenticated'
-  const [loadingOrganization, setLoadingOrganization] = useState(allowFetchOrgs)
   const [selectedOrg, setOrg] = useState<Organization>()
   const [isNavigating, setIsNavigating] = useState(false)
 
-  const currentUserRole = useMemo(
-    () =>
-      loadingOrganization || !selectedOrg
-        ? undefined
-        : getUserOrgPermission(selectedOrg, data?.user.pk_id ?? -1),
-    [data?.user.pk_id, loadingOrganization, selectedOrg],
-  )
+  const isAuthenticating = status == 'loading'
+  const isUnthenticated = status == 'unauthenticated'
 
   const {
-    data: { data: joinOrgs } = {},
+    data: { data: internalJoinedOrgs } = { data: [] },
     isPending,
     refetch,
   } = useFetchJoinedOrgs({
-    allowFetch: status === 'authenticated',
+    allowFetch: !isAuthenticating,
+    emptyReturn: isUnthenticated,
   })
 
-  const [internalJoinedOrgs, setInternalJoinedOrgs] = useState<Organization[] | undefined>(joinOrgs)
+  const isLoadingOrganization = isAuthenticating || isPending
 
-  useEffect(() => {
-    setInternalJoinedOrgs(joinOrgs)
-  }, [joinOrgs])
-
-  // check Is Loading org
-  useEffect(() => {
-    setLoadingOrganization(isPending && allowFetchOrgs)
-  }, [allowFetchOrgs, isPending])
+  const currentUserRole = useMemo(
+    () =>
+      isLoadingOrganization || !selectedOrg
+        ? undefined
+        : getUserOrgPermission(selectedOrg, data?.user.pk_id ?? -1),
+    [data?.user.pk_id, isLoadingOrganization, selectedOrg],
+  )
 
   // check isNavigating
   useEffect(() => {
@@ -78,22 +70,16 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     if (!internalJoinedOrgs || selectedOrg) return
     // FIXME: implement select most recent visit org
-    const selectOrg =
-      internalJoinedOrgs.find(
-        (org) =>
-          org.slug === orgSlug && getUserOrgPermission(org, data?.user.pk_id ?? -1) !== undefined,
-      ) ||
-      internalJoinedOrgs.find((org) => {
-        return getUserOrgPermission(org, data?.user.pk_id ?? -1) === ORG_ROLES.OWNER
-      }) ||
-      internalJoinedOrgs.find((org) => {
-        return getUserOrgPermission(org, data?.user.pk_id ?? -1) !== ORG_ROLES.OWNER
-      })
+    const selectOrg = internalJoinedOrgs.find(
+      (org) =>
+        (org.slug === orgSlug && getUserOrgPermission(org, data?.user.pk_id ?? -1) !== undefined) ||
+        true,
+    )
     setOrg(selectOrg)
 
     // Navigate if need
-    if (!selectOrg && !orgSlug) return
-    if (!selectOrg && orgSlug) {
+    if (!orgSlug) return
+    if (!selectOrg) {
       router.push(ROUTES.HOME_PAGE)
       setIsNavigating(true)
       return
@@ -106,26 +92,25 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
 
   // Redirect back to org if already selected org
   useEffect(() => {
-    if (!selectedOrg || status === 'unauthenticated') return
+    if (!selectedOrg || isUnthenticated) return
     if (selectedOrg?.slug !== orgSlug) {
       router.push(ROUTES.ORGANIZATION({ orgSlug: selectedOrg.slug }))
       setIsNavigating(true)
     }
-  }, [orgSlug, router, selectedOrg, status])
+  }, [orgSlug, isUnthenticated, router, selectedOrg, status])
 
   useEffect(() => {
-    if (status === 'unauthenticated' && prevStatus !== status) {
+    if (isUnthenticated && prevStatus !== status) {
       setOrg(undefined)
-      setInternalJoinedOrgs(undefined)
     }
-  }, [prevStatus, status])
+  }, [prevStatus, status, isUnthenticated])
 
   return (
     <Provider
       value={{
         organization: selectedOrg,
-        isLoadingOrganization: loadingOrganization,
         refetchOrgs: refetch,
+        isLoadingOrganization,
         isNavigating,
         currentUserRole,
       }}

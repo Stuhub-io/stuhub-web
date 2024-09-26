@@ -37,20 +37,33 @@ export const AuthGuard = (props: AuthGuardProps) => {
   }, [data?.user.accessToken])
 
   useEffect(() => {
+    if (status === 'unauthenticated' && !!from) {
+      console.log('1 ', from)
+      router.push(`${ROUTES.SIGNIN_PAGE}?from=${from}`)
+      servicesGuard.clearAuthToken()
+      queryClient.clear()
+      return
+    }
     if (status === 'unauthenticated' && !publicRoutes.includes(pathName)) {
+      console.log('2 ', from)
       router.push(`${ROUTES.SIGNIN_PAGE}?from=${pathName}`)
       servicesGuard.clearAuthToken()
       queryClient.clear()
       return
     }
-    if (status === 'authenticated' && authRoutes.includes(pathName)) {
-      if (from) {
-        router.push(from)
-        return
-      }
-      router.push(ROUTES.HOME_PAGE)
+    if (status === 'authenticated' && !!from) {
+      console.log('3 ', from)
+      router.push(from)
       return
     }
+    // if (status === 'authenticated' && authRoutes.includes(pathName)) {
+    //   if (from) {
+    //     router.push(from)
+    //     return
+    //   }
+    //   router.push(ROUTES.HOME_PAGE)
+    //   return
+    // }
   }, [from, pathName, queryClient, router, status])
 
   const isLoading =
