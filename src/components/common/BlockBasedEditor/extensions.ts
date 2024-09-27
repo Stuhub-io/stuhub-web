@@ -139,7 +139,7 @@ const twitter = Twitter.configure({
 
 const mathematics = Mathematics.configure({
   HTMLAttributes: {
-    class: cx("text-foreground rounded p-1 hover:bg-accent cursor-pointer"),
+    class: cx("text-foreground rounded p-1 hover:bg-default cursor-pointer"),
   },
   katexOptions: {
     throwOnError: false,

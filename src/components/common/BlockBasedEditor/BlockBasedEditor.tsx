@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  EditorBubble,
   EditorCommand,
   EditorCommandEmpty,
   EditorCommandItem,
@@ -23,7 +22,8 @@ import { LinkSelector } from './selectors/link-selector'
 import { MathSelector } from './selectors/math-selector'
 import { NodeSelector } from './selectors/node-selector'
 import { TextButtons } from './selectors/text-buttons'
-import { Divider } from '@nextui-org/react'
+import { ButtonGroup, Divider } from '@nextui-org/react'
+import EditorBubbleCommands from './EditorBubleCommand'
 
 // const hljs = require('highlight.js');
 
@@ -41,16 +41,16 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
   const [openColor, setOpenColor] = useState(false)
   const [openLink, setOpenLink] = useState(false)
 
-  //   //Apply Codeblock Highlighting on the HTML from editor.getHTML()
-  //   const highlightCodeblocks = (content: string) => {
-  //     const doc = new DOMParser().parseFromString(content, 'text/html');
-  //     doc.querySelectorAll('pre code').forEach((el) => {
-  //       // @ts-ignore
-  //       // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
-  //       hljs.highlightElement(el);
-  //     });
-  //     return new XMLSerializer().serializeToString(doc);
-  //   };
+  //Apply Codeblock Highlighting on the HTML from editor.getHTML()
+  // const highlightCodeblocks = (content: string) => {
+  //   const doc = new DOMParser().parseFromString(content, 'text/html');
+  //   doc.querySelectorAll('pre code').forEach((el) => {
+  //     // @ts-ignore
+  //     // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
+  //     hljs.highlightElement(el);
+  //   });
+  //   return new XMLSerializer().serializeToString(doc);
+  // };
 
   return (
     <EditorRoot>
@@ -58,6 +58,7 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
         autofocus
         initialContent={jsonContent}
         extensions={extensions}
+        className="relative"
         editorProps={{
           handleDOMEvents: {
             keydown: (_view, event) => handleCommandNavigation(event),
@@ -95,11 +96,12 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
               </EditorCommandItem>
             ))}
           </EditorCommandList>
-          <EditorBubble>
-            <Divider orientation="vertical" />
+        </EditorCommand>
+
+        <EditorBubbleCommands>
+          <ButtonGroup size="md">
             <NodeSelector open={openNode} onOpenChange={setOpenNode} />
             <Divider orientation="vertical" />
-
             <LinkSelector open={openLink} onOpenChange={setOpenLink} />
             <Divider orientation="vertical" />
             <MathSelector />
@@ -107,8 +109,8 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
             <TextButtons />
             <Divider orientation="vertical" />
             <ColorSelector open={openColor} onOpenChange={setOpenColor} />
-          </EditorBubble>
-        </EditorCommand>
+          </ButtonGroup>
+        </EditorBubbleCommands>
       </EditorContent>
     </EditorRoot>
   )

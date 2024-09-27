@@ -13,7 +13,7 @@ export const PageLayout = (props: PageLayoutProps) => {
         <div className="flex-1 overflow-hidden">{breadCrumb}</div>
         <div className="flex flex-shrink-0 items-center justify-end pl-8">{rightEl}</div>
       </header>
-      <main className="w-full flex-1 overflow-y-auto px-4">
+      <main className="w-full flex-1 overflow-y-auto px-4 overflow-x-hidden">
         <div className="mx-auto h-fit w-full max-w-[800px]">{children}</div>
       </main>
     </div>
