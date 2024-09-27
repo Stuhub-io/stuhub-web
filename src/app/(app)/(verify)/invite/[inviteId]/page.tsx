@@ -6,6 +6,7 @@ import { organizationService } from '@/api/organization'
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { UploadButton } from '@/libs/uploadthing'
 
 export default function ValidateOrgInvite() {
   const { data } = useSession()
@@ -28,5 +29,20 @@ export default function ValidateOrgInvite() {
   //   return null
   // }
 
-  return <div>hello</div>
+  return (
+    <div>
+      <UploadButton
+        endpoint="imageUploader"
+        onClientUploadComplete={(res) => {
+          // Do something with the response
+          console.log('Files: ', res)
+          alert('Upload Completed')
+        }}
+        onUploadError={(error: Error) => {
+          // Do something with the error.
+          alert(`ERROR! ${error.message}`)
+        }}
+      />
+    </div>
+  )
 }
