@@ -1,6 +1,5 @@
 import { pageService } from "@/api/page";
 import { QUERY_KEYS } from "@/mutation/keys";
-import { Page } from "@/schema/page";
 import { useQuery } from "@tanstack/react-query";
 
 export interface UseFetchPages { 
@@ -8,12 +7,9 @@ export interface UseFetchPages {
     pageID: string
 }
 
-export interface IPageData {
-    list: Page[]
-    map: Record<number, Page>
-}
-
-export const useFetchPage = (args: UseFetchPages) => {
+export const useFetchPage = (args: UseFetchPages, option?: {
+    refetchOnMount?: boolean
+}) => {
     const {allowFetch = true, pageID} = args
     return useQuery({
         queryKey: QUERY_KEYS.GET_PAGE({
@@ -21,5 +17,7 @@ export const useFetchPage = (args: UseFetchPages) => {
         }),
         queryFn: async () => pageService.getPageByID(pageID),
         enabled: allowFetch,
+        structuralSharing: false,
+        ...option
     })
 }

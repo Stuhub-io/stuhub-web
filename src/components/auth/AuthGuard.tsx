@@ -5,7 +5,6 @@ import { ROUTES } from '@/constants/routes'
 import { useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { PropsWithChildren, useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import { SplashAppLogo } from '../common/SplashAppLogo'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -69,21 +68,14 @@ export const AuthGuard = (props: AuthGuardProps) => {
 
   return (
     <>
-      {
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              key="splash-screen"
-              initial={false}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed flex h-[100dvh] w-full flex-col items-center justify-center"
-            >
-              <SplashAppLogo />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      }
+      {isLoading && (
+        <div
+          key="splash-screen"
+          className="fixed flex h-[100dvh] w-full flex-col items-center justify-center"
+        >
+          <SplashAppLogo />
+        </div>
+      )}
       {!isLoading ? children : null}
     </>
   )

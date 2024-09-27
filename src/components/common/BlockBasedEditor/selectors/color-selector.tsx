@@ -1,173 +1,181 @@
-import { EditorBubbleItem, useEditor } from "novel";
+import { EditorBubbleItem, useEditor } from 'novel'
 
-import { Button } from "@nextui-org/react";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react";
-import { RiCheckLine, RiArrowDownLine } from "react-icons/ri";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownSection,
+  DropdownTrigger,
+} from '@nextui-org/react'
+import { RiCheckLine, RiArrowDownSLine } from 'react-icons/ri'
+import { cn } from '@/libs/utils'
 export interface BubbleColorMenuItem {
-  name: string;
-  color: string;
+  name: string
+  color: string
 }
 
 const TEXT_COLORS: BubbleColorMenuItem[] = [
   {
-    name: "Default",
-    color: "var(--novel-black)",
+    name: 'Default',
+    color: 'var(--novel-black)',
   },
   {
-    name: "Purple",
-    color: "#9333EA",
+    name: 'Purple',
+    color: '#9f7aea', // Tailwind Purple 500
   },
   {
-    name: "Red",
-    color: "#E00000",
+    name: 'Red',
+    color: '#f56565', // Tailwind Red 500
   },
   {
-    name: "Yellow",
-    color: "#EAB308",
+    name: 'Yellow',
+    color: '#ecc94b', // Tailwind Yellow 500
   },
   {
-    name: "Blue",
-    color: "#2563EB",
+    name: 'Blue',
+    color: '#4299e1', // Tailwind Blue 500
   },
   {
-    name: "Green",
-    color: "#008A00",
+    name: 'Green',
+    color: '#48bb78', // Tailwind Green 500
   },
   {
-    name: "Orange",
-    color: "#FFA500",
+    name: 'Orange',
+    color: '#ed8936', // Tailwind Orange 500
   },
   {
-    name: "Pink",
-    color: "#BA4081",
+    name: 'Pink',
+    color: '#ed64a6', // Tailwind Pink 500
   },
   {
-    name: "Gray",
-    color: "#A8A29E",
+    name: 'Gray',
+    color: '#a0aec0', // Tailwind Gray 500
   },
-];
+]
 
 const HIGHLIGHT_COLORS: BubbleColorMenuItem[] = [
   {
-    name: "Default",
-    color: "var(--novel-highlight-default)",
+    name: 'Default',
+    color: 'var(--novel-highlight-default)',
   },
   {
-    name: "Purple",
-    color: "var(--novel-highlight-purple)",
+    name: 'Purple',
+    color: '#b794f4', // Tailwind Purple 400
   },
   {
-    name: "Red",
-    color: "var(--novel-highlight-red)",
+    name: 'Red',
+    color: '#fc8181', // Tailwind Red 400
   },
   {
-    name: "Yellow",
-    color: "var(--novel-highlight-yellow)",
+    name: 'Yellow',
+    color: '#f6e05e', // Tailwind Yellow 400
   },
   {
-    name: "Blue",
-    color: "var(--novel-highlight-blue)",
+    name: 'Blue',
+    color: '#63b3ed', // Tailwind Blue 400
   },
   {
-    name: "Green",
-    color: "var(--novel-highlight-green)",
+    name: 'Green',
+    color: '#68d391', // Tailwind Green 400
   },
   {
-    name: "Orange",
-    color: "var(--novel-highlight-orange)",
+    name: 'Orange',
+    color: '#f6ad55', // Tailwind Orange 400
   },
   {
-    name: "Pink",
-    color: "var(--novel-highlight-pink)",
+    name: 'Pink',
+    color: '#f687b3', // Tailwind Pink 400
   },
   {
-    name: "Gray",
-    color: "var(--novel-highlight-gray)",
+    name: 'Gray',
+    color: '#cbd5e0', // Tailwind Gray 400
   },
-];
+]
 
 interface ColorSelectorProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
 export const ColorSelector = ({ open, onOpenChange }: ColorSelectorProps) => {
-  const { editor } = useEditor();
+  const { editor } = useEditor()
 
-  if (!editor) return null;
-  const activeColorItem = TEXT_COLORS.find(({ color }) => editor.isActive("textStyle", { color }));
+  if (!editor) return null
+  const activeColorItem = TEXT_COLORS.find(({ color }) => editor.isActive('textStyle', { color }))
 
-  const activeHighlightItem = HIGHLIGHT_COLORS.find(({ color }) => editor.isActive("highlight", { color }));
+  const activeHighlightItem = HIGHLIGHT_COLORS.find(({ color }) =>
+    editor.isActive('highlight', { color }),
+  )
 
   return (
-    <Popover isOpen={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger>
-        <Button size="sm" className="gap-2 rounded-none" variant="ghost">
-          <span
-            className="rounded-sm px-1"
-            style={{
-              color: activeColorItem?.color,
-              backgroundColor: activeHighlightItem?.color,
-            }}
-          >
-            A
-          </span>
-          <RiArrowDownLine size={16}/>
+    <Dropdown isOpen={open} onOpenChange={onOpenChange}>
+      <DropdownTrigger>
+        <Button
+          variant="light"
+          style={{
+            color: activeColorItem?.color,
+            backgroundColor: activeHighlightItem?.color,
+          }}
+          endContent={<RiArrowDownSLine />}
+        >
+          A
         </Button>
-      </PopoverTrigger>
-
-      <PopoverContent
-        className="my-1 flex max-h-80 w-48 flex-col overflow-hidden overflow-y-auto rounded border p-1 shadow-xl "
-      >
-        <div className="flex flex-col">
-          <div className="my-1 px-2 text-sm font-semibold text-muted-foreground">Color</div>
-          {TEXT_COLORS.map(({ name, color }) => (
-            <EditorBubbleItem
+      </DropdownTrigger>
+      <DropdownMenu variant="flat" className="max-h-96 overflow-y-auto">
+        <DropdownSection title="Color">
+          {TEXT_COLORS.map(({ name, color }, index) => (
+            <DropdownItem
+              as={EditorBubbleItem}
               key={name}
+              showDivider={index === TEXT_COLORS.length - 1}
               onSelect={() => {
-                editor.commands.unsetColor();
-                name !== "Default" &&
+                editor.commands.unsetColor()
+                name !== 'Default' &&
                   editor
                     .chain()
                     .focus()
-                    .setColor(color || "")
-                    .run();
-                onOpenChange(false);
+                    .setColor(color || '')
+                    .run()
+                onOpenChange(false)
               }}
-              className="flex cursor-pointer items-center justify-between px-2 py-1 text-sm hover:bg-accent"
-            >
-              <div className="flex items-center gap-2">
-                <div className="rounded-sm border px-2 py-px font-medium" style={{ color }}>
+              startContent={
+                <div className="px-1 text-sm" style={{ color }}>
                   A
                 </div>
-                <span>{name}</span>
-              </div>
-            </EditorBubbleItem>
+              }
+            >
+              {name}
+            </DropdownItem>
           ))}
-        </div>
-        <div>
-          <div className="my-1 px-2 text-sm font-semibold text-muted-foreground">Background</div>
+        </DropdownSection>
+        <DropdownSection title="Background">
           {HIGHLIGHT_COLORS.map(({ name, color }) => (
-            <EditorBubbleItem
+            <DropdownItem
               key={name}
+              as={EditorBubbleItem}
               onSelect={() => {
-                editor.commands.unsetHighlight();
-                name !== "Default" && editor.chain().focus().setHighlight({ color }).run();
-                onOpenChange(false);
+                editor.commands.unsetHighlight()
+                name !== 'Default' && editor.chain().focus().setHighlight({ color }).run()
+                onOpenChange(false)
               }}
-              className="flex cursor-pointer items-center justify-between px-2 py-1 text-sm hover:bg-accent"
-            >
-              <div className="flex items-center gap-2">
-                <div className="rounded-sm border px-2 py-px font-medium" style={{ backgroundColor: color }}>
+              startContent={
+                <div
+                  className={cn('rounded-sm px-1 text-sm text-black', {
+                    'text-default-foreground': name === 'Default',
+                  })}
+                  style={{ backgroundColor: color }}
+                >
                   A
                 </div>
-                <span>{name}</span>
-              </div>
-              {editor.isActive("highlight", { color }) && <RiCheckLine className="h-4 w-4" />}
-            </EditorBubbleItem>
+              }
+              endContent={editor.isActive('highlight', { color }) && <RiCheckLine />}
+            >
+              {name}
+            </DropdownItem>
           ))}
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-};
+        </DropdownSection>
+      </DropdownMenu>
+    </Dropdown>
+  )
+}

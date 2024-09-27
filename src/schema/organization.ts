@@ -9,7 +9,7 @@ export interface CreateOrgnizationRequestBody {
 
 // Body, Params, ...
 export interface Organization {
-  pk_id: number
+  pkid: number
   id: string
   owner_id: number
   name: string
@@ -24,13 +24,12 @@ export interface Organization {
 export type OrgRole = 'owner' | 'member'
 
 export interface OrgMember {
-  pk_id: number
+  pkid: number
   organization_pkid: number
   user_pkid: number
   role: OrgRole
   created_at: string
   updated_at: string
-  activated_at: string
   user: User | null
 }
 

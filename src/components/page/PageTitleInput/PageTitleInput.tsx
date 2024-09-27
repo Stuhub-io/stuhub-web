@@ -1,40 +1,47 @@
 import { TextAreaNoBackground } from '@/components/common/TextAreaNoBackground'
 import { useSidebar } from '@/components/providers/sidebar'
-import { useDebounce, useThrottledCallback } from 'use-debounce'
+import { useDebouncedCallback } from 'use-debounce'
 import { useToast } from '@/hooks/useToast'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
-import { Page } from '@/schema/page'
 import { Button, Skeleton } from '@nextui-org/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { RiUserSmileFill, RiImage2Fill } from 'react-icons/ri'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
+import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 
 export interface PageTitleProps {
-  page?: Page
-  loading?: boolean
+  pageID: string
 }
 
 export const PageTitle = (props: PageTitleProps) => {
-  const { page, loading } = props
+  const { pageID } = props
+
+  const { isRefetching, data: { data: page } = {}, isPending } = useFetchPage({
+    pageID,
+  })
+
   const [title, setTitle] = useState(page?.name ?? 'Untitled')
+  const [isFocus, setFocus] = useState(false)
+
   const { refreshPrivatePages, privateSpace } = useSidebar()
+  const willUpdatePage = useRef(false)
+
   const { mutateAsync: updatePage } = useUpdatePage({ id: page?.id ?? '' })
+
   const { toast } = useToast()
   const queryClient = useQueryClient()
 
-  const thorttleUpdateTitle = useThrottledCallback(
-    async () => {
+  const updatePageTitle = useCallback(
+    async (name: string) => {
       if (!page) return
       try {
         await updatePage({
-          uuid: page.id,
-          name: title,
-          view_type: page.view_type,
-          parent_page_pk_id: page.parent_page_pkid,
+          ...page,
+          name,
         })
 
-        if (page.space_pkid === privateSpace?.pk_id) {
+        if (page.space_pkid === privateSpace?.pkid) {
           refreshPrivatePages()
         }
 
@@ -43,35 +50,41 @@ export const PageTitle = (props: PageTitleProps) => {
             pageID: page.id,
           }),
         })
+        // reset title after revalidate
       } catch (e) {
         toast({
           variant: 'danger',
           title: 'Failed to update page',
         })
       }
+      willUpdatePage.current = false
     },
-    1500,
-    {
-      trailing: true,
-    },
+    [page, privateSpace?.pkid, queryClient, refreshPrivatePages, toast, updatePage],
   )
 
-  const [debounceTitle] = useDebounce(title, 1000)
-  const [debouncePageName] = useDebounce(page?.name, 1000)
+  const thorttleUpdateTitle = useDebouncedCallback(updatePageTitle, 500, {
+    trailing: true,
+  })
+
+  const onTitleChange = (newTitle: string) => {
+    setTitle(newTitle)
+    if (!focus) {
+      return
+    }
+    willUpdatePage.current = true
+    thorttleUpdateTitle(newTitle)
+  }
 
   useEffect(() => {
-    if (debounceTitle !== debouncePageName) return
-    setTitle(debouncePageName ?? 'Untitled')
-  }, [debouncePageName, debounceTitle])
-
-  useEffect(() => {
-    thorttleUpdateTitle()
-  }, [thorttleUpdateTitle, title])
+    if (!isFocus && page && !isRefetching && !willUpdatePage.current) {
+      setTitle(page.name)
+    }
+  }, [isFocus, isRefetching, page])
 
   return (
     <div className="group">
       <div className="h-8 opacity-0 transition duration-200 group-hover:opacity-100">
-        {!loading && (
+        {!isPending && (
           <div className="hidden gap-1 opacity-60 group-hover:flex">
             <Button startContent={<RiUserSmileFill size={16} />} size="sm" variant="light">
               Add icons
@@ -82,16 +95,21 @@ export const PageTitle = (props: PageTitleProps) => {
           </div>
         )}
       </div>
-      {loading ? (
+      {isPending ? (
         <div>
-          <Skeleton className="h-[54px] w-[300px] rounded-medium" />
+          <Skeleton className="h-[54px] w-[300px] rounded-medium mx-3" />
         </div>
       ) : (
         <TextAreaNoBackground
+          disabled={isRefetching && !isFocus}
+          onFocus={() => setFocus(true)}
+          onBlur={() => {
+            setFocus(false)
+          }}
           minRows={1}
           placeholder="Untitled"
           value={title}
-          onValueChange={setTitle}
+          onValueChange={onTitleChange}
           autoFocus
           classNames={{
             input: 'text-5xl font-semibold',

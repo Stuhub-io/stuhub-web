@@ -23,8 +23,8 @@ class PageService extends Client {
             headers: this.privateHeaders
         })
     }
-    public updatePageByID({uuid, ...body}: UpdatePageRequestBody & {uuid: string}){
-        return fetcher<BaseResponse<Page>>(`${this.baseUrl}/v1/page-services/pages/${uuid}`,{
+    public updatePageByID({id, ...body}: UpdatePageRequestBody & {id: string}){
+        return fetcher<BaseResponse<Page>>(`${this.baseUrl}/v1/page-services/pages/${id}`,{
             method: 'PUT',
             headers: this.privateHeaders,
             body: JSON.stringify(body)

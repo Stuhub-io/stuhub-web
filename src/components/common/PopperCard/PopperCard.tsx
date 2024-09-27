@@ -1,39 +1,73 @@
-import { Tooltip } from '@nextui-org/react'
-import { PropsWithChildren, ReactNode, useEffect, useState } from 'react'
+import useMergeRefs from '@/hooks/useMergeRefs'
+import { Tooltip, TooltipProps } from '@nextui-org/react'
+import {
+  Children,
+  cloneElement,
+  ComponentRef,
+  forwardRef,
+  PropsWithChildren,
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useId,
+  useState,
+} from 'react'
 
-interface PopperCardProps {
+interface PopperCardProps extends TooltipProps {
   isOpen?: boolean
   onClose?: () => void
-  renderContent: (setAnchorEl: (el: HTMLElement | null) => void) => ReactNode
+  renderContent: (setAnchorEl: (el: HTMLElement | null) => void, tabIndex: number) => ReactNode
 }
 
-export const PopperCard = (props: PropsWithChildren<PopperCardProps>) => {
-  const { isOpen, renderContent, children, onClose } = props
-  const [contentRef, setContentRef] = useState<HTMLElement | null>(null)
+export const PopperCard = forwardRef<ComponentRef<typeof Tooltip>, PopperCardProps>(
+  (props: PropsWithChildren<PopperCardProps>, ref) => {
+    const { isOpen, renderContent, children, onClose, ...tooltipProps } = props
+    const [contentRef, setContentRef] = useState<HTMLElement | null>(null)
+    const id = useId()
 
-  useEffect(() => {
-    const handleOutSideClick: EventListener = (event) => {
-      if (!contentRef?.contains(event.target as Node)) {
-        onClose?.()
+    const child = Children.only(children) as ReactElement
+    const mergedRef = useMergeRefs(ref, child.props.ref)
+
+    useEffect(() => {
+      const handleOutSideClick: EventListener = (event) => {
+        if (!contentRef?.contains(event.target as Node)) {
+          onClose?.()
+        }
       }
-    }
-    window.addEventListener('mousedown', handleOutSideClick)
+      const handleEscape: EventListener = (event: any) => {
+        if (event.key === 'Escape') {
+          onClose?.()
+        }
+      }
+      window.addEventListener('mouseup', handleOutSideClick)
+      document.addEventListener('keyup', handleEscape)
 
-    return () => {
-      window.removeEventListener('mousedown', handleOutSideClick)
-    }
-  }, [contentRef, onClose])
+      return () => {
+        window.removeEventListener('mouseup', handleOutSideClick)
+        document.removeEventListener('keyup', handleEscape)
+      }
+    }, [contentRef, id, onClose])
 
-  return (
-    <Tooltip
-      isOpen={isOpen}
-      content={renderContent(setContentRef)}
-      autoFocus={false}
-      classNames={{
-        content: 'p-0 bg-transparent border-none',
-      }}
-    >
-      {children}
-    </Tooltip>
-  )
-}
+    const renderChild = cloneElement(child as ReactElement, {
+      ...(child as ReactElement).props,
+      ref: mergedRef,
+    })
+
+    return (
+      <Tooltip
+        {...tooltipProps}
+        isOpen={isOpen}
+        content={renderContent(setContentRef, 0)}
+        autoFocus
+        classNames={{
+          content: 'p-0 bg-transparent border-none',
+          base: `popper${String(id)}`,
+        }}
+      >
+        {renderChild}
+      </Tooltip>
+    )
+  },
+)
+
+PopperCard.displayName = 'PopperCard'

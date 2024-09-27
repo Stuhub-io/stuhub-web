@@ -58,8 +58,8 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     () =>
       isLoadingOrganization || !selectedOrg
         ? undefined
-        : getUserOrgPermission(selectedOrg, data?.user.pk_id ?? -1),
-    [data?.user.pk_id, isLoadingOrganization, selectedOrg],
+        : getUserOrgPermission(selectedOrg, data?.user.pkid ?? -1),
+    [data?.user.pkid, isLoadingOrganization, selectedOrg],
   )
 
   // check isNavigating
@@ -79,7 +79,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     // FIXME: implement select most recent visit org
     const selectOrg = internalJoinedOrgs.find(
       (org) =>
-        (org.slug === orgSlug && getUserOrgPermission(org, data?.user.pk_id ?? -1) !== undefined) ||
+        (org.slug === orgSlug && getUserOrgPermission(org, data?.user.pkid ?? -1) !== undefined) ||
         true,
     )
     setSelectedOrg(selectOrg)
@@ -96,7 +96,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
       router.push(ROUTES.ORGANIZATION({ orgSlug: selectOrg?.slug ?? '' }))
       setIsNavigating(true)
     }
-  }, [data?.user.pk_id, internalJoinedOrgs, orgSlug, router, selectedOrg, from])
+  }, [data?.user.pkid, internalJoinedOrgs, orgSlug, router, selectedOrg, from])
 
   // Redirect back to org if already selected org
   useEffect(() => {

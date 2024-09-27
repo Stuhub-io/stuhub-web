@@ -12,7 +12,6 @@ interface PageProviderValues {
   onSelectPage: (page: Page) => void
   isLoading: boolean
   isRedirecting?: boolean
-  refetchCurrentPage?: () => void
 }
 
 const [Provider, usePageContext] = createContext<PageProviderValues>({
@@ -36,9 +35,15 @@ export const PageProvider = ({ children }: PropsWithChildren) => {
   })
 
   const activePage = useMemo(() => {
-    return data || selectedPage
-  }, [selectedPage, data])
-  
+    if (!pageID) return undefined
+    const dataUpdatedAt =  new Date(data?.updated_at ?? "")
+    const selectedUpdatedAt = new Date(selectedPage?.updated_at ?? "")
+    if (!selectedPage || dataUpdatedAt > selectedUpdatedAt) {
+      return data
+    }
+    return selectedPage
+  }, [pageID, data, selectedPage])
+
   const onSelectPage = useCallback(
     (page: Page) => {
       if (page.id === selectedPage?.id) return
@@ -70,7 +75,12 @@ export const PageProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <Provider
-      value={{ onSelectPage, isLoading: !activePage, currentPage: activePage, isRedirecting, refetchCurrentPage: () => {} }}
+      value={{
+        onSelectPage,
+        isLoading: !activePage,
+        currentPage: activePage,
+        isRedirecting,
+      }}
     >
       {children}
     </Provider>
