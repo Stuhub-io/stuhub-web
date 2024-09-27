@@ -5,7 +5,7 @@ import { useFetchJoinedOrgs } from '@/mutation/querier/useFetchJoinedOrgs'
 import { Organization, OrgRole } from '@/schema/organization'
 import { getUserOrgPermission } from '@/utils/organization'
 import { useSession } from 'next-auth/react'
-import { useParams, usePathname, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
 interface OrganizationProviderValues {
@@ -16,6 +16,8 @@ interface OrganizationProviderValues {
   currentUserRole?: OrgRole
   refetchOrgs: () => void
 }
+
+const WHITELIST = [ROUTES.INVITE_PAGE]
 
 const [Provider, useOrganization] = createContext<OrganizationProviderValues>({
   name: 'OrganizationContext',
@@ -30,18 +32,23 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter()
   const prevStatus = usePrevious(status)
 
-  const [selectedOrg, setOrg] = useState<Organization>()
+  const [selectedOrg, setSelectedOrg] = useState<Organization>()
   const [isNavigating, setIsNavigating] = useState(false)
 
   const isAuthenticating = status == 'loading'
   const isUnthenticated = status == 'unauthenticated'
+
+  const searchParams = useSearchParams()
+  const from = searchParams.get('from')
+
+  const isInWhitelist = WHITELIST.some((path) => pathName.includes(path))
 
   const {
     data: { data: internalJoinedOrgs } = { data: [] },
     isPending,
     refetch,
   } = useFetchJoinedOrgs({
-    allowFetch: !isAuthenticating,
+    allowFetch: !isAuthenticating && !isInWhitelist,
     emptyReturn: isUnthenticated,
   })
 
@@ -75,7 +82,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
         (org.slug === orgSlug && getUserOrgPermission(org, data?.user.pk_id ?? -1) !== undefined) ||
         true,
     )
-    setOrg(selectOrg)
+    setSelectedOrg(selectOrg)
 
     // Navigate if need
     if (!orgSlug) return
@@ -84,11 +91,12 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
       setIsNavigating(true)
       return
     }
+
     if (selectOrg?.slug !== orgSlug) {
       router.push(ROUTES.ORGANIZATION({ orgSlug: selectOrg?.slug ?? '' }))
       setIsNavigating(true)
     }
-  }, [data?.user.pk_id, internalJoinedOrgs, orgSlug, router, selectedOrg])
+  }, [data?.user.pk_id, internalJoinedOrgs, orgSlug, router, selectedOrg, from])
 
   // Redirect back to org if already selected org
   useEffect(() => {
@@ -97,11 +105,11 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
       router.push(ROUTES.ORGANIZATION({ orgSlug: selectedOrg.slug }))
       setIsNavigating(true)
     }
-  }, [orgSlug, isUnthenticated, router, selectedOrg, status])
+  }, [orgSlug, isUnthenticated, router, selectedOrg, status, from])
 
   useEffect(() => {
     if (isUnthenticated && prevStatus !== status) {
-      setOrg(undefined)
+      setSelectedOrg(undefined)
     }
   }, [prevStatus, status, isUnthenticated])
 

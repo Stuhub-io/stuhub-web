@@ -52,6 +52,7 @@ class OrganizationService extends Client {
   }
 
   public validateOrgInvite(body: ValidateOrgInviteRequestBody) {
+    console.log(this.privateHeaders)
     return fetcher<BaseResponse<ValidateOrgInviteResponse>>(
       `${this.baseUrl}/v1/organization-services/invite-validate`,
       {
