@@ -6,11 +6,19 @@ import { RiCheckLine } from 'react-icons/ri'
 
 type SearchActionsProps = {
   role: string
+  isLoading: boolean
+  disableSubmit: boolean
   setRole: (value: OrgRole) => void
   submitInvitations: () => void
 }
 
-export const SearchActions = ({ role, setRole, submitInvitations }: SearchActionsProps) => {
+export const SearchActions = ({
+  role,
+  isLoading,
+  disableSubmit,
+  setRole,
+  submitInvitations,
+}: SearchActionsProps) => {
   return (
     <div className="flex w-fit py-1 pl-1 pr-2">
       <Dropdown>
@@ -24,23 +32,29 @@ export const SearchActions = ({ role, setRole, submitInvitations }: SearchAction
             {role}
           </Button>
         </DropdownTrigger>
-        <DropdownMenu
-          className="p-0"
-        >
+        <DropdownMenu className="p-0">
           {Object.values(ORG_ROLES).map((item) => (
-            <DropdownItem key={item} as={Button}
-              className="capitalize text-left"
+            <DropdownItem
+              key={item}
+              as={Button}
+              className="text-left capitalize"
               variant="light"
               endContent={item === role ? <RiCheckLine /> : null}
               onClick={() => setRole(item)}
             >
-                {item}
-              {/* </Button> */}
+              {item}
             </DropdownItem>
           ))}
         </DropdownMenu>
       </Dropdown>
-      <Button color="primary" className="my-auto ml-2" radius="sm" onClick={submitInvitations}>
+      <Button
+        isLoading={isLoading}
+        isDisabled={disableSubmit}
+        color="primary"
+        className="my-auto ml-2"
+        radius="sm"
+        onClick={submitInvitations}
+      >
         Invite
       </Button>
     </div>

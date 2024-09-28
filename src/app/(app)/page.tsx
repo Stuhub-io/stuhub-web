@@ -9,7 +9,7 @@ import { OnboardingFormValues, OnboardingSchema } from '@/components/onboarding/
 import { useOrganization } from '@/components/providers/organization'
 import { useToast } from '@/hooks/useToast'
 import { cn } from '@/libs/utils'
-import { useCreateOrg } from '@/mutation/mutator/useCreateOrg'
+import { useCreateOrg } from '@/mutation/mutator/organization/useCreateOrg'
 import { useUpdateUserInfo } from '@/mutation/mutator/useUpdateUserInfo'
 import { getUserFullName } from '@/utils/user'
 import { zodResolver } from '@hookform/resolvers/zod'
