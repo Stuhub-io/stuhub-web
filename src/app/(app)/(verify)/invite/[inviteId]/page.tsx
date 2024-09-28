@@ -34,7 +34,7 @@ export default function ValidateOrgInvite() {
     expired_at,
     organization: { name, slug, avatar, owner, members },
   } = data.data
-  console.log(data, user)
+
   if (is_used || user_pkid != user?.user.pk_id || dayjs().isAfter(dayjs(expired_at))) {
     return <UnavailableInviteCard />
   }
