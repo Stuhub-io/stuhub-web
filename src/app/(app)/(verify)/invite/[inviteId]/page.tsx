@@ -1,48 +1,48 @@
 'use client'
 
 import { OrganizationInviteParams } from '@/constants/routes'
-import { organizationService } from '@/api/organization'
-// import { useSession } from 'next-auth/react'
+import { OrgInviteCard } from '@/components/verify/invite'
+import { useFetchOrgInviteById } from '@/mutation/querier/organization/useFetchOrgInviteById'
+import { getUserFullName } from '@/utils/user'
+import { CircularProgress } from '@nextui-org/react'
 import { useParams } from 'next/navigation'
-import { useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import { UploadButton } from '@/libs/uploadthing'
 
 export default function ValidateOrgInvite() {
-  const { data } = useSession()
   const { inviteId } = useParams<Partial<OrganizationInviteParams>>()
 
-  useEffect(() => {
-    if (!inviteId || !data) return
-    const fetch = async () => {
-      try {
-        const res = await organizationService.validateOrgInvite({ token: inviteId })
-        console.log({ res })
-      } catch (error) {
-        console.log({ error })
-      }
-    }
-    fetch()
-  }, [inviteId, data])
+  const { data, isLoading } = useFetchOrgInviteById({
+    id: inviteId!,
+    allowFetch: !!inviteId,
+  })
 
-  // if (!res.data) {
-  //   return null
-  // }
+  if (isLoading) {
+    return <CircularProgress />
+  }
+
+  if (!data) {
+    return <p>Invalid invite</p>
+  }
+
+  const {
+    id,
+    organization: { name, avatar, owner, members },
+  } = data.data
+
+  const ownerFullname = getUserFullName({
+    firstName: owner?.first_name,
+    lastName: owner?.last_name,
+    email: owner?.email,
+  })
 
   return (
-    <div>
-      <UploadButton
-        endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          // Do something with the response
-          console.log('Files: ', res)
-          alert('Upload Completed')
-        }}
-        onUploadError={(error: Error) => {
-          // Do something with the error.
-          alert(`ERROR! ${error.message}`)
-        }}
+    <>
+      <OrgInviteCard
+        inviteId={id}
+        orgName={name}
+        orgAvatar={avatar}
+        ownerFullname={ownerFullname}
+        orgMembersLength={members.length}
       />
-    </div>
+    </>
   )
 }

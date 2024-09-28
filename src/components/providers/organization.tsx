@@ -1,7 +1,7 @@
 import { OrganizationParams, ROUTES } from '@/constants/routes'
 import { usePrevious } from '@/hooks/usePrev'
 import createContext from '@/libs/context'
-import { useFetchJoinedOrgs } from '@/mutation/querier/useFetchJoinedOrgs'
+import { useFetchJoinedOrgs } from '@/mutation/querier/organization/useFetchJoinedOrgs'
 import { Organization, OrgRole } from '@/schema/organization'
 import { getUserOrgPermission } from '@/utils/organization'
 import { useSession } from 'next-auth/react'

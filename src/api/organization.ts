@@ -4,6 +4,8 @@ import { BaseResponse } from '@/schema/base'
 import {
   CreateOrgnizationRequestBody,
   GetOrgBySlugParams,
+  GetOrgInviteByIdParams,
+  GetOrgInviteByIdResponse,
   InviteOrgMembersRequestBody,
   InviteOrgMembersResponse,
   Organization,
@@ -51,8 +53,17 @@ class OrganizationService extends Client {
     )
   }
 
+  public getOrgInviteByID({ id }: GetOrgInviteByIdParams) {
+    return fetcher<BaseResponse<GetOrgInviteByIdResponse>>(
+      `${this.baseUrl}/v1/organization-services/invite-details/${id}`,
+      {
+        method: 'GET',
+        headers: this.privateHeaders,
+      },
+    )
+  }
+
   public validateOrgInvite(body: ValidateOrgInviteRequestBody) {
-    console.log(this.privateHeaders)
     return fetcher<BaseResponse<ValidateOrgInviteResponse>>(
       `${this.baseUrl}/v1/organization-services/invite-validate`,
       {

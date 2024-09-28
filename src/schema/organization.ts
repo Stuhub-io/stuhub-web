@@ -18,6 +18,7 @@ export interface Organization {
   avatar: string
   created_at: string
   updated_at: string
+  owner: User | null
   members: OrgMember[]
 }
 
@@ -31,6 +32,17 @@ export interface OrgMember {
   created_at: string
   updated_at: string
   user: User | null
+}
+
+export interface OrgInvite {
+  pkid: number
+  id: string
+  user_pkid: number
+  organization_pkid: number
+  is_used: boolean
+  created_at: string
+  expired_at: string
+  organization: Organization
 }
 
 export interface GetOrgBySlugParams {
@@ -55,6 +67,12 @@ export interface InviteOrgMembersResponse {
   sent_emails: string[] | null
   failed_emails: string[] | null
 }
+
+export interface GetOrgInviteByIdParams {
+  id: string
+}
+
+export interface GetOrgInviteByIdResponse extends OrgInvite {}
 
 export interface ValidateOrgInviteRequestBody {
   token: string

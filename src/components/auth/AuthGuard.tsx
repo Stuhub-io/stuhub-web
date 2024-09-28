@@ -41,8 +41,6 @@ export const AuthGuard = (props: AuthGuardProps) => {
     }
   }, [data?.user.accessToken])
 
-  console.log({ pathName })
-
   useEffect(() => {
     if (authStatus === 'unauthenticated' && !publicRoutes.includes(pathName)) {
       router.push(`${ROUTES.SIGNIN_PAGE}?from=${pathName}`)

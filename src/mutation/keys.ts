@@ -1,10 +1,11 @@
-import { GetOrgBySlugParams } from '@/schema/organization'
+import { GetOrgBySlugParams, GetOrgInviteByIdParams } from '@/schema/organization'
 import { CreatePageRequestBody } from '@/schema/page'
 import { OrganizationPkIDParams, SpacePkIDParams } from '@/schema/space'
 
 export const QUERY_KEYS = {
   GET_JOIN_ORGS: ['GET_JOIN_ORGS'],
   GET_ORG_BY_SLUG: ({ slug }: GetOrgBySlugParams) => ['GET_ORG_BY_SLUG', slug],
+  GET_ORG_INVITE_BY_ID: ({ id }: GetOrgInviteByIdParams) => ['GET_ORG_INVITE_BY_ID', id],
   GET_ORG_SPACES: ({ organization_pkid }: OrganizationPkIDParams) => [
     'GET_ORG_SPACES',
     organization_pkid,
@@ -29,7 +30,7 @@ export const MUTATION_KEYS = {
     space_pkid,
     id,
   ],
-  UPDATE_PAGE:({id}: {id: string}) => ['UPDATE_PAGE', id],
+  UPDATE_PAGE: ({ id }: { id: string }) => ['UPDATE_PAGE', id],
   CREATE_DOC: ({
     parent_page_pkid,
     space_pkid,
