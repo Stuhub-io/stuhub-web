@@ -1,8 +1,6 @@
-
-
 // Entities
 export interface User {
-  pkid: number
+  pk_id: number
   id: string
   first_name: string
   last_name: string

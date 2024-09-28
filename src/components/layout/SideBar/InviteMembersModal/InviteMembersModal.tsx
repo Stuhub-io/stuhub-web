@@ -14,7 +14,7 @@ import { useMemo, useState } from 'react'
 import { SearchActions } from './SearchActions'
 import { SearchForm } from './SearchForm'
 import { SearchResults } from './SearchResults'
-import { useInviteOrgMembers } from '@/mutation/mutator/useInviteOrgMembers'
+import { useInviteOrgMembers } from '@/mutation/mutator/organization/useInviteOrgMembers'
 import { useToast } from '@/hooks/useToast'
 
 type InviteMembersModalProps = {

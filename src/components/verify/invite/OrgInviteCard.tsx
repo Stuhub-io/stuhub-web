@@ -1,10 +1,16 @@
 import Typography from '@/components/common/Typography'
+import { ROUTES } from '@/constants/routes'
+import { useToast } from '@/hooks/useToast'
+import { useAcceptOrgInvite } from '@/mutation/mutator/organization/useAcceptOrgInvite'
 import { Card, CardHeader, CardBody, Image, Chip, CardFooter, Button } from '@nextui-org/react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { GoDotFill } from 'react-icons/go'
 
 interface OrgInviteCardProps {
   inviteId: string
   orgName: string
+  orgSlug: string
   orgAvatar: string
   ownerFullname: string
   orgMembersLength: number
@@ -13,12 +19,43 @@ interface OrgInviteCardProps {
 export const OrgInviteCard = ({
   inviteId,
   orgName,
+  orgSlug,
   orgAvatar,
   ownerFullname,
   orgMembersLength,
 }: OrgInviteCardProps) => {
-  const onAcceptInvite = async () => {
-    console.log({ inviteId })
+  const router = useRouter()
+  const { toast } = useToast()
+
+  const [isNavigating, setIsNavigating] = useState(false)
+
+  const { mutate: acceptInvite, isPending } = useAcceptOrgInvite()
+
+  const onAcceptInvite = () => {
+    acceptInvite(
+      {
+        token: inviteId,
+      },
+      {
+        onSuccess: () => {
+          setIsNavigating(true)
+          setTimeout(() => {
+            router.push(ROUTES.ORGANIZATION({ orgSlug }))
+          }, 500)
+        },
+        onError: () => {
+          setIsNavigating(true)
+          toast({
+            variant: 'danger',
+            title: 'Oops',
+            description: 'Fail to join organization!',
+          })
+          setTimeout(() => {
+            router.push(ROUTES.HOME_PAGE)
+          }, 500)
+        },
+      },
+    )
   }
 
   return (
@@ -47,7 +84,13 @@ export const OrgInviteCard = ({
         </Chip>
       </CardBody>
       <CardFooter className="pb-1 pt-4">
-        <Button fullWidth color="primary" size="lg" onClick={onAcceptInvite}>
+        <Button
+          isLoading={isPending || isNavigating}
+          fullWidth
+          color="primary"
+          size="lg"
+          onClick={onAcceptInvite}
+        >
           Accept Invite
         </Button>
       </CardFooter>

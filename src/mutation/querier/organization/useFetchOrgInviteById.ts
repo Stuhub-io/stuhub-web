@@ -12,5 +12,6 @@ export const useFetchOrgInviteById = (args: UseFetchOrgInviteByIdArgs) => {
     queryKey: QUERY_KEYS.GET_ORG_INVITE_BY_ID({ id }),
     queryFn: () => organizationService.getOrgInviteByID({ id }),
     enabled: args.allowFetch,
+    retry: 0,
   })
 }
