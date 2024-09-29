@@ -10,7 +10,7 @@ import {
 import { SideBar } from '../SideBar'
 import { useDebouncedCallback } from 'use-debounce'
 
-const MIN_SIZE = 300
+const MIN_SIZE = 200
 
 console.warn = () => {}
 

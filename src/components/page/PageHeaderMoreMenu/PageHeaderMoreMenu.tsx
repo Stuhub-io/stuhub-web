@@ -7,7 +7,7 @@ import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { useParams } from 'next/navigation'
 import { OrganizationPageParams } from '@/constants/routes'
 
-export const HeaderMoreMenu = () => {
+export const PageHeaderMoreMenu = () => {
   const { pageID } = useParams<OrganizationPageParams>()
   const { data: { data: page } = {}, isPending } = useFetchPage({
     pageID,

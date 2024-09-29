@@ -35,7 +35,7 @@ export default function ValidateOrgInvite() {
     organization: { name, slug, avatar, owner, members },
   } = data.data
 
-  if (is_used || user_pkid != user?.user.pk_id || dayjs().isAfter(dayjs(expired_at))) {
+  if (is_used || user_pkid != user?.user.pkid || dayjs().isAfter(dayjs(expired_at))) {
     return <UnavailableInviteCard />
   }
 

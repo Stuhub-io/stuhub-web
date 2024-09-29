@@ -17,7 +17,6 @@ export const useFetchPage = (args: UseFetchPages, option?: {
         }),
         queryFn: async () => pageService.getPageByID(pageID),
         enabled: allowFetch,
-        structuralSharing: false,
         ...option
     })
 }

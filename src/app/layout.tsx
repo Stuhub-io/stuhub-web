@@ -1,13 +1,10 @@
-import { AppProviders } from '@/components/providers'
 import { cn } from '@/libs/utils'
 import type { Metadata } from 'next'
 import { Outfit } from 'next/font/google'
 import './globals.css'
 import '@/styles/prosemirror.css'
-import { AuthSessionProvider } from '@/components/auth/AuthSessionProvider'
 import Toaster from '@/components/common/Toast'
-import { AuthGuard } from '@/components/auth/AuthGuard'
-import { Suspense } from 'react'
+import { GlobalProviders } from '@/components/providers/GlobalProvides'
 
 const inter = Outfit({ subsets: ['latin'] })
 
@@ -24,13 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(inter.className)}>
-        <AuthSessionProvider>
-          <AppProviders>
-            <Suspense>
-              <AuthGuard>{children}</AuthGuard>
-            </Suspense>
-          </AppProviders>
-        </AuthSessionProvider>
+          <GlobalProviders>{children}</GlobalProviders>
         <Toaster />
       </body>
     </html>

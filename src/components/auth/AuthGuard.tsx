@@ -64,17 +64,20 @@ export const AuthGuard = (props: AuthGuardProps) => {
     (!publicRoutes.includes(pathName) && authStatus === 'unauthenticated') ||
     (authRoutes.includes(pathName) && authStatus === 'authenticated')
 
-  return (
-    <>
-      {isLoading && (
-        <div
+    if (isLoading) {
+      return (
+               <div
           key="splash-screen"
           className="fixed flex h-[100dvh] w-full flex-col items-center justify-center"
         >
           <SplashAppLogo />
-        </div>
-      )}
-      {!isLoading ? children : null}
+        </div> 
+      )
+    }
+
+  return (
+    <>
+      {children}
     </>
   )
 }

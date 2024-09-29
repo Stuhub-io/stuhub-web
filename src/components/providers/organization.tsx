@@ -1,11 +1,10 @@
 import { OrganizationParams, ROUTES } from '@/constants/routes'
-import { usePrevious } from '@/hooks/usePrev'
 import createContext from '@/libs/context'
 import { useFetchJoinedOrgs } from '@/mutation/querier/organization/useFetchJoinedOrgs'
 import { Organization, OrgRole } from '@/schema/organization'
 import { getUserOrgPermission } from '@/utils/organization'
 import { useSession } from 'next-auth/react'
-import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 
 interface OrganizationProviderValues {
@@ -17,49 +16,44 @@ interface OrganizationProviderValues {
   refetchOrgs: () => void
 }
 
-const WHITELIST = [ROUTES.INVITE_PAGE]
-
 const [Provider, useOrganization] = createContext<OrganizationProviderValues>({
   name: 'OrganizationContext',
 })
 
+const WHITE_LIST_ROUTES = [ROUTES.INVITE_PAGE]
+
 export { useOrganization }
 
 export const OrganizationProvider = ({ children }: PropsWithChildren) => {
-  const { data, status } = useSession()
-  const { orgSlug } = useParams<Partial<OrganizationParams>>()
+  const { data } = useSession()
+  const { orgSlug: urlOrgSlug } = useParams<Partial<OrganizationParams>>()
   const pathName = usePathname()
   const router = useRouter()
-  const prevStatus = usePrevious(status)
 
   const [selectedOrg, setSelectedOrg] = useState<Organization>()
+  const isInWhiteList = WHITE_LIST_ROUTES.some((route) => pathName.startsWith(route))
+
   const [isNavigating, setIsNavigating] = useState(false)
 
-  const isAuthenticating = status == 'loading'
-  const isUnthenticated = status == 'unauthenticated'
-
-  const searchParams = useSearchParams()
-  const from = searchParams.get('from')
-
-  const isInWhitelist = WHITELIST.some((path) => pathName.includes(path))
+  const orgSlug = useMemo(() => {
+    if (isInWhiteList) return undefined
+    return urlOrgSlug
+  }, [isInWhiteList, urlOrgSlug])
 
   const {
-    data: { data: internalJoinedOrgs } = { data: [] },
+    data: { data: internalJoinedOrgs } = {},
     isPending,
     refetch,
   } = useFetchJoinedOrgs({
-    allowFetch: !isAuthenticating && !isInWhitelist,
-    emptyReturn: isUnthenticated,
+    allowFetch: true,
   })
-
-  const isLoadingOrganization = isAuthenticating || isPending
 
   const currentUserRole = useMemo(
     () =>
-      isLoadingOrganization || !selectedOrg
+      isPending || !selectedOrg
         ? undefined
         : getUserOrgPermission(selectedOrg, data?.user.pkid ?? -1),
-    [data?.user.pkid, isLoadingOrganization, selectedOrg],
+    [data?.user.pkid, isPending, selectedOrg],
   )
 
   // check isNavigating
@@ -73,7 +67,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     }
   }, [isNavigating, pathName, selectedOrg])
 
-  // Handle select org and navigate
+  // Handle select org and navigate on init
   useEffect(() => {
     if (!internalJoinedOrgs || selectedOrg) return
     // FIXME: implement select most recent visit org
@@ -85,40 +79,35 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     setSelectedOrg(selectOrg)
 
     // Navigate if need
-    if (!orgSlug) return
     if (!selectOrg) {
       router.push(ROUTES.HOME_PAGE)
       setIsNavigating(true)
       return
     }
 
+    if (isInWhiteList) return
     if (selectOrg?.slug !== orgSlug) {
       router.push(ROUTES.ORGANIZATION({ orgSlug: selectOrg?.slug ?? '' }))
       setIsNavigating(true)
     }
-  }, [data?.user.pkid, internalJoinedOrgs, orgSlug, router, selectedOrg, from])
+  }, [data?.user.pkid, internalJoinedOrgs, isInWhiteList, orgSlug, router, selectedOrg])
 
   // Redirect back to org if already selected org
   useEffect(() => {
-    if (!selectedOrg || isUnthenticated) return
+    if (!selectedOrg) return
+    if (isInWhiteList) return
     if (selectedOrg?.slug !== orgSlug) {
       router.push(ROUTES.ORGANIZATION({ orgSlug: selectedOrg.slug }))
       setIsNavigating(true)
     }
-  }, [orgSlug, isUnthenticated, router, selectedOrg, status, from])
-
-  useEffect(() => {
-    if (isUnthenticated && prevStatus !== status) {
-      setSelectedOrg(undefined)
-    }
-  }, [prevStatus, status, isUnthenticated])
+  }, [isInWhiteList, orgSlug, router, selectedOrg])
 
   return (
     <Provider
       value={{
         organization: selectedOrg,
         refetchOrgs: refetch,
-        isLoadingOrganization,
+        isLoadingOrganization: isPending,
         isNavigating,
         currentUserRole,
       }}

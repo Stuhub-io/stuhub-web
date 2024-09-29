@@ -2,7 +2,6 @@
 
 import { PopperCard } from '@/components/common/PopperCard'
 import Typography from '@/components/common/Typography'
-import { usePageContext } from '@/components/providers/page'
 import { useSidebar } from '@/components/providers/sidebar'
 import { useSidebarBreadcrumb } from '@/hooks/breadcrumb/useSidebarBreadcrumb'
 import {
@@ -18,18 +17,34 @@ import {
 import { RiArrowRightDownLine } from 'react-icons/ri'
 import { RenamePageInput } from '../RenamePageInput'
 import { useEffect, useState } from 'react'
+import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
+import { useParams, useRouter } from 'next/navigation'
+import { OrganizationPageParams, ROUTES } from '@/constants/routes'
+import { useOrganization } from '@/components/providers/organization'
 
 export const PageBreadCrumbs = () => {
+  const { push } = useRouter()
+  const { pageID } = useParams<OrganizationPageParams>()
+  const { organization } = useOrganization()
   const pagePaths = useSidebarBreadcrumb()
-  const { isLoading: isPageLoading, onSelectPage, currentPage } = usePageContext()
+  
+  const { data: { data: pageDetail } = {}, isPending } = useFetchPage({
+    allowFetch: true,
+    pageID,
+  })
+
   const { isPendingPrivatePages, isPendingSpaces } = useSidebar()
 
-  const isLoading = isPageLoading || isPendingSpaces || isPendingPrivatePages
+  const onSelectPage = (selectedPageID: string) => {
+    push(ROUTES.ORGANIZATION_PAGE({ orgSlug: organization?.slug ?? '', pageID: selectedPageID }))
+  }
+
+  const isLoading = isPending || isPendingSpaces || isPendingPrivatePages
   const [openRename, setOpenRename] = useState(false)
 
   useEffect(() => {
     setOpenRename(false)
-  }, [currentPage?.id])
+  }, [pageID])
 
   return (
     <>
@@ -77,7 +92,7 @@ export const PageBreadCrumbs = () => {
           </BreadcrumbItem>,
         ]}
         {pagePaths.map((page) => {
-          const isCurrentPage = page.id === currentPage?.id
+          const isCurrentPage = page.id === pageDetail?.id
           const child = (
             <Typography noWrap level="p5" className="text-inherit">
               {page.name || 'Untitled'}
@@ -106,7 +121,7 @@ export const PageBreadCrumbs = () => {
                   setOpenRename(true)
                   return
                 }
-                onSelectPage(page || 'Untitled')
+                onSelectPage(page.id)
               }}
               isCurrent={false}
             >
