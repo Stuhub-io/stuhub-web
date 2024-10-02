@@ -3,9 +3,9 @@ import createContext from '@/libs/context'
 import { useFetchJoinedOrgs } from '@/mutation/querier/organization/useFetchJoinedOrgs'
 import { Organization, OrgRole } from '@/schema/organization'
 import { getUserOrgPermission } from '@/utils/organization'
-import { useSession } from 'next-auth/react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { useAuthContext } from '../auth/AuthGuard'
 
 interface OrganizationProviderValues {
   organization?: Organization
@@ -25,7 +25,7 @@ const WHITE_LIST_ROUTES = [ROUTES.INVITE_PAGE]
 export { useOrganization }
 
 export const OrganizationProvider = ({ children }: PropsWithChildren) => {
-  const { data } = useSession()
+  const { status, user } = useAuthContext()
   const { orgSlug: urlOrgSlug } = useParams<Partial<OrganizationParams>>()
   const pathName = usePathname()
   const router = useRouter()
@@ -45,15 +45,13 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     isPending,
     refetch,
   } = useFetchJoinedOrgs({
-    allowFetch: true,
+    allowFetch: status === 'authenticated',
   })
 
   const currentUserRole = useMemo(
     () =>
-      isPending || !selectedOrg
-        ? undefined
-        : getUserOrgPermission(selectedOrg, data?.user.pkid ?? -1),
-    [data?.user.pkid, isPending, selectedOrg],
+      isPending || !selectedOrg ? undefined : getUserOrgPermission(selectedOrg, user?.pkid ?? -1),
+    [isPending, selectedOrg, user?.pkid],
   )
 
   // check isNavigating
@@ -73,7 +71,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     // FIXME: implement select most recent visit org
     const selectOrg = internalJoinedOrgs.find(
       (org) =>
-        (org.slug === orgSlug && getUserOrgPermission(org, data?.user.pkid ?? -1) !== undefined) ||
+        (org.slug === orgSlug && getUserOrgPermission(org, user?.pkid ?? -1) !== undefined) ||
         true,
     )
     setSelectedOrg(selectOrg)
@@ -90,7 +88,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
       router.push(ROUTES.ORGANIZATION({ orgSlug: selectOrg?.slug ?? '' }))
       setIsNavigating(true)
     }
-  }, [data?.user.pkid, internalJoinedOrgs, isInWhiteList, orgSlug, router, selectedOrg])
+  }, [user?.pkid, internalJoinedOrgs, isInWhiteList, orgSlug, router, selectedOrg])
 
   // Redirect back to org if already selected org
   useEffect(() => {

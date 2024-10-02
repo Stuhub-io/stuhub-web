@@ -6,8 +6,8 @@ import { useFetchOrgInviteById } from '@/mutation/querier/organization/useFetchO
 import { getUserFullName } from '@/utils/user'
 import { CircularProgress } from '@nextui-org/react'
 import { useParams } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 import dayjs from 'dayjs'
+import { useAuthContext } from '@/components/auth/AuthGuard'
 
 export default function ValidateOrgInvite() {
   const { inviteId } = useParams<Partial<OrganizationInviteParams>>()
@@ -16,8 +16,7 @@ export default function ValidateOrgInvite() {
     id: inviteId!,
     allowFetch: !!inviteId,
   })
-
-  const { data: user } = useSession()
+  const { user }= useAuthContext()
 
   if (isLoading) {
     return <CircularProgress />
@@ -35,7 +34,7 @@ export default function ValidateOrgInvite() {
     organization: { name, slug, avatar, owner, members },
   } = data.data
 
-  if (is_used || user_pkid != user?.user.pkid || dayjs().isAfter(dayjs(expired_at))) {
+  if (is_used || user_pkid != user?.pkid || dayjs().isAfter(dayjs(expired_at))) {
     return <UnavailableInviteCard />
   }
 

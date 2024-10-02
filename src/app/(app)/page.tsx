@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuthContext } from '@/components/auth/AuthGuard'
 import { AppLogo } from '@/components/common/AppLogo'
 import { ThemeButton } from '@/components/common/ThemeButton'
 import { UpdateProfileOnboarding } from '@/components/onboarding'
@@ -21,13 +22,12 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react'
-import { useSession } from 'next-auth/react'
 import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 export default function Page() {
   const [step, setStep] = useState<'one' | 'two' | 'three'>('one')
-  const { data: authData } = useSession()
+  const { user } = useAuthContext()
   const { isLoadingOrganization, refetchOrgs, isNavigating } = useOrganization()
   const { mutateAsync, isPending } = useCreateOrg()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -37,9 +37,9 @@ export default function Page() {
 
   const onboardingForm = useForm<OnboardingFormValues>({
     defaultValues: {
-      firstName: authData?.user.first_name ?? '',
-      lastName: authData?.user.last_name ?? '',
-      avatar: authData?.user.avatar ?? '',
+      firstName: user?.first_name ?? '',
+      lastName: user?.last_name ?? '',
+      avatar: user?.avatar ?? '',
       orgName: '',
       orgDescription: '',
     },

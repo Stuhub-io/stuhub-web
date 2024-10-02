@@ -7,6 +7,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { PropsWithChildren, useEffect, useState } from 'react'
 import { SplashAppLogo } from '../common/SplashAppLogo'
 import { useQueryClient } from '@tanstack/react-query'
+import createContext from '@/libs/context'
+import { User } from '@/schema/user'
 
 const publicRoutes = [
   ROUTES.SIGNIN_PAGE,
@@ -18,6 +20,16 @@ const publicRoutes = [
 const authRoutes = [ROUTES.SIGNIN_PAGE, ROUTES.AUTH_EMAIL]
 
 interface AuthGuardProps extends PropsWithChildren {}
+
+interface AuthContextValues {
+  status?: 'loading' | 'authenticated' | 'unauthenticated'
+  user?: User
+}
+const [Provider, useAuthContext] = createContext<AuthContextValues>({
+  name: 'AuthContext',
+})
+
+export { useAuthContext }
 
 export const AuthGuard = (props: AuthGuardProps) => {
   const { children } = props
@@ -76,8 +88,11 @@ export const AuthGuard = (props: AuthGuardProps) => {
     }
 
   return (
-    <>
+    <Provider value={{
+      status: authStatus,
+      user: data?.user,
+    }}>
       {children}
-    </>
+    </Provider>
   )
 }
