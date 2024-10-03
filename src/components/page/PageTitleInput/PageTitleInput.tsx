@@ -9,27 +9,41 @@ import { RiUserSmileFill, RiImage2Fill } from 'react-icons/ri'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
+import { dump } from '@/constants/common'
 
 export interface PageTitleProps {
   pageID: string
+  onAddCover?: () => void
+  onAddIcon?: () => boolean
+  hasCorverImg?: boolean
+  hasIcon?: boolean
 }
 
 export const PageTitle = (props: PageTitleProps) => {
-  const { pageID } = props
+  const {
+    pageID,
+    onAddCover = dump,
+    onAddIcon = dump,
+    hasCorverImg = false,
+    hasIcon = false,
+  } = props
+  const { toast } = useToast()
+  const { refreshPrivatePages, privateSpace } = useSidebar()
 
-  const { isRefetching, data: { data: page } = {}, isPending } = useFetchPage({
+  const {
+    isRefetching,
+    data: { data: page } = {},
+    isPending,
+  } = useFetchPage({
     pageID,
   })
 
   const [title, setTitle] = useState(page?.name ?? 'Untitled')
   const [isFocus, setFocus] = useState(false)
 
-  const { refreshPrivatePages, privateSpace } = useSidebar()
   const willUpdatePage = useRef(false)
 
   const { mutateAsync: updatePage } = useUpdatePage({ id: page?.id ?? '' })
-
-  const { toast } = useToast()
   const queryClient = useQueryClient()
 
   const updatePageTitle = useCallback(
@@ -85,19 +99,33 @@ export const PageTitle = (props: PageTitleProps) => {
     <div className="group">
       <div className="h-8 opacity-0 transition duration-200 group-hover:opacity-100">
         {!isPending && (
-          <div className="hidden gap-1 opacity-60 group-hover:flex">
-            <Button startContent={<RiUserSmileFill size={16} />} size="sm" variant="light">
-              Add icons
-            </Button>
-            <Button startContent={<RiImage2Fill size={16} />} size="sm" variant="light">
-              Add cover
-            </Button>
+          <div className="hidden gap-1 opacity-70 group-hover:flex">
+            {!hasIcon && (
+              <Button
+                startContent={<RiUserSmileFill size={16} />}
+                size="sm"
+                variant="light"
+                onClick={onAddIcon}
+              >
+                Add icons
+              </Button>
+            )}
+            {!hasCorverImg && (
+              <Button
+                startContent={<RiImage2Fill size={16} />}
+                size="sm"
+                variant="light"
+                onClick={onAddCover}
+              >
+                Add cover
+              </Button>
+            )}
           </div>
         )}
       </div>
       {isPending ? (
         <div>
-          <Skeleton className="h-[54px] w-[300px] rounded-medium mx-3" />
+          <Skeleton className="mx-3 h-[54px] w-[300px] rounded-medium" />
         </div>
       ) : (
         <TextAreaNoBackground
