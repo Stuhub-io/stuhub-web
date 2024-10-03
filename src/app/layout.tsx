@@ -5,6 +5,7 @@ import './globals.css'
 import '@/styles/prosemirror.css'
 import Toaster from '@/components/common/Toast'
 import { GlobalProviders } from '@/components/providers/GlobalProvides'
+import { Suspense } from 'react'
 
 const inter = Outfit({ subsets: ['latin'] })
 
@@ -21,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(inter.className)}>
-          <GlobalProviders>{children}</GlobalProviders>
+          <Suspense>
+            <GlobalProviders>{children}</GlobalProviders>
+          </Suspense>
         <Toaster />
       </body>
     </html>
