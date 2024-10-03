@@ -66,7 +66,7 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
             className="absolute left-0 top-16 !w-6 min-w-0 rounded-l-none z-50"
             onClick={() => setIsHide(!isHide)}
             size="md"
-            variant="flat"
+            variant="solid"
           >
             <RiArrowRightSLine
               size={16}

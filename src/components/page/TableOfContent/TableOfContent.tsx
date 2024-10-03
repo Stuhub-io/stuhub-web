@@ -63,10 +63,12 @@ export const TableOfContentInner = (props: TableOfContentProps) => {
     }
   }, [headings])
 
+  if (!headings.length) return null
+
   return (
     <>
-      <div className="fixed right-4 top-1/2 h-full max-h-[calc(100vh-500px)] w-14 -translate-y-1/2 overflow-hidden z-20">
-        <div className="flex w-full flex-col items-end gap-3" onMouseEnter={onOpen}>
+      <div className="w-14 z-20 shrink-0 -ml-14">
+        <div className="sticky h-full max-h-[400px] mt-16 right-0 top-[140px] flex w-full flex-col items-end gap-3" onMouseEnter={onOpen}>
           <PopperCard
             isOpen={isOpen}
             onClose={onClose}
