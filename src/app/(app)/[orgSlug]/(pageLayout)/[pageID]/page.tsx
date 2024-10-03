@@ -8,14 +8,17 @@ import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { useParams } from 'next/navigation'
 import { OrganizationPageParams } from '@/constants/routes'
 import { TableOfContent } from '@/components/page/TableOfContent'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TOCHeading } from '@/components/common/BlockBasedEditor/utils/extract-headings'
+import { usePageLayoutContext } from '@/components/layout/PageLayout'
+import { getRandomImageUrl } from '@/libs/image'
 
 console.error = () => {}
 
 export default function PageDetail() {
   const { pageID } = useParams<OrganizationPageParams>()
   const [headings, setHeadings] = useState<TOCHeading[]>([])
+  const { setCoverImageUrl } = usePageLayoutContext()
 
   const { data: { data: pageDetail } = {} } = useFetchPage({
     allowFetch: true,
@@ -26,6 +29,11 @@ export default function PageDetail() {
     allowFetch: !!pageDetail,
     pagePkID: pageDetail?.pkid ?? -1,
   })
+
+  useEffect(() => {
+    // if (pageDetail) setCoverImageUrl(pageDetail?.cover_image ?? '')
+    setCoverImageUrl(getRandomImageUrl())
+  }, [pageDetail, setCoverImageUrl])
 
   return (
     <div className="flex flex-col py-8">

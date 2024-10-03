@@ -9,6 +9,7 @@ export interface Page {
     created_at: string
     updated_at: string
     view_type: PageViewType
+    cover_image: string
 }
 
 // Body, Params, ...
@@ -24,6 +25,7 @@ export interface UpdatePageRequestBody {
     name: string
     parent_page_pkid?: number
     view_type: PageViewType
+    cover_image?: string
 }
 
 export interface PagePkIDParams extends Record<string, any> {

@@ -16,6 +16,8 @@ export interface PageTitleProps {
 
 export const PageTitle = (props: PageTitleProps) => {
   const { pageID } = props
+  const { toast } = useToast()
+  const { refreshPrivatePages, privateSpace } = useSidebar()
 
   const { isRefetching, data: { data: page } = {}, isPending } = useFetchPage({
     pageID,
@@ -24,12 +26,9 @@ export const PageTitle = (props: PageTitleProps) => {
   const [title, setTitle] = useState(page?.name ?? 'Untitled')
   const [isFocus, setFocus] = useState(false)
 
-  const { refreshPrivatePages, privateSpace } = useSidebar()
   const willUpdatePage = useRef(false)
 
   const { mutateAsync: updatePage } = useUpdatePage({ id: page?.id ?? '' })
-
-  const { toast } = useToast()
   const queryClient = useQueryClient()
 
   const updatePageTitle = useCallback(
