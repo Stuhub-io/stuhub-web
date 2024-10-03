@@ -1,5 +1,5 @@
 .ProseMirror {
-  @apply px-4 sm:px-6 prose prose-neutral;
+  @apply px-4 sm:px-6 prose prose-neutral max-w-full;
 }
 [data-theme='dark'] .ProseMirror {
   @apply prose-invert;
