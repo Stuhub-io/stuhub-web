@@ -26,7 +26,7 @@ export const TableOfContent = (props: TableOfContentProps & { delay?: number }) 
     setTimeout(() => {
       setShow(true)
     }, delay)
-  }, [])
+  }, [delay])
 
   return show ? <TableOfContentInner {...rest} /> : null
 }
