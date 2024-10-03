@@ -2,15 +2,22 @@
 
 import { PageTitle } from '@/components/page/PageTitleInput'
 import { useFetchDocument } from '@/mutation/querier/document/useFetchDocument'
-import { PageContent } from '@/components/page/PageTitleInput/PageContent'
+import { PageContent } from '@/components/page/PageContent'
 import { Skeleton } from '@nextui-org/react'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { useParams } from 'next/navigation'
 import { OrganizationPageParams } from '@/constants/routes'
+import { TableOfContent } from '@/components/page/TableOfContent'
+import { useState } from 'react'
+import { TOCHeading } from '@/components/common/BlockBasedEditor/utils/extract-headings'
+
+console.error = () => {}
 
 export default function PageDetail() {
   const { pageID } = useParams<OrganizationPageParams>()
-  const {data: {data: pageDetail} = {}} = useFetchPage({
+  const [headings, setHeadings] = useState<TOCHeading[]>([])
+
+  const { data: { data: pageDetail } = {} } = useFetchPage({
     allowFetch: true,
     pageID,
   })
@@ -27,10 +34,18 @@ export default function PageDetail() {
       </div>
       <div className="-mx-3 pb-10">
         {documentData ? (
-          <PageContent
-            documentData={documentData}
-            key={isRefetching ? 'refetching' : documentData?.pkid}
-          />
+          <>
+            <PageContent
+              documentData={documentData}
+              onContentHeadingChanged={setHeadings}
+              isReadOnly={isRefetching}
+              key={documentData.pkid}
+            />
+            <TableOfContent
+              key={isRefetching ? 'refetching' : documentData.pkid}
+              headings={headings}
+            />
+          </>
         ) : (
           <div className="flex flex-col gap-4 px-8 py-8">
             <Skeleton className="h-[44px] w-[400px] max-w-full rounded-small" />

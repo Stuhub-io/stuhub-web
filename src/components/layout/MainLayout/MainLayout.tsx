@@ -2,11 +2,7 @@
 
 import { Layout } from '@/components/common/Layout'
 import { PropsWithChildren, useLayoutEffect, useRef, useState } from 'react'
-import {
-  Panel,
-  PanelResizeHandle,
-  PanelGroup,
-} from 'react-resizable-panels'
+import { Panel, PanelResizeHandle, PanelGroup } from 'react-resizable-panels'
 import { SideBar } from '../SideBar'
 import { useDebouncedCallback } from 'use-debounce'
 
@@ -38,10 +34,13 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
       observer.disconnect()
     }
   }, [setMaxSizeDebounce, setMinSizeDebounce])
-  
+
   return (
-    <Layout container={false} ref={wrapperRef}>
-      <PanelGroup direction="horizontal" autoSaveId="main-layout-sidebar">
+    <Layout container={false} ref={wrapperRef} wrapperClassName="overflow-y-hidden">
+      <PanelGroup
+        direction="horizontal"
+        autoSaveId="main-layout-sidebar"
+      >
         <Panel order={1} minSize={minSize} maxSize={maxSize}>
           <SideBar />
         </Panel>

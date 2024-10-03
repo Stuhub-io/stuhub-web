@@ -1,4 +1,9 @@
 import BlockBasedEditor from '@/components/common/BlockBasedEditor'
+import {
+  extractHeading,
+  TOCHeading,
+} from '@/components/common/BlockBasedEditor/utils/extract-headings'
+import { useToast } from '@/hooks/useToast'
 import { useUpdateDocumentContent } from '@/mutation/mutator/document/useUpdateDocumentContent'
 import { Document } from '@/schema/document'
 import { JSONContent } from 'novel'
@@ -7,17 +12,21 @@ import { useDebouncedCallback } from 'use-debounce'
 
 interface PageContentProps {
   documentData?: Document
+  onContentHeadingChanged?: (_: TOCHeading[]) => void
+  isReadOnly?: boolean
 }
 
 export const PageContent = (props: PageContentProps) => {
-  const { documentData } = props
+  const { documentData, onContentHeadingChanged, isReadOnly } = props
+  const { toast } = useToast()
   const [initLoad, setInitLoad] = useState(false)
 
   const { mutate: updateDocumentContent } = useUpdateDocumentContent()
 
   const onUpdateDocument = useDebouncedCallback(
     (content: JSONContent) => {
-      if (!documentData) return
+      if (!documentData || isReadOnly) return
+      onContentHeadingChanged?.(extractHeading(content))
       updateDocumentContent({
         pkid: documentData?.pkid,
         json_content: JSON.stringify(content ?? ''),
@@ -34,10 +43,22 @@ export const PageContent = (props: PageContentProps) => {
 
   useEffect(() => {
     if (documentData && !initLoad) {
-      setContent(documentData?.json_content ? JSON.parse(documentData?.json_content) : {})
-      setInitLoad(true)
+      try {
+        const validJsonContent = JSON.parse(documentData.json_content || '{}')
+        setContent(validJsonContent)
+        onContentHeadingChanged?.(extractHeading(validJsonContent))
+      } catch (e) {
+        setContent({})
+        toast({
+          variant: 'danger',
+          title: 'Something went wrong with old content',
+        })
+      }
+      if (!isReadOnly) {
+        setInitLoad(true)
+      }
     }
-  }, [documentData, initLoad])
+  }, [content, documentData, initLoad, isReadOnly, onContentHeadingChanged, toast])
 
   return (
     <BlockBasedEditor

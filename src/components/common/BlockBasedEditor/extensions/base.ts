@@ -21,10 +21,11 @@ import {
   Youtube,
   Mathematics,
 } from "novel/extensions";
+import { Extension } from "@tiptap/core";
 import { UploadImagesPlugin } from "novel/plugins";
-
 import { cx } from "class-variance-authority";
 import { common, createLowlight } from "lowlight";
+import { HeadingWithID } from "./heading";
 
 //TODO I am using cx here to get tailwind autocomplete working, idk if someone else can write a regex to just capture the class key in objects
 const aiHighlight = AIHighlight;
@@ -148,8 +149,26 @@ const mathematics = Mathematics.configure({
 
 const characterCount = CharacterCount.configure();
 
+const tabKey = Extension.create({
+    addKeyboardShortcuts() {
+      return {
+        Tab: () => {
+          this.editor
+            .chain()
+            .command(({ tr }) => {
+              tr.insertText('\t');
+              return true;
+            })
+            .run();
+          return true;
+        },
+      };
+    },
+  })
+
 export const defaultExtensions = [
   starterKit,
+  HeadingWithID,
   placeholder,
   tiptapLink,
   tiptapImage,
@@ -170,4 +189,5 @@ export const defaultExtensions = [
   Color,
   CustomKeymap,
   GlobalDragHandle,
+  tabKey,
 ];

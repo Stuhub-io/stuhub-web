@@ -115,7 +115,7 @@ export const PageBreadCrumbs = () => {
           return (
             <BreadcrumbItem
               key={page.id}
-              className="max-w-[200px] truncate text-nowrap"
+              className="truncate text-nowrap"
               onClick={() => {
                 if (isCurrentPage) {
                   setOpenRename(true)

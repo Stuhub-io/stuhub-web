@@ -5,20 +5,23 @@ interface Props {
   children: React.ReactNode
   className?: string
   container?: boolean
+  wrapperClassName?: string
 }
 
 export const Layout = forwardRef<ElementRef<'div'>, Props>((props, ref) => {
-  const { container = true, children, className, ...restProps } = props
+  const { container = true, children, className, wrapperClassName, ...restProps } = props
   return (
-    <div ref={ref} className={cn('', 'h-[100vh]', className ?? '')} {...restProps}>
-      <div className="flex h-full w-full flex-col overflow-y-auto backdrop-blur-md">
-        <div
-          className={cn('flex h-full w-full flex-1 flex-col', {
-            container,
-          })}
-        >
-          {children}
-        </div>
+    <div
+      role="base"
+      ref={ref}
+      className={cn('h-[100dvh]', 'w-full', className ?? '')}
+      {...restProps}
+    >
+      <div
+        role="wrapper"
+        className={cn('h-full overflow-y-auto backdrop-blur-md', wrapperClassName)}
+      >
+        {container ? <div className="container">{children}</div> : children}
       </div>
     </div>
   )
