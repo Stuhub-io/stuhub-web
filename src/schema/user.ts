@@ -1,5 +1,3 @@
-
-
 // Entities
 export interface User {
   pkid: number

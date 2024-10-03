@@ -4,12 +4,13 @@ import { FormInput } from '@/components/common/Form/FormInput'
 import { ProfileBadge } from '@/components/common/ProfileBadge'
 import Typography from '@/components/common/Typography'
 import { Button, Tooltip } from '@nextui-org/react'
-import { signOut, useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 import { FormEventHandler, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { RiArrowGoBackFill, RiArrowLeftLine, RiArrowRightLine, RiCloseLine } from 'react-icons/ri'
 import { FileUploadWrapper } from '../common/FileUploadWrapper/FileUploadWrapper'
 import { OnboardingFormValues } from './utils'
+import { useAuthContext } from '../auth/AuthGuard'
 
 export interface UpdateProfileOnboardingProps {
   onContinue?: FormEventHandler<HTMLFormElement>
@@ -19,9 +20,9 @@ export interface UpdateProfileOnboardingProps {
 
 export function UpdateProfileOnboarding(props: UpdateProfileOnboardingProps) {
   const { onContinue, onSelectedUserAvatar, selectedUserAvatar } = props
-  const { data } = useSession()
+  const { user } = useAuthContext()
 
-  const initAvatar = data?.user?.avatar ?? ''
+  const initAvatar = user?.avatar ?? ''
 
   const profileForm = useFormContext<OnboardingFormValues>()
 

@@ -13,15 +13,16 @@ import { LuSettings } from 'react-icons/lu'
 import { PiUserCirclePlusDuotone } from 'react-icons/pi'
 import { SidebarIconButton } from './SidebarIconbutton'
 import { SidebarItem } from './SidebarItem'
-import { signOut, useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 import { useRef } from 'react'
+import { useAuthContext } from '@/components/auth/AuthGuard'
 
 type SidebarOrgSwitcherProps = {
   openInviteMembers: () => void
 }
 
 export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProps) => {
-  const { data } = useSession()
+  const { user } = useAuthContext()
 
   const { organization, isLoadingOrganization } = useOrganization()
 
@@ -45,7 +46,7 @@ export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProp
         <div className="flex w-full items-center gap-3 text-text-tertiary">
           <Avatar src={organization?.avatar} radius="sm" />
           <div>
-            <Typography level="h6" className="flex-1 truncate">
+            <Typography level="p4" className="flex-1 truncate">
               {organization?.name}
             </Typography>
             <div className="mt-[-5px]">
@@ -81,7 +82,7 @@ export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProp
         <div className="w-[calc(100%+24px)] space-y-1 bg-content2 px-3 py-2">
           <div className="flex items-center justify-between">
             <Typography level="p6" className="truncate">
-              {data?.user.email}
+              {user?.email}
             </Typography>
             <SidebarIconButton>
               <RiMoreLine />

@@ -1,5 +1,6 @@
 'use client'
 
+import { Fragment } from 'react'
 import {
   Toast,
   ToastClose,
@@ -18,8 +19,8 @@ export function Toaster() {
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, icon, size, position, ...props }) {
         return (
-          <>
-            <Toast key={id} size={size} slideIn={position} {...props}>
+          <Fragment key={id}>
+            <Toast size={size} slideIn={position} {...props}>
               {icon && <ToastIcon icon={icon} />}
               <div className="grid gap-1">
                 {title && <ToastTitle>{title}</ToastTitle>}
@@ -29,7 +30,7 @@ export function Toaster() {
               <ToastClose />
             </Toast>
             <ToastViewport size={size} position={position} />
-          </>
+          </Fragment>
         )
       })}
     </ToastProvider>

@@ -3,7 +3,7 @@ import { useFindUserByEmail } from '@/mutation/mutator/useFindUserByEmail'
 import { User } from '@/schema/user'
 import { checkIsEmailValid } from '@/utils/user'
 import { Chip, Input } from '@nextui-org/react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type SearchFormProps = {
   emails: string[]
@@ -25,12 +25,14 @@ export const SearchForm = ({
   const [email, setEmail] = useState('')
   const [debouncedEmail] = useDebounce(email, 500)
 
+  const emailInputRef = useRef<HTMLInputElement>(null)
+
   const { mutate: findUserByEmailMutate } = useFindUserByEmail()
 
   const handleSubmitInvite = (e: React.FormEvent) => {
     e.preventDefault()
 
-    const existingEmail = invitedEmails.find((e) => e === email)
+    const existingEmail = invitedEmails.find((value) => value === email)
     if (!email || !checkIsEmailValid(email) || !!existingEmail) return
 
     addEmail(email)
@@ -39,7 +41,6 @@ export const SearchForm = ({
 
   useEffect(() => {
     if (!debouncedEmail) return
-
     if (checkIsEmailValid(debouncedEmail) && searchedUser?.email != debouncedEmail) {
       findUserByEmailMutate(
         { email: debouncedEmail },
@@ -50,36 +51,32 @@ export const SearchForm = ({
         },
       )
     }
-  }, [debouncedEmail])
+  }, [debouncedEmail, findUserByEmailMutate, setSearchedUser, searchedUser])
 
   const renderSelectedEmails = useCallback(() => {
     if (!emails.length) return null
     return (
       <div className="flex flex-wrap gap-1 px-2 py-1.5">
-        {emails.map((email) => (
-          <Chip key={email} onClose={() => removeEmail(email)}>
-            {email}
+        {emails.map((value) => (
+          <Chip key={value} onClose={() => removeEmail(value)}>
+            {value}
           </Chip>
         ))}
       </div>
     )
   }, [emails, removeEmail])
 
+  useEffect(() => {
+    emailInputRef?.current && emailInputRef.current.focus()
+  }, [])
+
   return (
     <div className="w-full pt-1">
       {renderSelectedEmails()}
       <form onSubmit={handleSubmitInvite}>
         <Input
+          ref={emailInputRef}
           variant="flat"
-          // classNames={{
-          //   inputWrapper: [
-          //     'bg-transparent',
-          //     'shadow-none',
-          //     'group-hover:bg-transparent',
-          //     'rounded-sm',
-          //   ],
-          //   input: ['placeholder:text-text-primary'],
-          // }}
           placeholder="Search name or emails"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

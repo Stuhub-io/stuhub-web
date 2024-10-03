@@ -8,10 +8,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { Page } from '@/schema/page'
 import { SidebarItemLeftSpacer } from '../SidebarItemLeftSpacer'
 import { ICreatingPage, useCreatePageContext } from '@/components/providers/newpage'
-import { usePageContext } from '@/components/providers/page'
 import { usePersistCollapseContext } from '@/components/providers/collapse'
 import { PageCreateButton } from './PageCreateButton'
 import { PageActionMenu } from '@/components/page/PageActionMenu/PageActionMenu'
+import { useParams, useRouter } from 'next/navigation'
+import { OrganizationPageParams, ROUTES } from '@/constants/routes'
+import { useOrganization } from '@/components/providers/organization'
 
 interface SpaceItemProps {
   space: Space
@@ -28,8 +30,7 @@ export const SpaceItem = (props: SpaceItemProps) => {
 
   const creatPagesData = useMemo(() => {
     return creatingPages.filter(
-      (page) =>
-        page.input.space_pkid === space.pkid && page.input.parent_page_pkid === undefined,
+      (page) => page.input.space_pkid === space.pkid && page.input.parent_page_pkid === undefined,
     )
   }, [creatingPages, space.pkid])
 
@@ -85,12 +86,23 @@ interface SidebarPageItemProps {
 }
 
 export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps) => {
+  const router = useRouter()
   const { privatePages } = useSidebar()
+  const { organization } = useOrganization()
   const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
   const [isExpanded, setIsExpanded] = useState(getCollapseState(`page-${page.pkid}`))
+  const { pageID } = useParams<Partial<OrganizationPageParams>>()
 
   const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
-  const { onSelectPage, currentPage } = usePageContext()
+
+  const onSelectPage = (selectedPageID: string) => {
+    router.push(
+      ROUTES.ORGANIZATION_PAGE({
+        orgSlug: organization?.slug ?? '',
+        pageID: selectedPageID,
+      }),
+    )
+  }
 
   const isRenderCreatingPage =
     selectedParent?.pkid === page.pkid && selectedSpace?.pkid === space.pkid
@@ -120,9 +132,9 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
         onClick={(e) => {
           e.stopPropagation()
           e.preventDefault()
-          onSelectPage(page)
+          onSelectPage(page.id)
         }}
-        isSelected={page.pkid === currentPage?.pkid}
+        isSelected={pageID === page.id}
         startContent={
           <>
             <SidebarItemLeftSpacer level={level} />
@@ -138,7 +150,9 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
         }
         endContent={
           <>
-            <div onClick={e => e.stopPropagation()}> {/* Prevents the click event from bubbling up to the parent */}
+            <div onClick={(e) => e.stopPropagation()}>
+              {' '}
+              {/* Prevents the click event from bubbling up to the parent */}
               <PageActionMenu page={page}>
                 <SidebarIconButton showOnGroupHoverOnly>
                   <RiMoreLine />

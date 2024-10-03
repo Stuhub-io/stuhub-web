@@ -11,18 +11,15 @@ import {
 } from 'novel'
 import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
 import { useState } from 'react'
-// import { useDebouncedCallback } from "use-debounce";
 import { defaultExtensions } from './extensions'
 import { handleImageDrop, handleImagePaste } from 'novel/plugins'
-// import GenerativeMenuSwitch from "./generative/generative-menu-switch";
-// import { uploadFn } from "./image-upload";
 import { slashCommand, suggestionItems } from './slash-command'
 import { ColorSelector } from './selectors/color-selector'
 import { LinkSelector } from './selectors/link-selector'
 import { MathSelector } from './selectors/math-selector'
 import { NodeSelector } from './selectors/node-selector'
 import { TextButtons } from './selectors/text-buttons'
-import { ButtonGroup, Divider } from '@nextui-org/react'
+import { ButtonGroup, Divider, Listbox, ListboxItem } from '@nextui-org/react'
 import EditorBubbleCommands from './EditorBubleCommand'
 
 // const hljs = require('highlight.js');
@@ -41,7 +38,7 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
   const [openColor, setOpenColor] = useState(false)
   const [openLink, setOpenLink] = useState(false)
 
-  //Apply Codeblock Highlighting on the HTML from editor.getHTML()
+  // Apply Codeblock Highlighting on the HTML from editor.getHTML()
   // const highlightCodeblocks = (content: string) => {
   //   const doc = new DOMParser().parseFromString(content, 'text/html');
   //   doc.querySelectorAll('pre code').forEach((el) => {
@@ -78,24 +75,25 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
           <EditorCommandEmpty className="px-2 text-small text-text-tertiary">
             No results
           </EditorCommandEmpty>
-          <EditorCommandList>
+          <Listbox variant="light" as={EditorCommandList}>
             {suggestionItems.map((item) => (
-              <EditorCommandItem
+              <ListboxItem
+                as={EditorCommandItem}
                 value={item.title}
+                startContent={
+                  <div className="flex h-[40px] w-[40px] items-center justify-center bg-default rounded-small">
+                    {item.icon}
+                  </div>
+                }
+                // @ts-expect-error - `onCommand` is valid prop
                 onCommand={(val) => item.command?.(val)}
-                className="flex w-full items-center space-x-2 rounded-small px-2 py-1 text-left text-sm aria-selected:bg-default/40"
                 key={item.title}
+                description={item.description}
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-default/20">
-                  {item.icon}
-                </div>
-                <div>
-                  <p className="font-medium text-text-secondary">{item.title}</p>
-                  <p className="text-xs text-text-tertiary">{item.description}</p>
-                </div>
-              </EditorCommandItem>
+                {item.title}
+              </ListboxItem>
             ))}
-          </EditorCommandList>
+          </Listbox>
         </EditorCommand>
 
         <EditorBubbleCommands>

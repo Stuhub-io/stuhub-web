@@ -4,9 +4,11 @@ import { servicesGuard } from '@/api'
 import { ROUTES } from '@/constants/routes'
 import { useSession } from 'next-auth/react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { PropsWithChildren, useEffect } from 'react'
+import { PropsWithChildren, useEffect, useState } from 'react'
 import { SplashAppLogo } from '../common/SplashAppLogo'
 import { useQueryClient } from '@tanstack/react-query'
+import createContext from '@/libs/context'
+import { User } from '@/schema/user'
 
 const publicRoutes = [
   ROUTES.SIGNIN_PAGE,
@@ -19,9 +21,21 @@ const authRoutes = [ROUTES.SIGNIN_PAGE, ROUTES.AUTH_EMAIL]
 
 interface AuthGuardProps extends PropsWithChildren {}
 
+interface AuthContextValues {
+  status?: 'loading' | 'authenticated' | 'unauthenticated'
+  user?: User
+}
+const [Provider, useAuthContext] = createContext<AuthContextValues>({
+  name: 'AuthContext',
+})
+
+export { useAuthContext }
+
 export const AuthGuard = (props: AuthGuardProps) => {
   const { children } = props
+
   const { data, status } = useSession()
+  const [authStatus, setAuthStatus] = useState(status)
   const searchParams = useSearchParams()
   const queryClient = useQueryClient()
 
@@ -30,19 +44,24 @@ export const AuthGuard = (props: AuthGuardProps) => {
   const from = searchParams.get('from')
 
   useEffect(() => {
+    setAuthStatus(status)
+  }, [status])
+
+  useEffect(() => {
     if (data?.user.accessToken) {
       servicesGuard.setAuthToken(data.user.accessToken)
     }
   }, [data?.user.accessToken])
 
   useEffect(() => {
-    if (status === 'unauthenticated' && !publicRoutes.includes(pathName)) {
+    if (authStatus === 'unauthenticated' && !publicRoutes.includes(pathName)) {
       router.push(`${ROUTES.SIGNIN_PAGE}?from=${pathName}`)
       servicesGuard.clearAuthToken()
       queryClient.clear()
       return
     }
-    if (status === 'authenticated' && authRoutes.includes(pathName)) {
+
+    if (authStatus === 'authenticated' && authRoutes.includes(pathName)) {
       if (from) {
         router.push(from)
         return
@@ -50,24 +69,30 @@ export const AuthGuard = (props: AuthGuardProps) => {
       router.push(ROUTES.HOME_PAGE)
       return
     }
-  }, [from, pathName, queryClient, router, status])
+  }, [from, pathName, queryClient, router, authStatus])
 
   const isLoading =
-    status === 'loading' ||
-    (!publicRoutes.includes(pathName) && status === 'unauthenticated') ||
-    (authRoutes.includes(pathName) && status === 'authenticated')
+    authStatus === 'loading' ||
+    (!publicRoutes.includes(pathName) && authStatus === 'unauthenticated') ||
+    (authRoutes.includes(pathName) && authStatus === 'authenticated')
 
-  return (
-    <>
-      {isLoading && (
-        <div
+    if (isLoading) {
+      return (
+               <div
           key="splash-screen"
           className="fixed flex h-[100dvh] w-full flex-col items-center justify-center"
         >
           <SplashAppLogo />
-        </div>
-      )}
-      {!isLoading ? children : null}
-    </>
+        </div> 
+      )
+    }
+
+  return (
+    <Provider value={{
+      status: authStatus,
+      user: data?.user,
+    }}>
+      {children}
+    </Provider>
   )
 }

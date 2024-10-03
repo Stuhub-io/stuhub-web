@@ -1,5 +1,5 @@
 import { PageLayout } from '@/components/layout/PageLayout'
-import { HeaderMoreMenu } from '@/components/page/HeaderMoreMenu'
+import { PageHeaderMoreMenu } from '@/components/page/PageHeaderMoreMenu'
 import { PageBreadCrumbs } from '@/components/page/PageBreadCrumbs'
 import { Metadata } from 'next'
 
@@ -11,7 +11,7 @@ export default function WithHeaderPageDetailLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <PageLayout breadCrumb={<PageBreadCrumbs />} rightEl={<HeaderMoreMenu />}>
+    <PageLayout breadCrumb={<PageBreadCrumbs />} rightEl={<PageHeaderMoreMenu />}>
       {children}
     </PageLayout>
   )

@@ -1,16 +1,15 @@
+import { useAuthContext } from '@/components/auth/AuthGuard'
 import { ProfileBadge } from '@/components/common/ProfileBadge'
 import Typography from '@/components/common/Typography'
 import { useOrganization } from '@/components/providers/organization'
 import { getPermissionText } from '@/utils/organization'
 import { Card, CardHeader, CardBody, CardFooter, Button } from '@nextui-org/react'
-import { useSession } from 'next-auth/react'
 import { AiOutlineTeam } from 'react-icons/ai'
 import { LuSparkle } from 'react-icons/lu'
 
 export const SidebarFooter = () => {
   const { currentUserRole } = useOrganization()
-  const { data } = useSession()
-  const user = data?.user
+  const { user } = useAuthContext()
   return (
     <>
       <div className="shrink-0 pt-4">
