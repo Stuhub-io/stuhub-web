@@ -1,27 +1,36 @@
 import { Avatar, Button } from '@nextui-org/react'
+import { ChangeEvent, useRef } from 'react'
 
-export const ProfileAvatar = () => {
-  //   const { startUpload, permittedFileInfo } = useUploadThing('productImage', {
-  //     onClientUploadComplete: () => {
-  //       alert('uploaded successfully!')
-  //     },
-  //     onUploadError: () => {
-  //       alert('error occurred while uploading')
-  //     },
-  //     onUploadBegin: () => {
-  //       alert('upload has begun')
-  //     },
-  //   })
+interface ProfileAvatarProps {
+  avatarUrl?: string
+  setFile: (file: File) => void
+}
+
+export const ProfileAvatar = ({ avatarUrl, setFile }: ProfileAvatarProps) => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    setFile(files[0])
+  }
 
   return (
     <div className="flex items-center gap-6">
-      <Avatar
-        src="https://image.api.playstation.com/vulcan/img/rnd/202010/2723/jBUUeoqKq1IzHbMeS9RzG0Z6.png"
-        className="h-24 w-24 text-large"
-      />
+      <Avatar src={avatarUrl} className="h-24 w-24 text-large" />
 
       <div className="space-x-3">
-        <Button color="primary">Change picture</Button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          name="myImage"
+          accept="image/*"
+          hidden
+          onChange={onFileChange}
+        />
+        <Button color="primary" onClick={() => fileInputRef?.current?.click()}>
+          Change picture
+        </Button>
         <Button color="danger">Delete picture</Button>
       </div>
     </div>

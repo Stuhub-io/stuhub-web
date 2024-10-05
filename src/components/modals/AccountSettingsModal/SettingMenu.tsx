@@ -31,7 +31,7 @@ const SettingCluster = ({
   setSelectedSetting,
 }: SettingClusterProps) => {
   return (
-    <Listbox variant="flat" aria-label="Listbox menu with sections">
+    <Listbox variant="flat">
       <ListboxSection title={title}>
         {settings.map((setting) => (
           <ListboxItem
