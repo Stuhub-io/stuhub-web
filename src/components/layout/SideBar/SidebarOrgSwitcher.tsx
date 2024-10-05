@@ -1,13 +1,7 @@
 import { ProfileBadge } from '@/components/common/ProfileBadge'
 import Typography from '@/components/common/Typography'
 import { useOrganization } from '@/components/providers/organization'
-import {
-  Avatar,
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@nextui-org/react'
+import { Avatar, Button, Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
 import { RiCheckLine, RiExpandUpDownLine, RiLogoutBoxLine, RiMoreLine } from 'react-icons/ri'
 import { LuSettings } from 'react-icons/lu'
 import { PiUserCirclePlusDuotone } from 'react-icons/pi'
@@ -19,9 +13,13 @@ import { useAuthContext } from '@/components/auth/AuthGuard'
 
 type SidebarOrgSwitcherProps = {
   openInviteMembers: () => void
+  openAccountSettings: () => void
 }
 
-export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProps) => {
+export const SidebarOrgSwitcher = ({
+  openInviteMembers,
+  openAccountSettings,
+}: SidebarOrgSwitcherProps) => {
   const { user } = useAuthContext()
 
   const { organization, isLoadingOrganization } = useOrganization()
@@ -63,6 +61,10 @@ export const SidebarOrgSwitcher = ({ openInviteMembers }: SidebarOrgSwitcherProp
             variant="ghost"
             startContent={<LuSettings size={14} />}
             className="border-1"
+            onClick={() => {
+              triggerRef.current?.click()
+              openAccountSettings()
+            }}
           >
             Settings
           </Button>

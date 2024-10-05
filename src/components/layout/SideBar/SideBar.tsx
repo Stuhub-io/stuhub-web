@@ -2,28 +2,43 @@
 
 import { cn } from '@/libs/utils'
 import { Divider, useDisclosure } from '@nextui-org/react'
-import { InviteMembersModal } from './InviteMembersModal'
+import { InviteMembersModal } from '@/components/modals/InviteMembersModal'
 import { SidebarFooter } from './SidebarFooterTool'
 import { SidebarOrgSwitcher } from './SidebarOrgSwitcher'
 import { SidebarToolItems } from './SidebarToolItems'
 import { SidebarSpaces } from './space/SidebarSpaces'
+import { AccountSettingsModal } from '@/components/modals/AccountSettingsModal'
 
 export interface SideBarProps {
   className?: string
 }
 
-export const SideBar = ({className}: SideBarProps) => {
+export const SideBar = ({ className }: SideBarProps) => {
   const {
     isOpen: isInviteMembersOpen,
     onOpen: openInviteMembers,
     onClose: closeInviteMembers,
   } = useDisclosure()
+  const {
+    isOpen: isAccountSettingsOpen,
+    onOpen: openAccountSettings,
+    onClose: closeAccountSettings,
+  } = useDisclosure()
 
   return (
-    <div className={cn('sidebar', 'h-full w-full', 'border-r border-r-divider', 'flex flex-col p-2', className)}>
+    <div
+      className={cn(
+        'sidebar',
+        'h-full w-full',
+        'border-r border-r-divider',
+        'flex flex-col p-2',
+        className,
+      )}
+    >
       <div className="mb-2 w-full">
-        <SidebarOrgSwitcher openInviteMembers={openInviteMembers} />
+        <SidebarOrgSwitcher {...{ openInviteMembers, openAccountSettings }} />
         <InviteMembersModal isOpen={isInviteMembersOpen} onClose={closeInviteMembers} />
+        <AccountSettingsModal isOpen={isAccountSettingsOpen} onClose={closeAccountSettings} />
       </div>
       <div className="w-full space-y-1 pb-2">
         <SidebarToolItems />
