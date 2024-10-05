@@ -25,7 +25,7 @@ interface AuthGuardProps extends PropsWithChildren {}
 interface AuthContextValues {
   status?: 'loading' | 'authenticated' | 'unauthenticated'
   user?: User
-  updateUser: (values: Partial<Session['user']>) => void
+  updateUser: (values: Partial<Session['user']>) => Promise<void>
 }
 const [Provider, useAuthContext] = createContext<AuthContextValues>({
   name: 'AuthContext',

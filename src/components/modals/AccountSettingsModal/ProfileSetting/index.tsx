@@ -46,7 +46,7 @@ const ProfileSetting = () => {
         toast({
           variant: 'danger',
           title: 'Upload avatar fail!',
-          description: 'Something wrong with uploading avatar. Please try again',
+          description: 'Something wrong with upload avatar. Please try again',
         })
         setIsSaving(false)
         return
@@ -59,12 +59,12 @@ const ProfileSetting = () => {
       avatar,
     }
     updateProfile(payload, {
-      onSuccess: () => {
+      onSuccess: async () => {
         toast({
           variant: 'success',
           title: 'Update profile successfully!',
         })
-        updateUser(payload)
+        await updateUser(payload)
       },
       onError: () => {
         toast({
@@ -74,7 +74,6 @@ const ProfileSetting = () => {
         })
       },
       onSettled: () => {
-        setFile(undefined)
         setIsSaving(false)
       },
     })
@@ -91,7 +90,7 @@ const ProfileSetting = () => {
   return (
     <FormProvider {...profileForm}>
       <form className="flex w-full flex-1 flex-col" onSubmit={handleSubmit}>
-        <div className="mb-6 mt-5">
+        <div className="mb-6 mt-2">
           <ProfileAvatar {...{ avatarUrl, setFile }} />
         </div>
 

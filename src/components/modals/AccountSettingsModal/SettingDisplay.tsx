@@ -12,8 +12,8 @@ export const SettingDisplay = ({ title, children }: SettingDisplayProps) => {
       <Typography level="h5" color="textSecondary">
         {title}
       </Typography>
-      <Divider orientation="horizontal" className="my-3" />
-      <Suspense fallback={<CircularProgress />}>{children}</Suspense>
+      <Divider orientation="horizontal" className="mb-6 mt-3" />
+      <Suspense fallback={<CircularProgress className="mx-auto" />}>{children}</Suspense>
     </div>
   )
 }
