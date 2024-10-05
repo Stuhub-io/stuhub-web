@@ -18,11 +18,12 @@ import { useInviteOrgMembers } from '@/mutation/mutator/organization/useInviteOr
 import { useToast } from '@/hooks/useToast'
 
 type InviteMembersModalProps = {
+  size?: 'sm' | 'md'
   isOpen: boolean
   onClose: () => void
 }
 
-export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps) => {
+export const InviteMembersModal = ({ size = 'md', isOpen, onClose }: InviteMembersModalProps) => {
   const [role, setRole] = useState<OrgRole>(ORG_ROLES.OWNER)
   const [emails, setEmails] = useState<string[]>([])
   const [searchedUser, setSearchedUser] = useState<User | null>(null)
@@ -86,8 +87,20 @@ export const InviteMembersModal = ({ isOpen, onClose }: InviteMembersModalProps)
     )
   }
 
+  const modalHeightClassname = {
+    sm: 'h-[500px] md:h-[600px]',
+    md: 'h-[600px] md:h-[800px]',
+  }
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg" hideCloseButton className="h-[800px]">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      hideCloseButton
+      placement="center"
+      className={modalHeightClassname[size]}
+    >
       <ModalContent>
         <ModalHeader>
           <div className="flex w-full items-start justify-between">
