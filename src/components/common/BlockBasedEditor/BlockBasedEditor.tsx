@@ -10,7 +10,7 @@ import {
   type JSONContent,
 } from 'novel'
 import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { defaultExtensions } from './extensions'
 import { handleImageDrop, handleImagePaste } from 'novel/plugins'
 import { slashCommand, suggestionItems } from './slash-command'
@@ -38,6 +38,8 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
   const [openColor, setOpenColor] = useState(false)
   const [openLink, setOpenLink] = useState(false)
 
+  const ref = useRef<HTMLDivElement>(null)
+
   // Apply Codeblock Highlighting on the HTML from editor.getHTML()
   // const highlightCodeblocks = (content: string) => {
   //   const doc = new DOMParser().parseFromString(content, 'text/html');
@@ -52,6 +54,7 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
   return (
     <EditorRoot>
       <EditorContent
+        ref={ref}
         autofocus
         initialContent={jsonContent}
         extensions={extensions}
@@ -81,7 +84,7 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
                 as={EditorCommandItem}
                 value={item.title}
                 startContent={
-                  <div className="flex h-[40px] w-[40px] items-center justify-center bg-default rounded-small">
+                  <div className="flex h-[40px] w-[40px] items-center justify-center rounded-small bg-default">
                     {item.icon}
                   </div>
                 }
