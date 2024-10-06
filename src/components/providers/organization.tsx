@@ -48,6 +48,8 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     allowFetch: status === 'authenticated',
   })
 
+  console.log({ internalJoinedOrgs })
+
   const currentUserRole = useMemo(
     () =>
       isPending || !selectedOrg ? undefined : getUserOrgPermission(selectedOrg, user?.pkid ?? -1),
@@ -71,8 +73,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     // FIXME: implement select most recent visit org
     const selectOrg = internalJoinedOrgs.find(
       (org) =>
-        (org.slug === orgSlug && getUserOrgPermission(org, user?.pkid ?? -1) !== undefined) ||
-        true,
+        (org.slug === orgSlug && getUserOrgPermission(org, user?.pkid ?? -1) !== undefined) || true,
     )
     setSelectedOrg(selectOrg)
 
@@ -104,6 +105,7 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     <Provider
       value={{
         organization: selectedOrg,
+        organizations: internalJoinedOrgs,
         refetchOrgs: refetch,
         isLoadingOrganization: isPending,
         isNavigating,

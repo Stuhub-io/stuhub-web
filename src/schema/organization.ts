@@ -45,6 +45,19 @@ export interface OrgInvite {
   organization: Organization
 }
 
+export interface MemberItem {
+  pkid: number
+  fullName: string
+  role: string
+  teamspaces: {
+    id: number
+    name: string
+    slug: string
+  }[]
+  avatar: string
+  email: string
+}
+
 export interface GetOrgBySlugParams {
   slug: string
 }

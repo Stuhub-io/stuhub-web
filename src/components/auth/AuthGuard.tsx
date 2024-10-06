@@ -9,6 +9,7 @@ import { SplashAppLogo } from '../common/SplashAppLogo'
 import { useQueryClient } from '@tanstack/react-query'
 import createContext from '@/libs/context'
 import { User } from '@/schema/user'
+import { Session } from 'next-auth'
 
 const publicRoutes = [
   ROUTES.SIGNIN_PAGE,
@@ -24,6 +25,7 @@ interface AuthGuardProps extends PropsWithChildren {}
 interface AuthContextValues {
   status?: 'loading' | 'authenticated' | 'unauthenticated'
   user?: User
+  updateUser: (values: Partial<Session['user']>) => Promise<void>
 }
 const [Provider, useAuthContext] = createContext<AuthContextValues>({
   name: 'AuthContext',
@@ -34,18 +36,34 @@ export { useAuthContext }
 export const AuthGuard = (props: AuthGuardProps) => {
   const { children } = props
 
-  const { data, status } = useSession()
-  const [authStatus, setAuthStatus] = useState(status)
+  const { data, status, update } = useSession()
   const searchParams = useSearchParams()
   const queryClient = useQueryClient()
+
+  const [authStatus, setAuthStatus] = useState(status)
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false)
 
   const router = useRouter()
   const pathName = usePathname()
   const from = searchParams.get('from')
 
+  const updateUser = async (values: Partial<Session['user']>) => {
+    setIsUpdatingUser(true)
+    const newSession = {
+      ...data,
+      user: {
+        ...data?.user,
+        ...values,
+      },
+    }
+    await update(newSession)
+    setIsUpdatingUser(false)
+  }
+
   useEffect(() => {
+    if (isUpdatingUser) return
     setAuthStatus(status)
-  }, [status])
+  }, [status, isUpdatingUser])
 
   useEffect(() => {
     if (data?.user.accessToken) {
@@ -76,22 +94,25 @@ export const AuthGuard = (props: AuthGuardProps) => {
     (!publicRoutes.includes(pathName) && authStatus === 'unauthenticated') ||
     (authRoutes.includes(pathName) && authStatus === 'authenticated')
 
-    if (isLoading) {
-      return (
-               <div
-          key="splash-screen"
-          className="fixed flex h-[100dvh] w-full flex-col items-center justify-center"
-        >
-          <SplashAppLogo />
-        </div> 
-      )
-    }
+  if (isLoading) {
+    return (
+      <div
+        key="splash-screen"
+        className="fixed flex h-[100dvh] w-full flex-col items-center justify-center"
+      >
+        <SplashAppLogo />
+      </div>
+    )
+  }
 
   return (
-    <Provider value={{
-      status: authStatus,
-      user: data?.user,
-    }}>
+    <Provider
+      value={{
+        status: authStatus,
+        user: data?.user,
+        updateUser,
+      }}
+    >
       {children}
     </Provider>
   )

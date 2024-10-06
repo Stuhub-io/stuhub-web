@@ -25,7 +25,10 @@ import { Extension } from "@tiptap/core";
 import { UploadImagesPlugin } from "novel/plugins";
 import { cx } from "class-variance-authority";
 import { common, createLowlight } from "lowlight";
-import { HeadingWithID } from "./heading";
+// @ts-expect-error - w
+import UniqueId from "tiptap-unique-id";
+import { generateUUID } from "@/libs/uuid";
+
 
 //TODO I am using cx here to get tailwind autocomplete working, idk if someone else can write a regex to just capture the class key in objects
 const aiHighlight = AIHighlight;
@@ -168,7 +171,11 @@ const tabKey = Extension.create({
 
 export const defaultExtensions = [
   starterKit,
-  HeadingWithID,
+  UniqueId.configure({
+    attributeName: "id",
+    types: ["heading"],
+    createId: () => generateUUID(),
+  }),
   placeholder,
   tiptapLink,
   tiptapImage,

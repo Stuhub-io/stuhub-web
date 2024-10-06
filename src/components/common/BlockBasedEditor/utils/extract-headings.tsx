@@ -7,6 +7,7 @@ export type TOCHeading = {
 }
 
 export const extractHeading = (content: JSONContent) => {
+  
   const headings: TOCHeading[] = content.content
     ?.filter((block) => block.type === 'heading' && block.attrs?.level)
     .map((heading) => {
