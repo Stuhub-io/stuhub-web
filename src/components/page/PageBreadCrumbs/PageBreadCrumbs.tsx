@@ -14,7 +14,7 @@ import {
   DropdownTrigger,
   Skeleton,
 } from '@nextui-org/react'
-import { RiArrowRightDownLine } from 'react-icons/ri'
+import { RiArrowRightDownLine, RiHome2Fill } from 'react-icons/ri'
 import { RenamePageInput } from '../RenamePageInput'
 import { useEffect, useState } from 'react'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
@@ -27,7 +27,7 @@ export const PageBreadCrumbs = () => {
   const { pageID } = useParams<OrganizationPageParams>()
   const { organization } = useOrganization()
   const pagePaths = useSidebarBreadcrumb()
-  
+
   const { data: { data: pageDetail } = {}, isPending } = useFetchPage({
     allowFetch: true,
     pageID,
@@ -91,6 +91,19 @@ export const PageBreadCrumbs = () => {
             <Skeleton className="h-3.5 w-28 rounded-medium" />
           </BreadcrumbItem>,
         ]}
+        {!isLoading && (
+          <BreadcrumbItem
+            onClick={() => {
+              push(
+                ROUTES.ORGANIZATION({
+                  orgSlug: organization?.slug ?? '',
+                }),
+              )
+            }}
+          >
+            <RiHome2Fill size={18} />
+          </BreadcrumbItem>
+        )}
         {pagePaths.map((page) => {
           const isCurrentPage = page.id === pageDetail?.id
           const child = (

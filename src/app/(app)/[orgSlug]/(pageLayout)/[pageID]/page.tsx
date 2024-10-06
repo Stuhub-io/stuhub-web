@@ -40,7 +40,7 @@ export default function PageDetail() {
 
   return (
     <div className="flex w-full">
-      <div className="mx-auto max-w-[832px] w-full">
+      <div className="mx-auto max-w-[732px] w-full">
         <div className="flex flex-col py-8">
           <div className="flex flex-col">
             {pageDetail && (

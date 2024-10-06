@@ -1,4 +1,4 @@
-import { Kbd, Listbox, ListboxItem } from '@nextui-org/react'
+import { Listbox, ListboxItem } from '@nextui-org/react'
 import { AiFillHome, AiFillMail, AiFillMoon, AiFillSetting, AiFillSun } from 'react-icons/ai'
 import { useMemo } from 'react'
 import { ROUTES } from '@/constants/routes'
@@ -6,47 +6,36 @@ import { useOrganization } from '@/components/providers/organization'
 import { useTheme } from '@/hooks/useTheme'
 import Link from 'next/link'
 
+interface IToolItem {
+  title: string
+  iconLeft: JSX.Element
+  href?: string
+  onClick?: () => void
+  rightEl?: JSX.Element
+}
+
+
 export const SidebarToolItems = () => {
   const { activeTheme, setTheme } = useTheme()
   const { organization } = useOrganization()
-  const items = useMemo(
+  const items: IToolItem[] = useMemo(
     () => [
       {
         title: 'Home',
         iconLeft: <AiFillHome />,
-        rightEl: (
-          <Kbd className="text-xs" keys={['command', 'shift']}>
-            H
-          </Kbd>
-        ),
         href: ROUTES.ORGANIZATION({ orgSlug: organization?.slug ?? '' }),
       },
       {
         title: 'Inboxes',
         iconLeft: <AiFillMail />,
-        rightEl: (
-          <Kbd className="text-xs" keys={['command', 'shift']}>
-            I
-          </Kbd>
-        ),
       },
       {
         title: 'Settings & Members',
         iconLeft: <AiFillSetting />,
-        rightEl: (
-          <Kbd className="text-xs" keys={['command', 'shift']}>
-            P
-          </Kbd>
-        ),
       },
       {
         title: 'Switch Theme',
         iconLeft: activeTheme === 'dark' ? <AiFillMoon /> : <AiFillSun />,
-        rightEl: (
-          <Kbd className="text-xs" keys={['command', 'shift']}>
-            \
-          </Kbd>
-        ),
         onClick: () => {
           setTheme(activeTheme === 'dark' ? 'light' : 'dark')
         },
