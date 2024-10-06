@@ -151,7 +151,6 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
         endContent={
           <>
             <div onClick={(e) => e.stopPropagation()}>
-              {' '}
               {/* Prevents the click event from bubbling up to the parent */}
               <PageActionMenu page={page}>
                 <SidebarIconButton showOnGroupHoverOnly>

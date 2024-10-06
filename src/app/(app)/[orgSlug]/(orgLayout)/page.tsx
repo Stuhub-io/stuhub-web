@@ -2,6 +2,7 @@
 
 import { useAuthContext } from '@/components/auth/AuthGuard'
 import Typography from '@/components/common/Typography'
+import { RecentVisitPageWidget } from '@/components/organization/widgets/RecentVisitPages'
 import { useOrganization } from '@/components/providers/organization'
 import { useSidebar } from '@/components/providers/sidebar'
 import { ROUTES } from '@/constants/routes'
@@ -17,14 +18,16 @@ export default function OrganizationHome() {
 
   useEffect(() => {
     if ((privatePages?.list.length ?? 0) === 0) return
-    prefetch(ROUTES.ORGANIZATION_PAGE({
-      orgSlug: organization?.slug ?? "",
-      pageID: privatePages?.list[0].id ?? "",
-    }))
+    prefetch(
+      ROUTES.ORGANIZATION_PAGE({
+        orgSlug: organization?.slug ?? '',
+        pageID: privatePages?.list[0].id ?? '',
+      }),
+    )
   }, [organization?.slug, prefetch, privatePages?.list])
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 space-y-8">
       <Typography className="mx-auto w-fit max-w-[800px] text-center" level="h3">
         Welcome back,{' '}
         {getUserFullName({
@@ -33,6 +36,7 @@ export default function OrganizationHome() {
           email: user?.email,
         })}
       </Typography>
+      <RecentVisitPageWidget />
     </div>
   )
 }
