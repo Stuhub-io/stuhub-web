@@ -30,6 +30,12 @@ class PageService extends Client {
             body: JSON.stringify(body)
         })
     }
+    public archivePageByID(id: string){
+        return fetcher<BaseResponse<Page>>(`${this.baseUrl}/v1/page-services/pages/${id}/archive`,{
+            method: "POST",
+            headers: this.privateHeaders
+        })
+    }
 }
 
 export const pageService = new PageService()

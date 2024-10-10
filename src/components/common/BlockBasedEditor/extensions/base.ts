@@ -21,14 +21,16 @@ import {
   Youtube,
   Mathematics,
 } from "novel/extensions";
+import Document from "@tiptap/extension-document";
 import { Extension } from "@tiptap/core";
 import { UploadImagesPlugin } from "novel/plugins";
 import { cx } from "class-variance-authority";
-import { common, createLowlight } from "lowlight";
+import { all, createLowlight } from "lowlight";
+import { PageNode } from "./Page";
 // @ts-expect-error - w
 import UniqueId from "tiptap-unique-id";
 import { generateUUID } from "@/libs/uuid";
-
+import { TrailingNode } from "./TrailingNode";
 
 //TODO I am using cx here to get tailwind autocomplete working, idk if someone else can write a regex to just capture the class key in objects
 const aiHighlight = AIHighlight;
@@ -82,6 +84,8 @@ const horizontalRule = HorizontalRule.configure({
 });
 
 const starterKit = StarterKit.configure({
+  document: false,
+  codeBlock: false,
   bulletList: {
     HTMLAttributes: {
       class: cx("list-disc list-outside leading-3 -mt-2"),
@@ -102,11 +106,6 @@ const starterKit = StarterKit.configure({
       class: cx("border-l-4 border-primary"),
     },
   },
-  codeBlock: {
-    HTMLAttributes: {
-      class: cx("rounded-md bg-muted text-muted-foreground border p-5 font-mono font-medium"),
-    },
-  },
   code: {
     HTMLAttributes: {
       class: cx("rounded-md bg-muted  px-1.5 py-1 font-mono font-medium"),
@@ -124,7 +123,8 @@ const starterKit = StarterKit.configure({
 const codeBlockLowlight = CodeBlockLowlight.configure({
   // configure lowlight: common /  all / use highlightJS in case there is a need to specify certain language grammars only
   // common: covers 37 language grammars which should be good enough in most cases
-  lowlight: createLowlight(common),
+  lowlight: createLowlight(all),
+  defaultLanguage: 'javascript'
 });
 
 const youtube = Youtube.configure({
@@ -170,12 +170,14 @@ const tabKey = Extension.create({
   })
 
 export const defaultExtensions = [
+  Document,
   starterKit,
   UniqueId.configure({
     attributeName: "id",
     types: ["heading"],
     createId: () => generateUUID(),
   }),
+  PageNode,
   placeholder,
   tiptapLink,
   tiptapImage,
@@ -197,4 +199,5 @@ export const defaultExtensions = [
   CustomKeymap,
   GlobalDragHandle,
   tabKey,
+  TrailingNode
 ];

@@ -11,10 +11,11 @@ interface PageMoreMenuPopoverContentProps {
   onRename?: () => void
   onOpenMove?: () => void
   page: Page
+  onArchive?: () => void
 }
 
 export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProps) => {
-  const { onClose, page, onRename, onOpenMove } = props
+  const { onClose, page, onRename, onOpenMove, onArchive } = props
   const { organization } = useOrganization()
 
   const pageHref =
@@ -43,6 +44,10 @@ export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProp
               break
             case 'move':
               onOpenMove?.()
+              break
+            case 'trash':
+              console.log('archive')
+              onArchive?.()
               break
             default:
               break

@@ -14,6 +14,8 @@ import { PageActionMenu } from '@/components/page/PageActionMenu/PageActionMenu'
 import { useParams, useRouter } from 'next/navigation'
 import { OrganizationPageParams, ROUTES } from '@/constants/routes'
 import { useOrganization } from '@/components/providers/organization'
+import { useMutationState } from '@tanstack/react-query'
+import { MUTATION_KEYS } from '@/mutation/keys'
 
 interface SpaceItemProps {
   space: Space
@@ -92,6 +94,14 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
   const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
   const [isExpanded, setIsExpanded] = useState(getCollapseState(`page-${page.pkid}`))
   const { pageID } = useParams<Partial<OrganizationPageParams>>()
+  const archiveStatus = useMutationState({
+    filters: {
+      mutationKey: MUTATION_KEYS.ARCHIVE_PAGE({ id: page.id }),
+    },
+    select: (state) => state.state.status,
+  })
+
+  const disabled = archiveStatus.includes('pending')
 
   const { creatingPages, onOpenCreatePage, selectedParent, selectedSpace } = useCreatePageContext()
 
@@ -130,10 +140,12 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
     >
       <SidebarItem
         onClick={(e) => {
+          if (disabled) return
           e.stopPropagation()
           e.preventDefault()
           onSelectPage(page.id)
         }}
+        isDisabled={disabled}
         isSelected={pageID === page.id}
         startContent={
           <>

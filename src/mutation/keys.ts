@@ -32,6 +32,7 @@ export const MUTATION_KEYS = {
     id,
   ],
   UPDATE_PAGE: ({ id }: { id: string }) => ['UPDATE_PAGE', id],
+  ARCHIVE_PAGE: ({ id }: { id: string }) => ['ARCHIVE_PAGE', id],
   CREATE_DOC: ({
     parent_page_pkid,
     space_pkid,

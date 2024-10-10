@@ -12,6 +12,7 @@ import { useSidebar } from '@/components/providers/sidebar'
 import { useToast } from '@/hooks/useToast'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
+import { useArchivePage } from '@/mutation/mutator/page/useArchivePage'
 
 interface PageActionMenuProps {
   page: Page
@@ -28,6 +29,8 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
 
   const { refreshSpacePages } = useSidebar()
   const { toast } = useToast()
+
+  const { mutateAsync: archivePage } = useArchivePage({ id: page.id })
 
   const { mutateAsync: updatePage } = useUpdatePage({
     id: page.id,
@@ -49,6 +52,23 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
       toast({
         variant: 'danger',
         title: 'Failed to move page',
+      })
+    }
+  }
+
+  const handleArchive = async () => {
+    try {
+      await archivePage(page.id)
+      refreshSpacePages(page.id)
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.GET_PAGE({
+          pageID: page.id,
+        }),
+      })
+    } catch (e) {
+      toast({
+        variant: 'danger',
+        title: 'Failed to archive page',
       })
     }
   }
@@ -87,7 +107,12 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
       <div>
         <PoperContentTrigger>
           {children}
-          <PageMoreMenuPopoverContent page={page} onRename={onOpenRename} onOpenMove={onOpenMove} />
+          <PageMoreMenuPopoverContent
+            page={page}
+            onRename={onOpenRename}
+            onOpenMove={onOpenMove}
+            onArchive={handleArchive}
+          />
         </PoperContentTrigger>
       </div>
     </WrapperRegistry>
