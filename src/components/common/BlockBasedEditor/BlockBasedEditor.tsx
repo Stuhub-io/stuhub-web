@@ -21,7 +21,6 @@ import { NodeSelector } from './selectors/node-selector'
 import { TextButtons } from './selectors/text-buttons'
 import { ButtonGroup, Divider, Listbox, ListboxItem } from '@nextui-org/react'
 import EditorBubbleCommands from './EditorBubleCommand'
-// const hljs = require('highlight.js');
 
 const extensions = [...defaultExtensions, slashCommand]
 
@@ -38,17 +37,6 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
   const [openLink, setOpenLink] = useState(false)
 
   const ref = useRef<HTMLDivElement>(null)
-
-  // Apply Codeblock Highlighting on the HTML from editor.getHTML()
-  // const highlightCodeblocks = (content: string) => {
-  //   const doc = new DOMParser().parseFromString(content, 'text/html');
-  //   doc.querySelectorAll('pre code').forEach((el) => {
-  //     // @ts-ignore
-  //     // https://highlightjs.readthedocs.io/en/latest/api.html?highlight=highlightElement#highlightelement
-  //     hljs.highlightElement(el);
-  //   });
-  //   return new XMLSerializer().serializeToString(doc);
-  // };
 
   return (
     <EditorRoot>
