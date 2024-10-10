@@ -7,6 +7,7 @@ import {
   ReactNodeViewRendererOptions,
 } from '@tiptap/react'
 import 'novel'
+import { editorEmittor } from '../../emitter'
 
 const PAGE_DATA_ATTRIBUTE = 'data-page-id'
 
@@ -19,7 +20,7 @@ const PageCardComponent = ({ node }: { node: Partial<ReactNodeViewRendererOption
     <NodeViewWrapper>
       <div {...{ [PAGE_DATA_ATTRIBUTE]: id }}>
         <Button className="rounded-small p-2" fullWidth variant="bordered">
-          {createPageData?.name ?? "Untitled"}
+          {createPageData?.name ?? 'Untitled'}
         </Button>
         {/* <PageCard pageDetail={pageDetail} /> */}
       </div>
@@ -94,6 +95,7 @@ export const PageNode = Node.create<PageCardOptions>({
       setPage:
         (options) =>
         ({ commands }) => {
+          editorEmittor.emit('pageAdd', { pageID: options.pageID })
           return commands.insertContent({
             type: 'page',
             attrs: {
