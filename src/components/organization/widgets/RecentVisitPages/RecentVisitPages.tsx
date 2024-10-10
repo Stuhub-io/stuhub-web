@@ -19,7 +19,7 @@ export const RecentVisitPageWidget = () => {
 
   const renderLayout =
     layoutConfig.layout === 'list'
-      ? (items: ReactNode) => <div className="no-scrollbar flex gap-4 overflow-x-auto">{items}</div>
+      ? (items: ReactNode) => <div className="no-scrollbar flex gap-4 overflow-x-auto py-2">{items}</div>
       : (items: ReactNode) => <div className="grid grid-cols-4 gap-4">{items}</div>
 
   return (

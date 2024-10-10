@@ -41,6 +41,7 @@ export const getRenderContainer = (editor: Editor, nodeType: string) => {
 export default getRenderContainer
 
 export interface MenuProps {
+  editor: Editor
   appendTo?: React.RefObject<any>
   shouldHide?: boolean
 }

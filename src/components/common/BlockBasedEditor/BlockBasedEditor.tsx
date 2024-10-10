@@ -21,7 +21,6 @@ import { NodeSelector } from './selectors/node-selector'
 import { TextButtons } from './selectors/text-buttons'
 import { ButtonGroup, Divider, Listbox, ListboxItem } from '@nextui-org/react'
 import EditorBubbleCommands from './EditorBubleCommand'
-
 // const hljs = require('highlight.js');
 
 const extensions = [...defaultExtensions, slashCommand]
@@ -98,7 +97,6 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
             ))}
           </Listbox>
         </EditorCommand>
-
         <EditorBubbleCommands>
           <ButtonGroup size="md">
             <NodeSelector open={openNode} onOpenChange={setOpenNode} />
