@@ -13,14 +13,16 @@ import { TOCHeading } from '@/components/common/BlockBasedEditor/utils/extract-h
 import { usePageLayoutContext } from '@/components/layout/PageLayout/context'
 import { getRandomImageUrl } from '@/libs/image'
 
-console.error = () => {}
-
 export default function PageDetail() {
   const { pageID } = useParams<OrganizationPageParams>()
   const [headings, setHeadings] = useState<TOCHeading[]>([])
   const { setCoverImageUrl, currentCoverImageUrl } = usePageLayoutContext()
 
-  const { data: { data: pageDetail } = {} } = useFetchPage({
+  const {
+    data: { data: pageDetail } = {},
+    refetch,
+    isFetching: isFetchingPage,
+  } = useFetchPage({
     allowFetch: true,
     pageID,
   })
@@ -56,8 +58,10 @@ export default function PageDetail() {
             {documentData ? (
               <>
                 <PageContent
+                  mutatePage={refetch}
                   page={pageDetail}
                   documentData={documentData}
+                  fetchingPage={isFetchingPage}
                   onContentHeadingChanged={setHeadings}
                   isReadOnly={isRefetching}
                   key={documentData.pkid}

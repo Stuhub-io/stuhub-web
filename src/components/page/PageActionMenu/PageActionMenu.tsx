@@ -16,10 +16,15 @@ import { useArchivePage } from '@/mutation/mutator/page/useArchivePage'
 
 interface PageActionMenuProps {
   page: Page
+  onSuccess?: () => void
+  onBeforeArchive?: () => boolean
+  onBeforeMove?: () => boolean
 }
 
+const funcTrue = () => true
+
 export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) => {
-  const { children, page } = props
+  const { children, page, onSuccess, onBeforeMove = funcTrue, onBeforeArchive = funcTrue } = props
 
   const queryClient = useQueryClient()
 
@@ -37,6 +42,7 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
   })
 
   const handleMove = async (selectedPage: Page) => {
+    if (!onBeforeMove()) return
     try {
       await updatePage({
         ...page,
@@ -48,6 +54,7 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
           pageID: page.id,
         }),
       })
+      await onSuccess?.()
     } catch (e) {
       toast({
         variant: 'danger',
@@ -57,6 +64,9 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
   }
 
   const handleArchive = async () => {
+    if (!onBeforeArchive()) {
+      return
+    }
     try {
       await archivePage(page.id)
       refreshSpacePages(page.id)
@@ -65,6 +75,7 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
           pageID: page.id,
         }),
       })
+      await onSuccess?.()
     } catch (e) {
       toast({
         variant: 'danger',
@@ -81,7 +92,12 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
           placement="bottom"
           isOpen={isOpenRename}
           renderContent={(setRef) => (
-            <RenamePageInput ref={setRef} page={page} onClose={onCloseRename} />
+            <RenamePageInput
+              ref={setRef}
+              page={page}
+              onClose={onCloseRename}
+              onSuccess={onSuccess}
+            />
           )}
           onClose={onCloseRename}
         />,

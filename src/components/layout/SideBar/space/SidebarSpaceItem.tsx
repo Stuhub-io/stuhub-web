@@ -39,7 +39,7 @@ export const SpaceItem = (props: SpaceItemProps) => {
   const outerPages = useMemo(() => {
     if (space.is_private) {
       return privatePages?.list?.filter(
-        (page) => page.space_pkid === space.pkid && !page.parent_page_pkid,
+        (page) => page.space_pkid === space.pkid && !page.parent_page_pkid && !page.archived_at,
       )
     }
     // FIXME: add handle pages
@@ -124,7 +124,7 @@ export const SidebarPageItem = ({ page, space, level = 0 }: SidebarPageItemProps
   }, [creatingPages, page.pkid, space.pkid])
 
   const childPages = useMemo(() => {
-    return privatePages?.list.filter((p) => p.parent_page_pkid === page.pkid)
+    return privatePages?.list.filter((p) => p.parent_page_pkid === page.pkid && !p.archived_at)
   }, [page.pkid, privatePages])
 
   useEffect(() => {
@@ -244,7 +244,7 @@ export const CreatingSidebarPageItem = (props: CreatingSidebarPageItemProps) => 
         </>
       }
     >
-      {data.input.name}
+      {data.input.name || "Untitled"}
     </SidebarItem>
   )
 }

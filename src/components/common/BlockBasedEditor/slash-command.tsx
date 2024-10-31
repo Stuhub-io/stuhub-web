@@ -1,3 +1,4 @@
+import { generateUUID } from '@/libs/uuid'
 import { createSuggestionItems } from 'novel/extensions'
 import { Command, renderItems } from 'novel/extensions'
 import { LuHeading1, LuHeading2, LuHeading3 } from 'react-icons/lu'
@@ -127,7 +128,7 @@ export const suggestionItems = createSuggestionItems([
     command: ({ editor, range }) => {
       // @ts-expect-error -- editor schema not applied
       // FIXME: type err
-      editor.chain().focus().deleteRange(range).setPage({ pageID: 'create-new' }).run()
+      editor.chain().focus().deleteRange(range).setPage({ pageID: generateUUID() }).run()
     },
   },
 ])

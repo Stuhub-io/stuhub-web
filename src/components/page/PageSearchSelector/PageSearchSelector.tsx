@@ -20,13 +20,19 @@ export const PageSearchSelector = forwardRef<ComponentRef<'div'>, PageSearchSele
       space_pkid: spacePkID,
     })
 
-    const outerPages = useMemo(() => pages?.list?.filter((page) => !page.parent_page_pkid), [pages])
+    const outerPages = useMemo(
+      () => pages?.list?.filter((page) => !page.parent_page_pkid && !page.archived_at),
+      [pages],
+    )
 
     const [search, setSearch] = useState('')
 
     const filteredPages = useMemo(
       () =>
-        pages?.list?.filter((page) => page.name.toLowerCase().includes(search.toLocaleLowerCase())),
+        pages?.list?.filter(
+          (page) =>
+            !page.archived_at && page.name.toLowerCase().includes(search.toLocaleLowerCase()),
+        ),
       [pages, search],
     )
 
@@ -39,7 +45,7 @@ export const PageSearchSelector = forwardRef<ComponentRef<'div'>, PageSearchSele
           value={search}
           onValueChange={setSearch}
         />
-        <div className="-mx-3 h-[300px]">
+        <div className="-mx-3 h-[300px] overflow-y-auto">
           {search ? (
             <div className="">
               {!filteredPages?.length ? (

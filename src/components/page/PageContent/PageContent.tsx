@@ -1,19 +1,22 @@
 import BlockBasedEditor from '@/components/common/BlockBasedEditor'
-import { editorEmittor } from '@/components/common/BlockBasedEditor/emitter'
+import { PAGE_DATA_ATTRIBUTE } from '@/components/common/BlockBasedEditor/extensions/Page'
 import {
   extractHeading,
   TOCHeading,
 } from '@/components/common/BlockBasedEditor/utils/extract-headings'
-import { useCreatePageContext } from '@/components/providers/newpage'
+import { PageEditorProvider } from '@/components/providers/page/page-editor'
+import { useSidebar } from '@/components/providers/sidebar'
 import { useToast } from '@/hooks/useToast'
 import { QUERY_KEYS } from '@/mutation/keys'
-import { useCreateDocument } from '@/mutation/mutator/document/useCreateDocument'
 import { useUpdateDocumentContent } from '@/mutation/mutator/document/useUpdateDocumentContent'
+import { useBulkArchivePages } from '@/mutation/mutator/page/useBulkArchivePages'
+import { useBulkGetOrCreatePages } from '@/mutation/mutator/page/useBulkGetOrCreatePages'
 import { Document } from '@/schema/document'
-import { Page } from '@/schema/page'
+import { BulkGetOrCreateRequestBody, Page } from '@/schema/page'
 import { useQueryClient } from '@tanstack/react-query'
+import { Attrs } from '@tiptap/pm/model'
 import { JSONContent } from 'novel'
-import { useState, useEffect, useId } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 
 interface PageContentProps {
@@ -21,27 +24,25 @@ interface PageContentProps {
   onContentHeadingChanged?: (_: TOCHeading[]) => void
   isReadOnly?: boolean
   page?: Page
+  mutatePage?: () => void
+  fetchingPage?: boolean
 }
 
 export const PageContent = (props: PageContentProps) => {
-  const { documentData, onContentHeadingChanged, isReadOnly, page } = props
+  const { documentData, onContentHeadingChanged, isReadOnly, page, mutatePage, fetchingPage } =
+    props
   const { toast } = useToast()
-  const { appendCreatingPages, updateCreatingPages } = useCreatePageContext()
   const queryClient = useQueryClient()
 
   const [initLoad, setInitLoad] = useState(false)
 
-  const createId = useId()
-
-  const { mutateAsync } = useCreateDocument({
-    parent_page_pkid: page?.parent_page_pkid ?? -1,
-    space_pkid: page?.space_pkid ?? -1,
-    tempId: createId,
-  })
-
   const { mutate: updateDocumentContent } = useUpdateDocumentContent()
+  const { refreshPrivatePages } = useSidebar()
 
-  const onUpdateDocument = useDebouncedCallback(
+  const { mutateAsync: bulkGetOrCreatePages } = useBulkGetOrCreatePages()
+  const { mutateAsync: bulkArchivePages } = useBulkArchivePages()
+
+  const updateDocument = useCallback(
     (content: JSONContent) => {
       if (!documentData || isReadOnly) return
       onContentHeadingChanged?.(extractHeading(content))
@@ -50,47 +51,76 @@ export const PageContent = (props: PageContentProps) => {
         json_content: JSON.stringify(content ?? ''),
       })
     },
-    500,
-    {
-      maxWait: 2000,
-      trailing: true,
-    },
+    [documentData, isReadOnly, onContentHeadingChanged, updateDocumentContent],
   )
+
+  const onUpdateDocumentDebounce = useDebouncedCallback(updateDocument, 500, {
+    maxWait: 2000,
+    trailing: true,
+  })
 
   const [content, setContent] = useState<JSONContent>()
 
-  const handleCreateDocument = async () => {
-    console.log('handleCreateDocument')
-    try {
-      const data = {
-        name: '',
-        parent_page_pkid: page?.parent_page_pkid,
-        space_pkid: page?.space_pkid ?? -1,
-        view_type: 'document' as const,
+  const handleCreateDocument = useCallback(
+    async (attr: Attrs[], snapContent: JSONContent) => {
+      if (!page) return
+      try {
+        const inputs: BulkGetOrCreateRequestBody = {
+          page_inputs: attr.map((a) => ({
+            name: '',
+            node_id: a[PAGE_DATA_ATTRIBUTE],
+            parent_page_pkid: page.pkid,
+            space_pkid: page.space_pkid,
+            view_type: 'document',
+          })),
+        }
+        updateDocument(snapContent)
+        // const newPages =
+        await bulkGetOrCreatePages(inputs)
+        refreshPrivatePages()
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.GET_PAGE({ pageID: page.id }),
+        })
+      } catch (e) {
+        toast({
+          variant: 'danger',
+          title: 'Failed to create document',
+        })
       }
-      appendCreatingPages({
-        id: createId,
-        input: data,
-      })
-      const result = await mutateAsync({
-        page: data,
-        json_content: '{}',
-      })
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.GET_SPACE_PAGES({ space_pkid: data.space_pkid }),
-      })
-      updateCreatingPages(createId, {
-        id: createId,
-        input: data,
-        result: result.data.page,
-      })
-    } catch (e) {
-      toast({
-        variant: 'danger',
-        title: 'Failed to create document',
-      })
-    }
-  }
+    },
+    [bulkGetOrCreatePages, page, queryClient, refreshPrivatePages, toast, updateDocument],
+  )
+
+  const handleDeleteDocument = useCallback(
+    async (attrs: Attrs[], snapContent: JSONContent) => {
+      if (!page) return
+      const childPageMap =
+        page.child_pages?.reduce(
+          (map, child) => {
+            map[child.node_id ?? ''] = child
+            return map
+          },
+          {} as Record<string, Page>,
+        ) ?? {}
+      const pagePkIDs = attrs.map((a) => childPageMap[a[PAGE_DATA_ATTRIBUTE]]?.pkid).filter(Boolean)
+      try {
+        updateDocument(snapContent)
+        await bulkArchivePages({
+          page_pkids: pagePkIDs,
+        })
+        refreshPrivatePages()
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.GET_PAGE({ pageID: page.id }),
+        })
+      } catch (e) {
+        toast({
+          variant: 'danger',
+          title: 'Failed to archive document',
+        })
+      }
+    },
+    [bulkArchivePages, page, queryClient, refreshPrivatePages, toast, updateDocument],
+  )
 
   useEffect(() => {
     if (documentData && !initLoad) {
@@ -111,20 +141,19 @@ export const PageContent = (props: PageContentProps) => {
     }
   }, [content, documentData, initLoad, isReadOnly, onContentHeadingChanged, toast])
 
-  useEffect(() => {
-    editorEmittor.on('pageAdd', () => {
-      handleCreateDocument()
-    })
-    return () => {
-      editorEmittor.off('pageAdd')
-    }
-  }, [])
-
   return (
-    <BlockBasedEditor
-      jsonContent={content}
-      onJsonContentChange={onUpdateDocument}
-      key={documentData && initLoad ? documentData?.pkid : 'loading'}
-    />
+    <PageEditorProvider
+      childPages={page?.child_pages ?? []}
+      pageMutate={mutatePage}
+      validatingPageMap={fetchingPage}
+    >
+      <BlockBasedEditor
+        jsonContent={content}
+        onJsonContentChange={onUpdateDocumentDebounce}
+        onPageNodesAdded={handleCreateDocument}
+        onPageNodesRemoved={handleDeleteDocument}
+        key={documentData && initLoad ? documentData?.pkid : 'loading'}
+      />
+    </PageEditorProvider>
   )
 }

@@ -46,7 +46,6 @@ export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProp
               onOpenMove?.()
               break
             case 'trash':
-              console.log('archive')
               onArchive?.()
               break
             default:
