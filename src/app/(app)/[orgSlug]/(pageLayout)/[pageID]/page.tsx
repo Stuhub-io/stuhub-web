@@ -1,7 +1,6 @@
 'use client'
 
 import { PageTitle } from '@/components/page/PageTitleInput'
-import { useFetchDocument } from '@/mutation/querier/document/useFetchDocument'
 import { PageContent } from '@/components/page/PageContent'
 import { Skeleton } from '@nextui-org/react'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
@@ -20,16 +19,10 @@ export default function PageDetail() {
 
   const {
     data: { data: pageDetail } = {},
-    refetch,
-    isFetching: isFetchingPage,
+    isLoading,
   } = useFetchPage({
     allowFetch: true,
     pageID,
-  })
-
-  const { data: { data: documentData } = {}, isRefetching } = useFetchDocument({
-    allowFetch: !!pageDetail,
-    pagePkID: pageDetail?.pkid ?? -1,
   })
 
   const onAddCoverBtn = () => {
@@ -55,16 +48,12 @@ export default function PageDetail() {
             )}
           </div>
           <div className="-mx-3 pb-10">
-            {documentData ? (
+            {pageDetail ? (
               <>
                 <PageContent
-                  mutatePage={refetch}
-                  page={pageDetail}
-                  documentData={documentData}
-                  fetchingPage={isFetchingPage}
+                  documentData={pageDetail.document}
                   onContentHeadingChanged={setHeadings}
-                  isReadOnly={isRefetching}
-                  key={documentData.pkid}
+                  key={pageDetail.pkid}
                 />
               </>
             ) : (
@@ -76,9 +65,7 @@ export default function PageDetail() {
           </div>
         </div>
       </div>
-      {documentData && (
-        <TableOfContent key={isRefetching ? 'refetching' : documentData.pkid} headings={headings} />
-      )}
+      {pageDetail && <TableOfContent key={isLoading ? "loading": "done"} headings={headings} />}
     </div>
   )
 }

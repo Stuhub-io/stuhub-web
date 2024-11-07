@@ -8,12 +8,12 @@ import { CollapsePersistProvider } from './collapse'
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
-    <CreatePageProvider>
-      <OrganizationProvider>
+    <OrganizationProvider>
+      <CreatePageProvider>
         <CollapsePersistProvider>
           <SidebarProvider>{children}</SidebarProvider>
         </CollapsePersistProvider>
-      </OrganizationProvider>
-    </CreatePageProvider>
+      </CreatePageProvider>
+    </OrganizationProvider>
   )
 }

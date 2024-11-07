@@ -1,11 +1,9 @@
-import { generateUUID } from '@/libs/uuid'
 import { createSuggestionItems } from 'novel/extensions'
 import { Command, renderItems } from 'novel/extensions'
 import { LuHeading1, LuHeading2, LuHeading3 } from 'react-icons/lu'
 import {
   RiCheckFill,
   RiCodeBlock,
-  RiFileFill,
   RiImage2Fill,
   RiListOrdered,
   RiListRadio,
@@ -118,17 +116,6 @@ export const suggestionItems = createSuggestionItems([
         }
       }
       input.click()
-    },
-  },
-  {
-    title: 'Page',
-    description: 'Link to another page.',
-    searchTerms: ['link', 'page'],
-    icon: <RiFileFill size={18} />,
-    command: ({ editor, range }) => {
-      // @ts-expect-error -- editor schema not applied
-      // FIXME: type err
-      editor.chain().focus().deleteRange(range).setPage({ pageID: generateUUID() }).run()
     },
   },
 ])

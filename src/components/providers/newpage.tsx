@@ -2,28 +2,34 @@ import createContext from '@/libs/context'
 import { useDisclosure } from '@nextui-org/react'
 import { Dispatch, PropsWithChildren, SetStateAction, useState } from 'react'
 import { CreateNewPageModal } from '../page/CreateNewPageModal'
-import { CreatePageRequestBody, Page } from '@/schema/page'
-import { Space } from '@/schema/space'
+import { CreatePageRequest, Page, PageViewTypeEnum } from '@/schema/page'
 import { newIdGenerator } from '@/libs/utils'
+import { useOrganization } from './organization'
+import { JSONContent } from 'novel'
 
-export type IToCreatePage = CreatePageRequestBody & {
+export type IToCreatePage = CreatePageRequest & {
   uniqID: string
   status: 'loading' | 'success' | 'error'
 }
 
 export type ICreatingPage = {
   id: string
-  input: CreatePageRequestBody
+  input: CreatePageRequest
   result?: Page
+}
+
+type CreatePageData = Omit<CreatePageRequest, 'document'> & {
+  document: {
+    json_content: JSONContent
+  }
 }
 interface CreatePageContextValue {
   selectedParent?: Page
-  selectedSpace?: Space
-  onOpenCreatePage: (space: Space, parentPage?: Page) => void
+  onOpenCreatePage: (parentPage?: Page) => void
   onCloseCreatePage: () => void
   isOpenCreatePage: boolean
-  createPageData?: CreatePageRequestBody
-  setCreatePageData?: Dispatch<SetStateAction<CreatePageRequestBody | undefined>>
+  createPageData?: CreatePageData
+  setCreatePageData?: Dispatch<SetStateAction<CreatePageData | undefined>>
   creatingPages: ICreatingPage[]
   appendCreatingPages: (data: ICreatingPage) => void
   doneCreatingPage: (id: string) => void
@@ -39,13 +45,14 @@ export { useCreatePageContext }
 
 const genID = newIdGenerator()
 
+
 export const CreatePageProvider = ({ children }: PropsWithChildren) => {
+  const { organization } = useOrganization()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedParent, setSelectedParent] = useState<Page>()
-  const [selectedSpace, setSelectedSpace] = useState<Space>()
   const [creatingPages, setCreatingPages] = useState<ICreatingPage[]>([])
-  const [createPageData, setCreatePageData] = useState<CreatePageRequestBody>()
-  const [ createID, setCreateID ] = useState<string>("")
+  const [createPageData, setCreatePageData] = useState<CreatePageData>()
+  const [createID, setCreateID] = useState<string>('')
 
   const appendCreatingPages = (data: ICreatingPage) => {
     setCreatingPages((prev) => [...prev, data])
@@ -59,14 +66,17 @@ export const CreatePageProvider = ({ children }: PropsWithChildren) => {
     setCreatingPages((prev) => prev.filter((data) => data.id !== id))
   }
 
-  const onOpenCreatePage = (space: Space, parentPage?: Page) => {
-    setSelectedSpace(space)
+  const onOpenCreatePage = (parentPage?: Page) => {
     setSelectedParent(parentPage)
     setCreatePageData({
       name: '',
-      space_pkid: space.pkid,
+      org_pkid: organization?.pkid ?? -1,
       parent_page_pkid: parentPage?.pkid,
-      view_type: 'document',
+      view_type: PageViewTypeEnum.DOCUMENT,
+      cover_image: '',
+      document: {
+        json_content: {} as JSONContent,
+      },
     })
     setCreateID(genID())
     onOpen()
@@ -74,9 +84,8 @@ export const CreatePageProvider = ({ children }: PropsWithChildren) => {
 
   const onCloseCreatePage = () => {
     setSelectedParent(undefined)
-    setSelectedSpace(undefined)
     setCreatePageData(undefined)
-    setCreateID("")
+    setCreateID('')
     onClose()
   }
 
@@ -87,18 +96,17 @@ export const CreatePageProvider = ({ children }: PropsWithChildren) => {
         selectedParent,
         onCloseCreatePage,
         onOpenCreatePage,
-        selectedSpace,
         createPageData,
         setCreatePageData,
         appendCreatingPages,
         doneCreatingPage,
         creatingPages,
         updateCreatingPages,
-        createID
+        createID,
       }}
     >
       {children}
-      <CreateNewPageModal key={(selectedParent?.id ?? '-') + (selectedSpace?.id ?? '-')}  />
+      <CreateNewPageModal key={selectedParent?.id ?? ''} />
     </Provider>
   )
 }

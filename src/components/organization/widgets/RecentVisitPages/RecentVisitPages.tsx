@@ -10,7 +10,7 @@ import { PoperContentTrigger } from '@/components/common/PopoverTrigger'
 
 export const RecentVisitPageWidget = () => {
   // FIXME: fetch recent visit pages
-  const { privatePages } = useSidebar()
+  const { orgPages } = useSidebar()
 
   const [layoutConfig, setLayoutConfig] = useState<ILayoutSettings>({
     layout: 'list',
@@ -35,7 +35,7 @@ export const RecentVisitPageWidget = () => {
         </PoperContentTrigger>
       }
     >
-      {renderLayout(privatePages?.list.map((page) => <PageCard pageDetail={page} key={page.id} />))}
+      {renderLayout(orgPages?.list.map((page) => <PageCard pageDetail={page} key={page.id} />))}
     </WidgetSection>
   )
 }

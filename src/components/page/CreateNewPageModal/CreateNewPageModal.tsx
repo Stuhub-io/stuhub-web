@@ -14,8 +14,10 @@ import { useCreatePageContext } from '@/components/providers/newpage'
 import { useToast } from '@/hooks/useToast'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
-import { useCreateDocument } from '@/mutation/mutator/document/useCreateDocument'
-import { useState } from 'react'
+import { useCreatePage } from '@/mutation/mutator/page/useCreatePage'
+import { useCallback } from 'react'
+import { PageViewTypeEnum } from '@/schema/page'
+import { useOrganization } from '@/components/providers/organization'
 import { JSONContent } from 'novel'
 
 export const CreateNewPageModal = () => {
@@ -23,70 +25,89 @@ export const CreateNewPageModal = () => {
     isOpenCreatePage,
     onCloseCreatePage,
     selectedParent,
-    selectedSpace,
     appendCreatingPages,
     createPageData,
     setCreatePageData,
     updateCreatingPages,
     createID,
   } = useCreatePageContext()
+  const { organization } = useOrganization()
 
   const queryClient = useQueryClient()
   const { toast } = useToast()
+
   const title = createPageData?.name
-  const [content, setContent] = useState<JSONContent>()
+  const content = createPageData?.document.json_content ?? ({} as JSONContent)
+
+  const setContent = useCallback(
+    (value: JSONContent) => {
+      setCreatePageData?.((pageInput) => ({
+        ...(pageInput ?? {
+          name: '',
+          view_type: PageViewTypeEnum.DOCUMENT,
+          parent_page_pkid: selectedParent?.pkid,
+          org_pkid: organization?.pkid ?? -1,
+          cover_image: '',
+          document: {
+            json_content: {},
+          },
+        }),
+        document: {
+          json_content: value,
+        },
+      }))
+    },
+    [organization?.pkid, selectedParent?.pkid, setCreatePageData],
+  )
 
   const setTitle = (value: string) => {
-    if (!selectedSpace) return
-    setCreatePageData?.({
+    setCreatePageData?.((pageInput) => ({
+      ...(pageInput ?? {
+        view_type: PageViewTypeEnum.DOCUMENT,
+        parent_page_pkid: selectedParent?.pkid,
+        org_pkid: organization?.pkid ?? -1,
+        cover_image: '',
+        document: {
+          json_content: {},
+        },
+      }),
       name: value,
-      parent_page_pkid: selectedParent?.pkid,
-      space_pkid: selectedSpace?.pkid,
-      view_type: 'document',
-    })
+    }))
   }
 
-  const { mutateAsync } = useCreateDocument({
+  const { mutateAsync } = useCreatePage({
     parent_page_pkid: selectedParent?.pkid ?? -1,
-    space_pkid: selectedSpace?.pkid ?? -1,
+    org_pkid: organization?.pkid ?? -1,
     tempId: createID,
   })
 
   const handleOnClose = () => {
-    if (!selectedSpace) {
-      onCloseCreatePage()
-      return
-    }
     // FIXME: check if empty content
     if (!title) {
       onCloseCreatePage()
       return
     }
-    const data = {
-      name: title || 'Untitled',
-      parent_page_pkid: selectedParent?.pkid,
-      space_pkid: selectedSpace.pkid,
-      view_type: 'document',
-    } as const
-
     onCloseCreatePage()
     ;(async () => {
       try {
+        const dataInput = {
+          ...createPageData,
+          document: {
+            json_content: JSON.stringify(content),
+          },
+        }
         appendCreatingPages({
           id: createID,
-          input: data,
+          input: dataInput,
         })
-        const result = await mutateAsync({
-          page: data,
-          json_content: JSON.stringify(content) || '{}',
-        })
+        const { data: newPage } = await mutateAsync(dataInput)
         queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.GET_SPACE_PAGES({ space_pkid: data.space_pkid }),
+          queryKey: QUERY_KEYS.GET_ORG_PAGES({ org_pkid: organization?.pkid ?? -1 }),
         })
         updateCreatingPages(createID, {
           id: createID,
-          input: data,
-          result: result.data.page,
+          input: dataInput,
+          result: newPage,
         })
       } catch (e) {
         toast({
@@ -115,9 +136,6 @@ export const CreateNewPageModal = () => {
               </Button>
             </div>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="flat" endContent={<RiArrowDropDownLine size={16} />}>
-                {selectedSpace?.name}
-              </Button>
               <Button
                 size="sm"
                 variant="flat"
@@ -165,7 +183,7 @@ export const CreateNewPageModal = () => {
             </div>
             <div className="-mx-3 mt-2 pb-10">
               <BlockBasedEditor
-                jsonContent={content}
+                jsonContent={(content ?? '{}') as unknown as JSONContent}
                 onJsonContentChange={(json) => setContent(json)}
               />
             </div>

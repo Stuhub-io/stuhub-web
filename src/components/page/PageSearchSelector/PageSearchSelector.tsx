@@ -6,18 +6,19 @@ import { ComponentRef, forwardRef, useMemo, useState } from 'react'
 import { RiSearchLine } from 'react-icons/ri'
 import { PageTreeItem } from './PageTreeItem'
 import { SidebarItemSkeleton } from '@/components/layout/SideBar/SidebarItemSkeleton'
+import { useOrganization } from '@/components/providers/organization'
 
 export interface PageSearchSelectorProps {
   onSelected?: (selected: Page) => void
-  spacePkID: number
   excludePageIds?: string[]
 }
 
 export const PageSearchSelector = forwardRef<ComponentRef<'div'>, PageSearchSelectorProps>(
   (props, ref) => {
-    const { onSelected, spacePkID, excludePageIds = [] } = props
+    const { onSelected, excludePageIds = [] } = props
+    const { organization } = useOrganization()
     const { data: { data: pages } = {}, isPending } = useFetchPages({
-      space_pkid: spacePkID,
+      org_pkid: organization?.pkid ?? -1,
     })
 
     const outerPages = useMemo(

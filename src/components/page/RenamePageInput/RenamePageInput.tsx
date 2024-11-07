@@ -29,7 +29,7 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
     const { toast } = useToast()
     const queryClient = useQueryClient()
 
-    const { refreshPrivatePages, privateSpace } = useSidebar()
+    const { refreshOrgPages } = useSidebar()
 
     const { mutateAsync: updatePage, isPending } = useUpdatePage({
       id: page.id,
@@ -45,14 +45,15 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
       try {
         onClose()
         await updatePage({
-          ...page,
-          name: data.name,
+          pkid: page.pkid,
+          body: {
+            ...page,
+            name: data.name,
+          },
         })
 
-        if (page.space_pkid === privateSpace?.pkid) {
-          refreshPrivatePages()
-        }
-
+        refreshOrgPages()
+        
         queryClient.invalidateQueries({
           exact: true,
           queryKey: QUERY_KEYS.GET_PAGE({

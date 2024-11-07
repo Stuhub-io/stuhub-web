@@ -6,8 +6,10 @@ import { InviteMembersModal } from '@/components/modals/InviteMembersModal'
 import { SidebarFooter } from './SidebarFooterTool'
 import { SidebarOrgSwitcher } from './SidebarOrgSwitcher'
 import { SidebarToolItems } from './SidebarToolItems'
-import { SidebarSpaces } from './space/SidebarSpaces'
 import { AccountSettingsModal } from '@/components/modals/AccountSettingsModal'
+import { SidebarOrgPages } from './page/SidebarOrgPages'
+import { useSidebar } from '@/components/providers/sidebar'
+import { SidebarItemSkeleton } from './SidebarItemSkeleton'
 
 export interface SideBarProps {
   className?: string
@@ -24,6 +26,8 @@ export const SideBar = ({ className }: SideBarProps) => {
     onOpen: openAccountSettings,
     onClose: closeAccountSettings,
   } = useDisclosure()
+
+  const { orgPages } = useSidebar()
 
   return (
     <div
@@ -45,7 +49,17 @@ export const SideBar = ({ className }: SideBarProps) => {
       </div>
       <Divider />
       <div className="space-y-1 overflow-y-auto pb-4 pt-4">
-        <SidebarSpaces />
+        {/* Favorites */}
+        {orgPages && <SidebarOrgPages />}
+        {!orgPages && (
+          <>
+            <SidebarItemSkeleton className="w-14" />
+            <SidebarItemSkeleton hasIcon />
+            {[1, 2, 3, 4].map((i) => (
+              <SidebarItemSkeleton hasIcon delay={300 + 200 * i} key={i} />
+            ))}
+          </>
+        )}
       </div>
       <div className="flex-1" />
       <Divider />

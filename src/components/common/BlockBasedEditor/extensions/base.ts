@@ -26,7 +26,6 @@ import { Extension } from "@tiptap/core";
 import { UploadImagesPlugin } from "novel/plugins";
 import { cx } from "class-variance-authority";
 import { all, createLowlight } from "lowlight";
-import { PageNode } from "./Page";
 // @ts-expect-error - w
 import UniqueId from "tiptap-unique-id";
 import { generateUUID } from "@/libs/uuid";
@@ -177,7 +176,6 @@ export const defaultExtensions = [
     types: ["heading"],
     createId: () => generateUUID(),
   }),
-  PageNode,
   placeholder,
   tiptapLink,
   tiptapImage,
