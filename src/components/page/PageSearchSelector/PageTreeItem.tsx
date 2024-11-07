@@ -33,7 +33,7 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
 
   const childPages = useMemo(() => {
     if (!showChild) return []
-    return pages.filter((p) => p.parent_page_pkid === page.pkid)
+    return pages.filter((p) => p.parent_page_pkid === page.pkid && !p.archived_at)
   }, [page.pkid, pages, showChild])
 
   const handlePageClick = useCallback(() => {
@@ -85,7 +85,7 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
           </>
         }
       >
-        {page.name}
+        {page.name || 'Untitled'}
       </SidebarItem>
       {showChild &&
         childPages.map((childPage) => (

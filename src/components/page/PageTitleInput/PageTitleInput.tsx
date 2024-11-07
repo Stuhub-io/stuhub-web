@@ -28,7 +28,7 @@ export const PageTitle = (props: PageTitleProps) => {
     hasIcon = false,
   } = props
   const { toast } = useToast()
-  const { refreshPrivatePages, privateSpace } = useSidebar()
+  const { refreshOrgPages } = useSidebar()
 
   const {
     isRefetching,
@@ -51,13 +51,14 @@ export const PageTitle = (props: PageTitleProps) => {
       if (!page) return
       try {
         await updatePage({
-          ...page,
-          name,
+          pkid: page.pkid,
+          body: {
+            ...page,
+            name,
+          },
         })
 
-        if (page.space_pkid === privateSpace?.pkid) {
-          refreshPrivatePages()
-        }
+        refreshOrgPages()
 
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.GET_PAGE({
@@ -73,7 +74,7 @@ export const PageTitle = (props: PageTitleProps) => {
       }
       willUpdatePage.current = false
     },
-    [page, privateSpace?.pkid, queryClient, refreshPrivatePages, toast, updatePage],
+    [page, queryClient, refreshOrgPages, toast, updatePage],
   )
 
   const thorttleUpdateTitle = useDebouncedCallback(updatePageTitle, 500, {

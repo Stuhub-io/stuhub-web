@@ -1,10 +1,9 @@
-import { pageService } from "@/api/page";
 import { QUERY_KEYS } from "@/mutation/keys";
-import { Page } from "@/schema/page";
-import { SpacePkIDParams } from "@/schema/space";
+import { GetPagesQuery, Page } from "@/schema/page";
 import { useQuery } from "@tanstack/react-query";
+import { pageService } from "@/api/page";
 
-export interface UseFetchPages extends SpacePkIDParams {
+export interface UseFetchPages extends GetPagesQuery {
     allowFetch?: boolean
 }
 
@@ -16,9 +15,9 @@ export interface IPageData {
 export const useFetchPages = (args: UseFetchPages) => {
     const {allowFetch = true, ...restParams} = args
     return useQuery({
-        queryKey: QUERY_KEYS.GET_SPACE_PAGES(restParams),
+        queryKey: QUERY_KEYS.GET_ORG_PAGES(restParams),
         queryFn: async () => {
-            const resp = await pageService.getPagesBySpacePkID(restParams)
+            const resp = await pageService.getPages(restParams)
             return {
                 ...resp,
                 data: {

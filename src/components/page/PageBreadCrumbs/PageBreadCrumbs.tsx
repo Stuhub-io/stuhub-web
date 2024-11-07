@@ -33,13 +33,13 @@ export const PageBreadCrumbs = () => {
     pageID,
   })
 
-  const { isPendingPrivatePages, isPendingSpaces } = useSidebar()
+  const { isPendingorgPages, isPendingSpaces } = useSidebar()
 
   const onSelectPage = (selectedPageID: string) => {
     push(ROUTES.ORGANIZATION_PAGE({ orgSlug: organization?.slug ?? '', pageID: selectedPageID }))
   }
 
-  const isLoading = isPending || isPendingSpaces || isPendingPrivatePages
+  const isLoading = isPending || isPendingSpaces || isPendingorgPages
   const [openRename, setOpenRename] = useState(false)
 
   useEffect(() => {

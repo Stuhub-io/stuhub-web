@@ -1,7 +1,7 @@
 
 export type Pagination = {
     size: number
-    offset: number
+    page: number
 }
 
 export type  BaseResponse<T=undefined> = {

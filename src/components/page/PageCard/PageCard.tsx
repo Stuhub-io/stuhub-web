@@ -40,7 +40,7 @@ export const PageCard = (props: PageCardProps) => {
         </div>
         <div className="mt-2 h-[40px] w-full">
           <Typography level="h8" className="line-clamp-2 !font-medium">
-            {pageDetail?.name}
+            {pageDetail?.name || "Untitled"}
           </Typography>
         </div>
       </CardHeader>

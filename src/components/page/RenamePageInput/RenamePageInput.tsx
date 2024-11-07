@@ -20,15 +20,16 @@ type RenamePageInputForm = z.infer<typeof schema>
 interface RenamePageInputProps {
   page: Page
   onClose: () => void
+  onSuccess?: () => void
 }
 
 export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputProps>(
   (props, ref) => {
-    const { page, onClose } = props
+    const { page, onClose, onSuccess } = props
     const { toast } = useToast()
     const queryClient = useQueryClient()
 
-    const { refreshPrivatePages, privateSpace } = useSidebar()
+    const { refreshOrgPages } = useSidebar()
 
     const { mutateAsync: updatePage, isPending } = useUpdatePage({
       id: page.id,
@@ -44,19 +45,22 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
       try {
         onClose()
         await updatePage({
-          ...page,
-          name: data.name,
+          pkid: page.pkid,
+          body: {
+            ...page,
+            name: data.name,
+          },
         })
 
-        if (page.space_pkid === privateSpace?.pkid) {
-          refreshPrivatePages()
-        }
-
+        refreshOrgPages()
+        
         queryClient.invalidateQueries({
+          exact: true,
           queryKey: QUERY_KEYS.GET_PAGE({
             pageID: page.id,
           }),
         })
+        onSuccess?.()
       } catch (e) {
         toast({
           variant: 'danger',

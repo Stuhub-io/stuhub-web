@@ -4,10 +4,9 @@ import {
   TOCHeading,
 } from '@/components/common/BlockBasedEditor/utils/extract-headings'
 import { useToast } from '@/hooks/useToast'
-import { useUpdateDocumentContent } from '@/mutation/mutator/document/useUpdateDocumentContent'
-import { Document } from '@/schema/document'
+import { Document } from '@/schema/page'
 import { JSONContent } from 'novel'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 
 interface PageContentProps {
@@ -17,27 +16,28 @@ interface PageContentProps {
 }
 
 export const PageContent = (props: PageContentProps) => {
-  const { documentData, onContentHeadingChanged, isReadOnly } = props
+  const { documentData, onContentHeadingChanged, isReadOnly } =
+    props
   const { toast } = useToast()
+
   const [initLoad, setInitLoad] = useState(false)
 
-  const { mutate: updateDocumentContent } = useUpdateDocumentContent()
-
-  const onUpdateDocument = useDebouncedCallback(
+  const updateDocument = useCallback(
     (content: JSONContent) => {
       if (!documentData || isReadOnly) return
       onContentHeadingChanged?.(extractHeading(content))
-      updateDocumentContent({
-        pkid: documentData?.pkid,
-        json_content: JSON.stringify(content ?? ''),
-      })
+      // updateDocumentContent({
+      //   pkid: documentData?.pkid,
+      //   json_content: JSON.stringify(content ?? ''),
+      // })
     },
-    500,
-    {
-      maxWait: 2000,
-      trailing: true,
-    },
+    [documentData, isReadOnly, onContentHeadingChanged],
   )
+
+  const onUpdateDocumentDebounce = useDebouncedCallback(updateDocument, 500, {
+    maxWait: 2000,
+    trailing: true,
+  })
 
   const [content, setContent] = useState<JSONContent>()
 
@@ -63,7 +63,7 @@ export const PageContent = (props: PageContentProps) => {
   return (
     <BlockBasedEditor
       jsonContent={content}
-      onJsonContentChange={onUpdateDocument}
+      onJsonContentChange={onUpdateDocumentDebounce}
       key={documentData && initLoad ? documentData?.pkid : 'loading'}
     />
   )

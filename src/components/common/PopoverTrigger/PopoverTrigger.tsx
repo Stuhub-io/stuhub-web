@@ -1,8 +1,15 @@
-import callAllHandlers from '@/libs/utils'
-import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react'
+import callAllHandlers, { cn } from '@/libs/utils'
+import { Popover, PopoverContent, PopoverProps, PopoverTrigger } from '@nextui-org/react'
 import { Children, cloneElement, ReactElement, useState } from 'react'
 
-export const PoperContentTrigger = ({ children }: { children: React.ReactNode }) => {
+export const PoperContentTrigger = ({
+  children,
+  hasPadding,
+  ...rest
+}: {
+  children: React.ReactNode
+  hasPadding?: boolean
+} & PopoverProps) => {
   if (Children.count(children) !== 2) throw Error('PopoverTrigger must have exactly 2 children')
   const trigger = Children.toArray(children)[0] as ReactElement
   const poper = Children.toArray(children)[1] as ReactElement
@@ -18,9 +25,25 @@ export const PoperContentTrigger = ({ children }: { children: React.ReactNode })
   })
 
   return (
-    <Popover isOpen={open} onOpenChange={setIsOpen} placement="bottom">
+    <Popover
+      isOpen={open}
+      onOpenChange={setIsOpen}
+      placement="bottom"
+      {...rest}
+      classNames={{
+        content: cn({
+          'p-0': !hasPadding,
+        }),
+      }}
+    >
       <PopoverTrigger>{trigger}</PopoverTrigger>
-      <PopoverContent>{poperContent}</PopoverContent>
+      <PopoverContent
+        onClick={(e) => {
+          e.preventDefault()
+        }}
+      >
+        {poperContent}
+      </PopoverContent>
     </Popover>
   )
 }

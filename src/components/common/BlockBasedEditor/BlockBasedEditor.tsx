@@ -10,7 +10,7 @@ import {
   type JSONContent,
 } from 'novel'
 import { ImageResizer, handleCommandNavigation } from 'novel/extensions'
-import { useRef, useState } from 'react'
+import { memo, useMemo, useRef, useState } from 'react'
 import { defaultExtensions } from './extensions'
 import { handleImageDrop, handleImagePaste } from 'novel/plugins'
 import { slashCommand, suggestionItems } from './slash-command'
@@ -21,22 +21,37 @@ import { NodeSelector } from './selectors/node-selector'
 import { TextButtons } from './selectors/text-buttons'
 import { ButtonGroup, Divider, Listbox, ListboxItem } from '@nextui-org/react'
 import EditorBubbleCommands from './EditorBubleCommand'
-
-const extensions = [...defaultExtensions, slashCommand]
+import { EditorEventListeners } from './EditorEventListeners'
+import { Attrs } from '@tiptap/pm/model'
 
 interface BlockBasedEditorProps {
   jsonContent?: JSONContent
   onJsonContentChange: (jsonContent: JSONContent) => void
+  onPageNodesRemoved?: (attrs: Attrs[], content: JSONContent) => void
+  onPageNodesAdded?: (attrs: Attrs[], content: JSONContent) => void
+  customExtensions?: any[]
 }
 
-export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
-  const { jsonContent, onJsonContentChange } = props
+export const BlockBasedEditor = memo((props: BlockBasedEditorProps) => {
+  const {
+    jsonContent,
+    onJsonContentChange,
+    onPageNodesAdded,
+    onPageNodesRemoved,
+    customExtensions,
+  } = props
 
   const [openNode, setOpenNode] = useState(false)
   const [openColor, setOpenColor] = useState(false)
   const [openLink, setOpenLink] = useState(false)
 
   const ref = useRef<HTMLDivElement>(null)
+  const addExtensions = useRef(customExtensions)
+
+  const extensions = useMemo(
+    () => [...defaultExtensions, slashCommand, ...(addExtensions.current ?? [])],
+    [],
+  )
 
   return (
     <EditorRoot>
@@ -61,6 +76,10 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
         }}
         slotAfter={<ImageResizer />}
       >
+        <EditorEventListeners
+          onPageNodesAdded={onPageNodesAdded}
+          onPageNodesRemoved={onPageNodesRemoved}
+        />
         <EditorCommand className="z-50 h-fit max-h-[330px] overflow-y-auto rounded-medium bg-content1 px-1 py-2 shadow-small transition-all dark:border dark:border-divider">
           <EditorCommandEmpty className="px-2 text-small text-text-tertiary">
             No results
@@ -101,6 +120,8 @@ export const BlockBasedEditor = (props: BlockBasedEditorProps) => {
       </EditorContent>
     </EditorRoot>
   )
-}
+})
+
+BlockBasedEditor.displayName = 'BlockBasedEditor'
 
 export default BlockBasedEditor

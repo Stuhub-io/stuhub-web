@@ -6,27 +6,34 @@ import { ComponentRef, forwardRef, useMemo, useState } from 'react'
 import { RiSearchLine } from 'react-icons/ri'
 import { PageTreeItem } from './PageTreeItem'
 import { SidebarItemSkeleton } from '@/components/layout/SideBar/SidebarItemSkeleton'
+import { useOrganization } from '@/components/providers/organization'
 
 export interface PageSearchSelectorProps {
   onSelected?: (selected: Page) => void
-  spacePkID: number
   excludePageIds?: string[]
 }
 
 export const PageSearchSelector = forwardRef<ComponentRef<'div'>, PageSearchSelectorProps>(
   (props, ref) => {
-    const { onSelected, spacePkID, excludePageIds = [] } = props
+    const { onSelected, excludePageIds = [] } = props
+    const { organization } = useOrganization()
     const { data: { data: pages } = {}, isPending } = useFetchPages({
-      space_pkid: spacePkID,
+      org_pkid: organization?.pkid ?? -1,
     })
 
-    const outerPages = useMemo(() => pages?.list?.filter((page) => !page.parent_page_pkid), [pages])
+    const outerPages = useMemo(
+      () => pages?.list?.filter((page) => !page.parent_page_pkid && !page.archived_at),
+      [pages],
+    )
 
     const [search, setSearch] = useState('')
 
     const filteredPages = useMemo(
       () =>
-        pages?.list?.filter((page) => page.name.toLowerCase().includes(search.toLocaleLowerCase())),
+        pages?.list?.filter(
+          (page) =>
+            !page.archived_at && page.name.toLowerCase().includes(search.toLocaleLowerCase()),
+        ),
       [pages, search],
     )
 
@@ -39,7 +46,7 @@ export const PageSearchSelector = forwardRef<ComponentRef<'div'>, PageSearchSele
           value={search}
           onValueChange={setSearch}
         />
-        <div className="-mx-3 h-[300px]">
+        <div className="-mx-3 h-[300px] overflow-y-auto">
           {search ? (
             <div className="">
               {!filteredPages?.length ? (

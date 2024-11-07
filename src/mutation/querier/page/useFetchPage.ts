@@ -1,6 +1,6 @@
-import { pageService } from "@/api/page";
 import { QUERY_KEYS } from "@/mutation/keys";
 import { useQuery } from "@tanstack/react-query";
+import { pageService } from "@/api/page";
 
 export interface UseFetchPages { 
     allowFetch?: boolean
@@ -15,7 +15,7 @@ export const useFetchPage = (args: UseFetchPages, option?: {
         queryKey: QUERY_KEYS.GET_PAGE({
             pageID,
         }),
-        queryFn: async () => pageService.getPageByID(pageID),
+        queryFn: async () => pageService.getPage(pageID),
         enabled: allowFetch,
         ...option
     })

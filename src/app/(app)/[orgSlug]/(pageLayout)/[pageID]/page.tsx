@@ -1,7 +1,6 @@
 'use client'
 
 import { PageTitle } from '@/components/page/PageTitleInput'
-import { useFetchDocument } from '@/mutation/querier/document/useFetchDocument'
 import { PageContent } from '@/components/page/PageContent'
 import { Skeleton } from '@nextui-org/react'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
@@ -13,21 +12,17 @@ import { TOCHeading } from '@/components/common/BlockBasedEditor/utils/extract-h
 import { usePageLayoutContext } from '@/components/layout/PageLayout/context'
 import { getRandomImageUrl } from '@/libs/image'
 
-console.error = () => {}
-
 export default function PageDetail() {
   const { pageID } = useParams<OrganizationPageParams>()
   const [headings, setHeadings] = useState<TOCHeading[]>([])
   const { setCoverImageUrl, currentCoverImageUrl } = usePageLayoutContext()
 
-  const { data: { data: pageDetail } = {} } = useFetchPage({
+  const {
+    data: { data: pageDetail } = {},
+    isLoading,
+  } = useFetchPage({
     allowFetch: true,
     pageID,
-  })
-
-  const { data: { data: documentData } = {}, isRefetching } = useFetchDocument({
-    allowFetch: !!pageDetail,
-    pagePkID: pageDetail?.pkid ?? -1,
   })
 
   const onAddCoverBtn = () => {
@@ -40,7 +35,7 @@ export default function PageDetail() {
 
   return (
     <div className="flex w-full">
-      <div className="mx-auto max-w-[732px] w-full">
+      <div className="mx-auto w-full max-w-[732px]">
         <div className="flex flex-col py-8">
           <div className="flex flex-col">
             {pageDetail && (
@@ -53,13 +48,12 @@ export default function PageDetail() {
             )}
           </div>
           <div className="-mx-3 pb-10">
-            {documentData ? (
+            {pageDetail ? (
               <>
                 <PageContent
-                  documentData={documentData}
+                  documentData={pageDetail.document}
                   onContentHeadingChanged={setHeadings}
-                  isReadOnly={isRefetching}
-                  key={documentData.pkid}
+                  key={pageDetail.pkid}
                 />
               </>
             ) : (
@@ -71,9 +65,7 @@ export default function PageDetail() {
           </div>
         </div>
       </div>
-      {documentData && (
-        <TableOfContent key={isRefetching ? 'refetching' : documentData.pkid} headings={headings} />
-      )}
+      {pageDetail && <TableOfContent key={isLoading ? "loading": "done"} headings={headings} />}
     </div>
   )
 }

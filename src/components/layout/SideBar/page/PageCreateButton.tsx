@@ -1,42 +1,46 @@
 import { RiAddFill } from 'react-icons/ri'
 import { SidebarItem } from '../SidebarItem'
 import { SidebarIconButton } from '../SidebarIconbutton'
-import { useCreateDocument } from '@/mutation/mutator/document/useCreateDocument'
 import { useToast } from '@/hooks/useToast'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/constants/routes'
 import { useOrganization } from '@/components/providers/organization'
 import { AiOutlineLoading } from 'react-icons/ai'
+import { useCreatePage } from '@/mutation/mutator/page/useCreatePage'
+import { PageViewTypeEnum } from '@/schema/page'
+import { useSidebar } from '@/components/providers/sidebar'
 
 interface PageCreateButtonProps {
   parentPagePkId?: number
-  spacePkId: number
 }
 export const PageCreateButton = (props: PageCreateButtonProps) => {
-  const { parentPagePkId, spacePkId } = props
+  const { parentPagePkId } = props
   const { toast } = useToast()
   const { push } = useRouter()
   const { organization } = useOrganization()
+  const { refreshOrgPages } = useSidebar()
 
-  const { mutateAsync, isPending } = useCreateDocument({
+  const { mutateAsync, isPending } = useCreatePage({
     parent_page_pkid: parentPagePkId,
-    space_pkid: spacePkId,
+    org_pkid: organization?.pkid ?? -1,
     tempId: 'create-with-add-button',
   })
 
   const onClick = async () => {
     try {
       const {
-        data: { page: newPage },
+        data: newPage
       } = await mutateAsync({
-        json_content: '{}',
-        page: {
-          name: '',
-          parent_page_pkid: parentPagePkId,
-          space_pkid: spacePkId,
-          view_type: 'document',
-        },
+        name: '',
+        parent_page_pkid: parentPagePkId,
+        org_pkid: organization?.pkid ?? -1,
+        view_type: PageViewTypeEnum.DOCUMENT,
+        cover_image: '',
+        document: {
+          json_content: '{}',
+        }
       })
+      refreshOrgPages()
       push(
         ROUTES.ORGANIZATION_PAGE({
           orgSlug: organization?.slug ?? '',

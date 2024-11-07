@@ -48,8 +48,6 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     allowFetch: status === 'authenticated',
   })
 
-  console.log({ internalJoinedOrgs })
-
   const currentUserRole = useMemo(
     () =>
       isPending || !selectedOrg ? undefined : getUserOrgPermission(selectedOrg, user?.pkid ?? -1),
