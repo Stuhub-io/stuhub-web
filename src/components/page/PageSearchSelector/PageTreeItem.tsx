@@ -1,18 +1,19 @@
 import { SidebarIconButton } from '@/components/layout/SideBar/SidebarIconbutton'
 import { SidebarItem } from '@/components/layout/SideBar/SidebarItem'
 import { SidebarItemLeftSpacer } from '@/components/layout/SideBar/SidebarItemLeftSpacer'
-import { Page } from '@/schema/page'
+import { Page, PageViewTypeEnum } from '@/schema/page'
 import { useCallback, useMemo, useState } from 'react'
-import { RiArrowDownSLine, RiCloseLine, RiFileFill } from 'react-icons/ri'
+import { RiCloseLine, RiFolderFill, RiFolderOpenFill } from 'react-icons/ri'
 import { HiCursorClick } from 'react-icons/hi'
 import { cn } from '@/libs/utils'
+import { IPageData } from '@/components/providers/sidebar'
 
 interface PageTreeItemProps {
   page: Page
-  pages: Page[]
+  pages: IPageData
   level?: number
   onClick?: (page: Page) => void
-  excludePageIds?: string[]
+  excludePagePkIds?: number[]
   showChild?: boolean
   hide?: boolean
   disabled?: boolean
@@ -27,13 +28,16 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
     onClick,
     hide = false,
     disabled = false,
-    excludePageIds = [],
+    excludePagePkIds = [],
   } = props
+
   const [expaned, setExpanded] = useState(false)
 
   const childPages = useMemo(() => {
     if (!showChild) return []
-    return pages.filter((p) => p.parent_page_pkid === page.pkid && !p.archived_at)
+    return pages.map[page.pkid]?.childrenPkids
+      .filter((p) => pages.map[p].page.view_type === PageViewTypeEnum.FOLDER)
+      .map((pkid) => pages.map[pkid].page)
   }, [page.pkid, pages, showChild])
 
   const handlePageClick = useCallback(() => {
@@ -41,6 +45,9 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
   }, [onClick, page])
 
   if (hide) return null
+  if (page.view_type !== PageViewTypeEnum.FOLDER) {
+    return null
+  }
 
   return (
     <>
@@ -53,21 +60,12 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
         startContent={
           <>
             <SidebarItemLeftSpacer level={level} size="xs" />
-            <SidebarIconButton hideOnGroupHover={showChild} size="sm">
-              <RiFileFill />
+            <SidebarIconButton
+              onClick={() => setExpanded((prev) => !prev)}
+              size="sm"
+            >
+              {expaned ? <RiFolderOpenFill /> : <RiFolderFill />}
             </SidebarIconButton>
-            {showChild && (
-              <SidebarIconButton
-                onClick={() => setExpanded((prev) => !prev)}
-                showOnGroupHoverOnly
-                className={cn('rotate-0', {
-                  '-rotate-90': !expaned,
-                })}
-                size="sm"
-              >
-                <RiArrowDownSLine />
-              </SidebarIconButton>
-            )}
           </>
         }
         endContent={
@@ -91,8 +89,8 @@ export const PageTreeItem = (props: PageTreeItemProps) => {
         childPages.map((childPage) => (
           <PageTreeItem
             onClick={onClick}
-            excludePageIds={excludePageIds}
-            disabled={excludePageIds.includes(childPage.id)}
+            excludePagePkIds={excludePagePkIds}
+            disabled={excludePagePkIds.includes(childPage.pkid)}
             key={childPage.id}
             page={childPage}
             pages={pages}

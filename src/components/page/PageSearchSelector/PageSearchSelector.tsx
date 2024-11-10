@@ -1,40 +1,36 @@
 import Typography from '@/components/common/Typography'
-import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
-import { Page } from '@/schema/page'
+import { Page, PageViewTypeEnum } from '@/schema/page'
 import { Input } from '@nextui-org/react'
 import { ComponentRef, forwardRef, useMemo, useState } from 'react'
 import { RiSearchLine } from 'react-icons/ri'
 import { PageTreeItem } from './PageTreeItem'
 import { SidebarItemSkeleton } from '@/components/layout/SideBar/SidebarItemSkeleton'
-import { useOrganization } from '@/components/providers/organization'
+import { useSidebar } from '@/components/providers/sidebar'
 
 export interface PageSearchSelectorProps {
   onSelected?: (selected: Page) => void
-  excludePageIds?: string[]
+  excludePagePkIds?: number[]
 }
 
 export const PageSearchSelector = forwardRef<ComponentRef<'div'>, PageSearchSelectorProps>(
   (props, ref) => {
-    const { onSelected, excludePageIds = [] } = props
-    const { organization } = useOrganization()
-    const { data: { data: pages } = {}, isPending } = useFetchPages({
-      org_pkid: organization?.pkid ?? -1,
-    })
+    const { onSelected, excludePagePkIds = [] } = props
+    const { orgPages, isPendingOrgPages } = useSidebar()
 
     const outerPages = useMemo(
-      () => pages?.list?.filter((page) => !page.parent_page_pkid && !page.archived_at),
-      [pages],
+      () => orgPages?.list?.filter((page) => !page.parent_page_pkid && !page.archived_at && page.view_type === PageViewTypeEnum.FOLDER),
+      [orgPages],
     )
 
     const [search, setSearch] = useState('')
 
     const filteredPages = useMemo(
       () =>
-        pages?.list?.filter(
+        orgPages?.list?.filter(
           (page) =>
             !page.archived_at && page.name.toLowerCase().includes(search.toLocaleLowerCase()),
         ),
-      [pages, search],
+      [orgPages, search],
     )
 
     return (
@@ -62,9 +58,9 @@ export const PageSearchSelector = forwardRef<ComponentRef<'div'>, PageSearchSele
                       page={p}
                       key={p.id}
                       onClick={onSelected}
-                      disabled={excludePageIds.includes(p.id)}
-                      excludePageIds={excludePageIds}
-                      pages={[]}
+                      disabled={excludePagePkIds.includes(p.pkid)}
+                      excludePagePkIds={excludePagePkIds}
+                      pages={{ list: filteredPages, map: {} }}
                       showChild={false}
                     />
                   ))}
@@ -78,22 +74,22 @@ export const PageSearchSelector = forwardRef<ComponentRef<'div'>, PageSearchSele
                   Recent
                 </Typography>
               </div>
-              {isPending && (
+              {isPendingOrgPages && (
                 <>
                   <SidebarItemSkeleton size="sm" hasIcon className="h-2" />
                   <SidebarItemSkeleton size="sm" hasIcon className="h-2" delay={300} />
                   <SidebarItemSkeleton size="sm" hasIcon className="h-2" delay={500} />
                 </>
               )}
-              {!isPending &&
+              {!isPendingOrgPages && orgPages &&
                 outerPages?.map((p) => (
                   <PageTreeItem
                     page={p}
                     key={p.id}
                     onClick={onSelected}
-                    disabled={excludePageIds.includes(p.id)}
-                    excludePageIds={excludePageIds}
-                    pages={pages?.list ?? []}
+                    disabled={excludePagePkIds.includes(p.pkid)}
+                    excludePagePkIds={excludePagePkIds}
+                    pages={orgPages}
                   />
                 ))}
             </div>

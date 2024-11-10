@@ -1,11 +1,14 @@
 import createContext from '@/libs/context'
 import { useDisclosure } from '@nextui-org/react'
-import { Dispatch, PropsWithChildren, SetStateAction, useState } from 'react'
+import { Dispatch, PropsWithChildren, SetStateAction, useId, useState } from 'react'
 import { CreateNewPageModal } from '../page/CreateNewPageModal'
-import { CreatePageRequest, Page, PageViewTypeEnum } from '@/schema/page'
+import { CreatePageRequest, Page, PageViewType, PageViewTypeEnum } from '@/schema/page'
 import { newIdGenerator } from '@/libs/utils'
 import { useOrganization } from './organization'
 import { JSONContent } from 'novel'
+import { useCreatePage } from '@/mutation/mutator/page/useCreatePage'
+import { useSidebar } from './sidebar'
+import { useToast } from '@/hooks/useToast'
 
 export type IToCreatePage = CreatePageRequest & {
   uniqID: string
@@ -44,7 +47,6 @@ const [Provider, useCreatePageContext] = createContext<CreatePageContextValue>({
 export { useCreatePageContext }
 
 const genID = newIdGenerator()
-
 
 export const CreatePageProvider = ({ children }: PropsWithChildren) => {
   const { organization } = useOrganization()
@@ -109,4 +111,64 @@ export const CreatePageProvider = ({ children }: PropsWithChildren) => {
       <CreateNewPageModal key={selectedParent?.id ?? ''} />
     </Provider>
   )
+}
+
+export const useNewPage = ({
+  parentPagePkID,
+  type,
+}: {
+  parentPagePkID?: number
+  type: PageViewType
+}) => {
+  const { toast } = useToast()
+  const { organization } = useOrganization()
+  const { refreshOrgPages } = useSidebar()
+
+  const { appendCreatingPages, updateCreatingPages } = useCreatePageContext()
+  const tempId = useId()
+
+  const { mutateAsync, isPending } = useCreatePage({
+    parent_page_pkid: parentPagePkID,
+    org_pkid: organization?.pkid ?? -1,
+    tempId,
+  })
+
+  const onClick = async (onSucces?: (page: Page) => void) => {
+    try {
+      const dataInput = {
+        name: '',
+        parent_page_pkid: parentPagePkID,
+        org_pkid: organization?.pkid ?? -1,
+        view_type: type,
+        cover_image: '',
+        document: {
+          json_content: '{}',
+        },
+      }
+      appendCreatingPages({
+        input: dataInput,
+        id: tempId,
+      })
+
+      const { data: newPage } = await mutateAsync(dataInput)
+
+      updateCreatingPages(tempId, {
+        id: tempId,
+        input: dataInput,
+        result: newPage,
+      })
+
+      refreshOrgPages()
+      onSucces?.(newPage)
+    } catch (e) {
+      toast({
+        variant: 'danger',
+        title: 'Failed to create page',
+      })
+    }
+  }
+  return {
+    onCreate: onClick,
+    isPending,
+  }
 }

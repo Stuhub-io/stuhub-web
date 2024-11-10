@@ -55,9 +55,12 @@ export interface UpdatePageRequest {
   org_pkid?: number
   view_type?: PageViewType
   name?: string
-  parent_page_pkid?: number
   cover_image?: string
   document?: {
     json_content: string
   }
+}
+
+export interface MovePageRequest {
+  parent_page_pkid?: number
 }

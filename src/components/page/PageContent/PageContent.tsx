@@ -4,34 +4,39 @@ import {
   TOCHeading,
 } from '@/components/common/BlockBasedEditor/utils/extract-headings'
 import { useToast } from '@/hooks/useToast'
-import { Document } from '@/schema/page'
+import { useUpdatePageContent } from '@/mutation/mutator/page/useUpdatePageContent'
+import { Page } from '@/schema/page'
 import { JSONContent } from 'novel'
 import { useState, useEffect, useCallback } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 
 interface PageContentProps {
-  documentData?: Document
+  page?: Page
   onContentHeadingChanged?: (_: TOCHeading[]) => void
   isReadOnly?: boolean
 }
 
 export const PageContent = (props: PageContentProps) => {
-  const { documentData, onContentHeadingChanged, isReadOnly } =
-    props
+  const { page, onContentHeadingChanged, isReadOnly } = props
   const { toast } = useToast()
+  const { mutateAsync: updateDocumentContent } = useUpdatePageContent({
+    id: String(page?.pkid) ?? '',
+  })
 
   const [initLoad, setInitLoad] = useState(false)
 
   const updateDocument = useCallback(
     (content: JSONContent) => {
-      if (!documentData || isReadOnly) return
+      if (!page || isReadOnly) return
       onContentHeadingChanged?.(extractHeading(content))
-      // updateDocumentContent({
-      //   pkid: documentData?.pkid,
-      //   json_content: JSON.stringify(content ?? ''),
-      // })
+      updateDocumentContent({
+        pkid: page?.pkid,
+        body: {
+          json_content: JSON.stringify(content ?? ''),
+        },
+      })
     },
-    [documentData, isReadOnly, onContentHeadingChanged],
+    [page, isReadOnly, onContentHeadingChanged, updateDocumentContent],
   )
 
   const onUpdateDocumentDebounce = useDebouncedCallback(updateDocument, 500, {
@@ -42,9 +47,9 @@ export const PageContent = (props: PageContentProps) => {
   const [content, setContent] = useState<JSONContent>()
 
   useEffect(() => {
-    if (documentData && !initLoad) {
+    if (page && !initLoad) {
       try {
-        const validJsonContent = JSON.parse(documentData.json_content || '{}')
+        const validJsonContent = JSON.parse(page.document?.json_content || '{}')
         setContent(validJsonContent)
         onContentHeadingChanged?.(extractHeading(validJsonContent))
       } catch (e) {
@@ -58,13 +63,13 @@ export const PageContent = (props: PageContentProps) => {
         setInitLoad(true)
       }
     }
-  }, [content, documentData, initLoad, isReadOnly, onContentHeadingChanged, toast])
+  }, [content, page, initLoad, isReadOnly, onContentHeadingChanged, toast])
 
   return (
     <BlockBasedEditor
       jsonContent={content}
       onJsonContentChange={onUpdateDocumentDebounce}
-      key={documentData && initLoad ? documentData?.pkid : 'loading'}
+      key={page && initLoad ? page.pkid : 'loading'}
     />
   )
 }

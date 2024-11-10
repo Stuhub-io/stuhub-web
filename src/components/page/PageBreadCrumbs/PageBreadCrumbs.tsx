@@ -21,6 +21,7 @@ import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { useParams, useRouter } from 'next/navigation'
 import { OrganizationPageParams, ROUTES } from '@/constants/routes'
 import { useOrganization } from '@/components/providers/organization'
+import { PageViewTypeEnum } from '@/schema/page'
 
 export const PageBreadCrumbs = () => {
   const { push } = useRouter()
@@ -33,13 +34,13 @@ export const PageBreadCrumbs = () => {
     pageID,
   })
 
-  const { isPendingorgPages, isPendingSpaces } = useSidebar()
+  const { isPendingOrgPages } = useSidebar()
 
   const onSelectPage = (selectedPageID: string) => {
     push(ROUTES.ORGANIZATION_PAGE({ orgSlug: organization?.slug ?? '', pageID: selectedPageID }))
   }
 
-  const isLoading = isPending || isPendingSpaces || isPendingorgPages
+  const isLoading = isPending || isPendingOrgPages
   const [openRename, setOpenRename] = useState(false)
 
   useEffect(() => {
@@ -134,7 +135,9 @@ export const PageBreadCrumbs = () => {
                   setOpenRename(true)
                   return
                 }
-                onSelectPage(page.id)
+                if (page.view_type === PageViewTypeEnum.DOCUMENT) {
+                  onSelectPage(page.id)
+                }
               }}
               isCurrent={false}
             >

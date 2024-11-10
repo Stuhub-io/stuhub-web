@@ -41,5 +41,7 @@ export const MUTATION_KEYS = {
     tempId,
   ],
   UPDATE_PAGE: ({ id }: { id: string }) => ['UPDATE_PAGE', id],
+  MOVE_PAGE: ({ id }: { id: string }) => ['MOVE_PAGE', id],
+  UPDATE_PAGE_CONTENT : ({ id }: { id: string }) => ['UPDATE_PAGE_CONTENT', id],
   ARCHIVE_PAGE: ({ id }: { id: string }) => ['ARCHIVE_PAGE', id],
 }

@@ -1,7 +1,7 @@
 import { Client } from '@/libs/client'
 import fetcher from '@/libs/fetcher'
 import { BaseResponse } from '@/schema/base'
-import { CreatePageRequest, GetPagesQuery, Page, UpdatePageRequest } from '@/schema/page'
+import { CreatePageRequest, GetPagesQuery, MovePageRequest, Page, UpdatePageRequest } from '@/schema/page'
 import qs from 'querystring'
 
 class PageService extends Client {
@@ -56,7 +56,34 @@ class PageService extends Client {
       }
     )
   }
-
+  public updatePageContent(request: {
+    pkid: number,
+    body: {
+      json_content: string
+    }
+  }) {
+    return fetcher<BaseResponse<Page>>(
+      `${this.baseUrl}/v1/page-services/pages/${request.pkid}/content`,
+      {
+        method: 'PUT',
+        headers: this.privateHeaders,
+        body: JSON.stringify(request.body),
+      }
+    )
+  }
+  public movePage(request: {
+    pkid: number,
+    body: MovePageRequest
+  }){
+    return fetcher<BaseResponse<Page>>(
+      `${this.baseUrl}/v1/page-services/pages/${request.pkid}/move`,
+      {
+        method: 'PUT',
+        headers: this.privateHeaders,
+        body: JSON.stringify(request.body),
+      }
+    )
+  }
 }
 
 export const pageService = new PageService()

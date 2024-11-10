@@ -21,8 +21,8 @@ export const useSidebarBreadcrumb = () => {
         const path = [pageDetail]
         let initPath =pageDetail 
         while (initPath?.parent_page_pkid) {
-            path.push(orgPages?.map[initPath.parent_page_pkid])
-            initPath = orgPages?.map[initPath.parent_page_pkid]
+            path.push(orgPages?.map[initPath.parent_page_pkid].page)
+            initPath = orgPages?.map[initPath.parent_page_pkid].page
         }
         return path.reverse()
     }, [orgPages, pageDetail])

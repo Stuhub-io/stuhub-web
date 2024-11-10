@@ -100,6 +100,7 @@ export const CreateNewPageModal = () => {
           id: createID,
           input: dataInput,
         })
+        
         const { data: newPage } = await mutateAsync(dataInput)
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.GET_ORG_PAGES({ org_pkid: organization?.pkid ?? -1 }),

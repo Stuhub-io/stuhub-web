@@ -7,24 +7,20 @@ import { PopperCard } from '@/components/common/PopperCard'
 import { PageSearchSelector } from '@/components/page/PageSearchSelector'
 import { WrapperRegistry } from '@/components/common/WrapperRegistry/WrapperRegistry'
 import { Page } from '@/schema/page'
-import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { useSidebar } from '@/components/providers/sidebar'
 import { useToast } from '@/hooks/useToast'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
 import { useArchivePage } from '@/mutation/mutator/page/useArchivePage'
+import { useMovePage } from '@/mutation/mutator/page/useMovePage'
 
 interface PageActionMenuProps {
   page: Page
   onSuccess?: () => void
-  onBeforeArchive?: () => boolean
-  onBeforeMove?: () => boolean
 }
 
-const funcTrue = () => true
-
 export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) => {
-  const { children, page, onSuccess, onBeforeMove = funcTrue, onBeforeArchive = funcTrue } = props
+  const { children, page, onSuccess } = props
 
   const queryClient = useQueryClient()
 
@@ -37,19 +33,17 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
 
   const { mutateAsync: archivePage } = useArchivePage({ id: page.id })
 
-  const { mutateAsync: updatePage } = useUpdatePage({
+  const { mutateAsync: movePage } = useMovePage({
     id: page.id,
   })
 
   const handleMove = async (selectedPage: Page) => {
-    if (!onBeforeMove()) return
     try {
-      await updatePage({
+      await movePage({
         pkid: page.pkid,
         body: {
-          ...page,
           parent_page_pkid: selectedPage.pkid,
-        }
+        },
       })
       refreshOrgPages()
       queryClient.invalidateQueries({
@@ -67,9 +61,6 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
   }
 
   const handleArchive = async () => {
-    if (!onBeforeArchive()) {
-      return
-    }
     try {
       await archivePage(page.pkid)
       refreshOrgPages()
@@ -110,7 +101,7 @@ export const PageActionMenu = (props: PropsWithChildren<PageActionMenuProps>) =>
           isOpen={isOpenMove}
           renderContent={(setRef) => (
             <PageSearchSelector
-              excludePageIds={[page.id]}
+              excludePagePkIds={[page.pkid]}
               ref={setRef}
               onSelected={(selectPage) => {
                 onCloseMove()

@@ -24,7 +24,7 @@ export const PageLayout = (props: PageLayoutProps) => {
           <div className="flex-1 overflow-hidden">{breadCrumb}</div>
           <div className="flex flex-shrink-0 items-center justify-end pl-8">{rightEl}</div>
         </header>
-        <main className="mx-auto w-full overflow-y-auto overflow-x-hidden px-4">
+        <main className="mx-auto w-full overflow-y-auto overflow-x-hidden px-4 flex-1">
           <PageCoverImage />
           {children}
         </main>

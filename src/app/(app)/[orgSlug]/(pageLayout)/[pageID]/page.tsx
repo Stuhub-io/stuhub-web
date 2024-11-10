@@ -20,6 +20,7 @@ export default function PageDetail() {
   const {
     data: { data: pageDetail } = {},
     isLoading,
+    isRefetching
   } = useFetchPage({
     allowFetch: true,
     pageID,
@@ -51,9 +52,9 @@ export default function PageDetail() {
             {pageDetail ? (
               <>
                 <PageContent
-                  documentData={pageDetail.document}
+                  page={pageDetail}
                   onContentHeadingChanged={setHeadings}
-                  key={pageDetail.pkid}
+                  key={isRefetching ? "loading": pageDetail.pkid }
                 />
               </>
             ) : (
