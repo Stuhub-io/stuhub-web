@@ -5,7 +5,6 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { ProfileAvatar } from './ProfileAvatar'
 import { useState } from 'react'
-import { useUploadThing } from '@/libs/uploadthing'
 import { useAuthContext } from '@/components/auth/AuthGuard'
 import { useToast } from '@/hooks/useToast'
 import { useUpdateUserInfo } from '@/mutation/mutator/useUpdateUserInfo'
@@ -33,7 +32,7 @@ const ProfileSetting = () => {
     resolver: zodResolver(profileSchema),
   })
 
-  const { startUpload } = useUploadThing('profileImage')
+  // const { startUpload } = useUploadThing('profileImage')
 
   const handleSubmit = profileForm.handleSubmit(async (values) => {
     setIsSaving(true)
@@ -41,7 +40,13 @@ const ProfileSetting = () => {
     let avatar = user?.avatar ?? ''
 
     if (file) {
-      const data = await startUpload([file])
+      // const data = await startUpload([file])
+      const data = await new Promise<{url: string}[]>((resolve) => {
+        resolve([{
+          url: 'https://example.com',
+        }] as const)
+      })
+
       if (data === undefined) {
         toast({
           variant: 'danger',
