@@ -19,7 +19,7 @@ export default function OrganizationHome() {
   useEffect(() => {
     if ((orgPages?.list.length ?? 0) === 0) return
     prefetch(
-      ROUTES.ORGANIZATION_PAGE({
+      ROUTES.VAULT_PAGE({
         orgSlug: organization?.slug ?? '',
         pageID: orgPages?.list[0].id ?? '',
       }),

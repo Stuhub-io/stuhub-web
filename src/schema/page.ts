@@ -1,11 +1,12 @@
 import { Pagination } from "./base"
 
 
-export type PageViewType = 1 | 2
+export type PageViewType = 1 | 2 | 3
 
 export const PageViewTypeEnum = {
   DOCUMENT: 1 as PageViewType,
   FOLDER: 2 as PageViewType,
+  ASSET: 3 as PageViewType
 } as const
 
 export interface Page {
@@ -16,12 +17,28 @@ export interface Page {
     created_at: string
     updated_at: string
     archived_at?: string
-    view_type:PageViewType 
+    view_type: PageViewType 
     cover_image: string
     node_id: string
     name: string
     child_pages?: Page[]
     document?: Document
+    asset?: Asset
+}
+
+export interface Asset {
+  pkid: number
+  page_pkid: number
+  updated_at: string
+  created_at: string
+  url: string
+  size: number
+  extension: string
+  thumbnails: {
+    small: string
+    medium: string
+    large: string
+  }
 }
 
 export interface Document {
@@ -49,6 +66,7 @@ export type GetPagesQuery = Partial<Pagination> & {
   view_types?: PageViewType[]
   parent_page_pkid?: number
   is_archived?: boolean
+  all?: boolean
 }
 
 export interface UpdatePageRequest {
@@ -63,4 +81,18 @@ export interface UpdatePageRequest {
 
 export interface MovePageRequest {
   parent_page_pkid?: number
+}
+
+
+export interface CreatePageAssetRequest extends Omit<CreatePageRequest, 'document'> {
+  asset: {
+    url: string
+    size: number
+    extension: string
+    thumbnails: {
+      small: string
+      medium: string
+      large: string
+    }
+  }
 }

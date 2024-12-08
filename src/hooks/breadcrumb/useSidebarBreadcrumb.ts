@@ -16,16 +16,17 @@ export const useSidebarBreadcrumb = () => {
     // FIXME: fetch current page with page UUID from params
     // show title first -> waiting for sidebar to be ready
     const paths = useMemo(() => {
+        if (!pageID) return []
         if (!pageDetail) return []
         if (orgPages === undefined) return []
         const path = [pageDetail]
-        let initPath =pageDetail 
+        let initPath = pageDetail 
         while (initPath?.parent_page_pkid) {
             path.push(orgPages?.map[initPath.parent_page_pkid].page)
             initPath = orgPages?.map[initPath.parent_page_pkid].page
         }
         return path.reverse()
-    }, [orgPages, pageDetail])
+    }, [orgPages, pageDetail, pageID])
     
     return paths
 }

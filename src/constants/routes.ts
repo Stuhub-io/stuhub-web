@@ -25,5 +25,6 @@ export const ROUTES = {
   INVITE_PAGE: '/invite',
   AUTH_EMAIL: '/auth-email',
   ORGANIZATION: ({ orgSlug }: OrganizationParams) => `/${orgSlug}`,
-  ORGANIZATION_PAGE: ({ orgSlug, pageID }: OrganizationPageParams) => `/${orgSlug}/${pageID}`,
+  VAULT_PAGE: ({ orgSlug, pageID }: OrganizationPageParams) => `/${orgSlug}/${pageID}`,
+  ROOT_VAULTS: ({ orgSlug }: OrganizationParams) => `/${orgSlug}/vaults`,
 }

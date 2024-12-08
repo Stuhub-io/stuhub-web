@@ -22,7 +22,7 @@ export const SearchResults = ({ invitedEmails, results, addEmail }: SearchResult
               key={id}
               fullWidth
               radius="sm"
-              className="justify-start bg-content3 pl-3"
+              className="justify-start bg-background pl-3"
               isDisabled={isEmailInvited}
               startContent={<Avatar src={avatar} radius="sm" size="sm" />}
               endContent={

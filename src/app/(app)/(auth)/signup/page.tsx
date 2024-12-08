@@ -21,7 +21,7 @@ export default function SignUpPage() {
   })
 
   return (
-    <Form {...form} className="flex w-full flex-col items-center px-4 py-10">
+    (<Form {...form} className="flex w-full flex-col items-center px-4 py-10">
       <Typography level="h4" className="mb-2 w-fit">
         Create an account
       </Typography>
@@ -43,7 +43,6 @@ export default function SignUpPage() {
         </Typography>
         <Divider orientation="horizontal" />
       </div>
-
       <div className="w-full max-w-md space-y-3">
         <Button variant="flat" size="lg" fullWidth>
           Sign up with Email
@@ -54,12 +53,15 @@ export default function SignUpPage() {
         </Button>
       </div>
       <div className="mt-6 flex w-full max-w-md justify-center space-y-3">
-        <Link className="underline underline-offset-4" href={ROUTES.SIGNIN_PAGE}>
+        <Link
+          className="underline underline-offset-4"
+          href={ROUTES.SIGNIN_PAGE}
+          >
           <Typography fontWeight="sm" color="textTertiary">
             Already have an account? Sign in
           </Typography>
         </Link>
       </div>
-    </Form>
-  )
+    </Form>)
+  );
 }

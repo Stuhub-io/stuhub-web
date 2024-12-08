@@ -1,14 +1,14 @@
 'use client'
 
 import { Layout } from '@/components/common/Layout'
-import { PropsWithChildren, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { PropsWithChildren, useLayoutEffect, useRef, useState } from 'react'
 import { Panel, PanelResizeHandle, PanelGroup } from 'react-resizable-panels'
-import { SideBar } from '../SideBar'
+import { MainSideBar } from './MainSidebar'
 import { useDebouncedCallback } from 'use-debounce'
-import { usePersistCollapseContext } from '@/components/providers/collapse'
 import { Button } from '@nextui-org/react'
 import { RiArrowRightSLine } from 'react-icons/ri'
 import { cn } from '@/libs/utils'
+import { useSidebar } from '@/components/providers/sidebar'
 
 const MIN_SIZE = 200
 
@@ -17,12 +17,10 @@ console.warn = () => {}
 export const MainLayout = ({ children }: PropsWithChildren) => {
   const [minSize, setMinSize] = useState(15)
   const [maxSize, setMaxSize] = useState(30)
-  const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
-  const [isHide, setIsHide] = useState(() => getCollapseState(`main-layout-sidebar`))
 
-  useEffect(() => {
-    persistCollapseData(`main-layout-sidebar`, isHide)
-  }, [isHide, persistCollapseData])
+  const { showSidebar, setShowSidebar } = useSidebar()
+
+
 
   const setMinSizeDebounce = useDebouncedCallback(setMinSize, 100)
   const setMaxSizeDebounce = useDebouncedCallback(setMaxSize, 100)
@@ -49,29 +47,29 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
     <Layout container={false} ref={wrapperRef} wrapperClassName="overflow-y-hidden">
       <PanelGroup direction="horizontal" autoSaveId="main-layout-sidebar">
         <Panel
-          defaultSize={isHide ? 0 : minSize}
+          defaultSize={showSidebar ? minSize: 0}
           order={1}
           minSize={minSize}
           maxSize={maxSize}
-          className={cn({
-            hidden: isHide,
+          className={cn("bg-background",{
+            hidden: !showSidebar,
           })}
         >
-          <SideBar />
+          <MainSideBar />
         </Panel>
         <PanelResizeHandle />
-        <Panel order={2} className="relative">
+        <Panel order={2} className="relative bg-background">
           <Button
             isIconOnly
             className="absolute left-0 top-16 !w-6 min-w-0 rounded-l-none z-50"
-            onClick={() => setIsHide(!isHide)}
+            onClick={() => setShowSidebar(!showSidebar)}
             size="md"
             variant="solid"
           >
             <RiArrowRightSLine
               size={16}
               className={cn({
-                'rotate-180': !isHide,
+                'rotate-180': showSidebar,
               })}
             />
           </Button>

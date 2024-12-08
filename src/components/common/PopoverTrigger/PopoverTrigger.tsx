@@ -2,7 +2,7 @@ import callAllHandlers, { cn } from '@/libs/utils'
 import { Popover, PopoverContent, PopoverProps, PopoverTrigger } from '@nextui-org/react'
 import { Children, cloneElement, ReactElement, useState } from 'react'
 
-export const PoperContentTrigger = ({
+export const PopperContentTrigger = ({
   children,
   hasPadding,
   ...rest

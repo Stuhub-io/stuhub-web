@@ -43,3 +43,4 @@ export const pick = <T extends object, K extends keyof T>(obj: T, keys: K[]): Pi
 export const isSameObjects = <T, K extends object>(obj1: T, obj2: K): boolean => {
   return JSON.stringify(obj1) === JSON.stringify(obj2)
 }
+

@@ -7,14 +7,14 @@ import { ThemeSwitch } from '../common/ThemeSwitch/ThemeSwitch'
 
 export const LandingPageHeader = () => {
   return (
-    <Navbar
+    (<Navbar
       classNames={{
         wrapper: '!container backdrop-blur-md',
       }}
     >
       <NavbarContent justify="start">
         <NavbarBrand className="gap-4">
-          <Link href={ROUTES.LANDING_PAGE}>
+          <Link href={ROUTES.LANDING_PAGE} >
             <Typography level="h5">Stuhub 📖</Typography>
           </Link>
         </NavbarBrand>
@@ -35,12 +35,12 @@ export const LandingPageHeader = () => {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button color="primary" as={Link} href={ROUTES.SIGNIN_PAGE}>
+          <Button color="primary" as={Link} href={ROUTES.SIGNIN_PAGE} >
             Getting Start
             <BsChevronRight size={16} />
           </Button>
         </NavbarItem>
       </NavbarContent>
-    </Navbar>
-  )
+    </Navbar>)
+  );
 }

@@ -57,7 +57,6 @@ export const BlockBasedEditor = memo((props: BlockBasedEditorProps) => {
     <EditorRoot>
       <EditorContent
         ref={ref}
-        autofocus
         initialContent={jsonContent}
         extensions={extensions}
         className="relative"

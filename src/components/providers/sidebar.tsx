@@ -1,19 +1,20 @@
 'use client'
 
 import createContext from '@/libs/context'
-import { PropsWithChildren, useMemo } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 import { useOrganization } from './organization'
 import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { useThrottledCallback } from 'use-debounce'
-import { Page } from '@/schema/page'
+import { Page, PageViewTypeEnum } from '@/schema/page'
+import { usePersistCollapseContext } from './collapse'
 
 export type ChildMap = Record<
-    number,
-    {
-      page: Page
-      childrenPkids: number[]
-    }
-  >
+  number,
+  {
+    page: Page
+    childrenPkids: number[]
+  }
+>
 
 export interface IPageData {
   list: Page[]
@@ -24,6 +25,9 @@ interface SidebarContextValue {
   orgPages?: IPageData
   isPendingOrgPages: boolean
   refreshOrgPages: () => void
+  getChildrenPageByPkID: (pagePkId: number) => Page[]
+  showSidebar?: boolean
+  setShowSidebar: (_:boolean) => void
 }
 
 const [Provider, useSidebar] = createContext<SidebarContextValue>({
@@ -35,13 +39,23 @@ export { useSidebar }
 export const SidebarProvider = ({ children }: PropsWithChildren) => {
   const { organization } = useOrganization()
 
+  const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
+  const [showSidebar, setShowSidebar ] = useState(() => getCollapseState(`main-layout-sidebar`))
+
+  useEffect(() => {
+    persistCollapseData(`main-layout-sidebar`, showSidebar)
+  }, [showSidebar, persistCollapseData])
+
   const {
     data: { data: internalOrgPages } = {},
     refetch: refreshOrgPages,
     isPending: isPendingOrgPages,
   } = useFetchPages({
     allowFetch: Boolean(organization?.pkid),
+    is_archived: false,
     org_pkid: organization?.pkid ?? -1,
+    view_types: [ PageViewTypeEnum.FOLDER ],
+    all: true,
   })
 
   const orgPages: IPageData | undefined = useMemo(() => {
@@ -78,12 +92,25 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     trailing: true,
   })
 
+  const getChildrenPageByPkID = useCallback(
+    (pagePkId: number) => {
+      if (!orgPages) return []
+      const childPagePkIDs = orgPages.map[pagePkId]?.childrenPkids ?? []
+      const children = childPagePkIDs?.map((pkid) => orgPages.map[pkid].page)
+      return children.filter((p) => !p?.archived_at)
+    },
+    [orgPages],
+  )
+
   return (
     <Provider
       value={{
         orgPages,
         refreshOrgPages: debounceRefreshOrgPages,
+        showSidebar,
+        setShowSidebar,
         isPendingOrgPages,
+       getChildrenPageByPkID 
       }}
     >
       {children}

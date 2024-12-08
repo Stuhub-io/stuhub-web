@@ -17,7 +17,8 @@ export const QUERY_KEYS = {
     query.size,
     query.is_archived,
     query.org_pkid,
-    query.parent_page_pkid,
+    query.parent_page_pkid || -1,
+    query.all,
     JSON.stringify(query.view_types),
     ],
   GET_PAGE: ({ pageID }: { pageID: string }) => [PAGE_KEYS.GET, pageID],
@@ -44,4 +45,15 @@ export const MUTATION_KEYS = {
   MOVE_PAGE: ({ id }: { id: string }) => ['MOVE_PAGE', id],
   UPDATE_PAGE_CONTENT : ({ id }: { id: string }) => ['UPDATE_PAGE_CONTENT', id],
   ARCHIVE_PAGE: ({ id }: { id: string }) => ['ARCHIVE_PAGE', id],
+  CREATE_ASSET: 
+  ({
+    parent_page_pkid,
+    org_pkid,
+    tempId,
+  }: { tempId?: string } & Pick<CreatePageRequest, 'parent_page_pkid' | 'org_pkid'>) => [
+    'CREATE_PAGE_ASSET',
+    parent_page_pkid,
+    org_pkid,
+    tempId,
+  ],
 }
