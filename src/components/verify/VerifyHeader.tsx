@@ -6,14 +6,14 @@ import Typography from '../common/Typography'
 
 export const VerifyPageHeader = () => {
   return (
-    <Navbar
+    (<Navbar
       classNames={{
         wrapper: '!container backdrop-blur-md',
       }}
     >
       <NavbarContent justify="start">
         <NavbarBrand className="gap-4">
-          <Link href={ROUTES.LANDING_PAGE}>
+          <Link href={ROUTES.LANDING_PAGE} >
             <Typography level="h5">Stuhub 📖</Typography>
           </Link>
         </NavbarBrand>
@@ -21,6 +21,6 @@ export const VerifyPageHeader = () => {
           <ThemeSwitch />
         </NavbarContent>
       </NavbarContent>
-    </Navbar>
-  )
+    </Navbar>)
+  );
 }

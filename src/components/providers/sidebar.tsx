@@ -1,21 +1,33 @@
 'use client'
 
 import createContext from '@/libs/context'
-import { useFetchOrgSpaces } from '@/mutation/querier/space/useFetchSpaces'
-import { PropsWithChildren, useMemo } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 import { useOrganization } from './organization'
-import { Space } from '@/schema/space'
-import { IPageData, useFetchPages } from '@/mutation/querier/page/useFetchPages'
+import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { useThrottledCallback } from 'use-debounce'
+import { Page, PageViewTypeEnum } from '@/schema/page'
+import { usePersistCollapseContext } from './collapse'
+
+export type ChildMap = Record<
+  number,
+  {
+    page: Page
+    childrenPkids: number[]
+  }
+>
+
+export interface IPageData {
+  list: Page[]
+  map: ChildMap
+}
 
 interface SidebarContextValue {
-  isPendingSpaces: boolean
-  privateSpace?: Space
-  publicSpaces?: Space[]
-  privatePages?: IPageData
-  isPendingPrivatePages: boolean
-  refreshPrivatePages: () => void
-  refreshSpacePages: (pageID: string) => void
+  orgPages?: IPageData
+  isPendingOrgPages: boolean
+  refreshOrgPages: () => void
+  getChildrenPageByPkID: (pagePkId: number) => Page[]
+  showSidebar?: boolean
+  setShowSidebar: (_:boolean) => void
 }
 
 const [Provider, useSidebar] = createContext<SidebarContextValue>({
@@ -27,48 +39,78 @@ export { useSidebar }
 export const SidebarProvider = ({ children }: PropsWithChildren) => {
   const { organization } = useOrganization()
 
-  const { data: { data: spaces } = {}, isPending: isPendingSpaces } = useFetchOrgSpaces({
-    organization_pkid: organization?.pkid ?? -1,
-    allowFetch: Boolean(organization),
-  })
+  const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
+  const [showSidebar, setShowSidebar ] = useState(() => getCollapseState(`main-layout-sidebar`))
 
-  const privateSpace = useMemo(() => {
-    return spaces?.find((space) => space.is_private)
-  }, [spaces])
-
-  const publicSpaces = useMemo(() => {
-    return spaces?.filter((space) => !space.is_private)
-  }, [spaces])
+  useEffect(() => {
+    persistCollapseData(`main-layout-sidebar`, showSidebar)
+  }, [showSidebar, persistCollapseData])
 
   const {
-    data: { data: privatePages } = {},
-    refetch: refreshPrivatePages,
-    isPending: isPendingPrivatePages,
+    data: { data: internalOrgPages } = {},
+    refetch: refreshOrgPages,
+    isPending: isPendingOrgPages,
   } = useFetchPages({
-    allowFetch: Boolean(privateSpace),
-    space_pkid: privateSpace?.pkid ?? -1,
+    allowFetch: Boolean(organization?.pkid),
+    is_archived: false,
+    org_pkid: organization?.pkid ?? -1,
+    view_types: [ PageViewTypeEnum.FOLDER ],
+    all: true,
   })
 
-  const debounceRefreshPrivatePages = useThrottledCallback(refreshPrivatePages, 2000, {
+  const orgPages: IPageData | undefined = useMemo(() => {
+    if (!internalOrgPages) {
+      return undefined
+    }
+    const childMap = {} as Record<
+      number,
+      {
+        page: Page
+        childrenPkids: number[]
+      }
+    >
+
+    internalOrgPages?.forEach((page) => {
+      childMap[page.pkid] = {
+        page,
+        childrenPkids: [],
+      }
+    })
+    internalOrgPages?.forEach((page) => {
+      if (page.parent_page_pkid && childMap[page.parent_page_pkid]) {
+        childMap[page.parent_page_pkid].childrenPkids.push(page.pkid)
+      }
+    })
+
+    return {
+      list: internalOrgPages ?? [],
+      map: childMap,
+    }
+  }, [internalOrgPages])
+
+  const debounceRefreshOrgPages = useThrottledCallback(refreshOrgPages, 2000, {
     trailing: true,
   })
 
-  const refreshSpacePages = (pageID: string) => {
-    // TODO: search for the space that contains the page and refresh it
-    console.log('refreshing space pages', pageID)
-    debounceRefreshPrivatePages()
-  }
+  const getChildrenPageByPkID = useCallback(
+    (pagePkId: number) => {
+      if (!orgPages) return []
+      const childPagePkIDs = orgPages.map[pagePkId]?.childrenPkids ?? []
+      const children = childPagePkIDs?.map((pkid) => orgPages.map[pkid].page)
+      return children.filter((p) => !p?.archived_at)
+    },
+    [orgPages],
+  )
 
   return (
     <Provider
       value={{
-        isPendingSpaces,
-        privateSpace,
-        publicSpaces,
-        privatePages,
-        refreshPrivatePages: debounceRefreshPrivatePages,
-        isPendingPrivatePages,
-        refreshSpacePages
+        orgPages,
+        refreshOrgPages: debounceRefreshOrgPages,
+        showSidebar,
+        setShowSidebar,
+        isPendingOrgPages,
+       getChildrenPageByPkID 
       }}
     >
       {children}

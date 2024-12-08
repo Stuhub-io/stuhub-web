@@ -24,6 +24,7 @@ const typographyVariants = cva([''], {
       inherit: 'text-inherit',
     },
     color: {
+      contrast: 'text-white',
       primary: 'text-primary',
       secondary: 'text-secondary',
       success: 'text-success',

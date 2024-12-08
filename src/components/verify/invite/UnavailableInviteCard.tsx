@@ -21,7 +21,7 @@ export const UnavailableInviteCard = () => {
         </Typography>
       </CardBody>
       <CardFooter className="pb-1 pt-4">
-        <Button fullWidth color="primary" size="lg" as={Link} href={ROUTES.HOME_PAGE}>
+        <Button fullWidth color="primary" size="lg" as={Link} href={ROUTES.HOME_PAGE} >
           Continue to Stuhub
         </Button>
       </CardFooter>

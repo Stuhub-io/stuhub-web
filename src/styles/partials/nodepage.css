@@ -1,0 +1,7 @@
+.ProseMirror .node-page {
+    @apply my-8
+}
+
+.ProseMirror .node-page.ProseMirror-selectednode [data-page-id] {
+    @apply outline outline-primary rounded-large overflow-hidden
+}

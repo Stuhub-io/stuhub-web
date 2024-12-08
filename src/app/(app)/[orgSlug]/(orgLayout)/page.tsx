@@ -14,17 +14,17 @@ export default function OrganizationHome() {
   const { user } = useAuthContext()
   const { prefetch } = useRouter()
   const { organization } = useOrganization()
-  const { privatePages } = useSidebar()
+  const { orgPages } = useSidebar()
 
   useEffect(() => {
-    if ((privatePages?.list.length ?? 0) === 0) return
+    if ((orgPages?.list.length ?? 0) === 0) return
     prefetch(
-      ROUTES.ORGANIZATION_PAGE({
+      ROUTES.VAULT_PAGE({
         orgSlug: organization?.slug ?? '',
-        pageID: privatePages?.list[0].id ?? '',
+        pageID: orgPages?.list[0].id ?? '',
       }),
     )
-  }, [organization?.slug, prefetch, privatePages?.list])
+  }, [organization?.slug, prefetch, orgPages?.list])
 
   return (
     <div className="container mt-4 space-y-8">

@@ -1,6 +1,7 @@
 .ProseMirror {
   @apply px-4 sm:px-6 prose prose-neutral max-w-full;
 }
+
 [data-theme='dark'] .ProseMirror {
   @apply prose-invert;
 }
@@ -16,6 +17,7 @@
   pointer-events: none;
   height: 0;
 }
+
 .ProseMirror .is-empty::before {
   content: attr(data-placeholder);
   float: left;
@@ -65,8 +67,7 @@
 }
 
 /* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
-
-ul[data-type="taskList"] li > label {
+.ProseMirror [data-type="taskList"] li > label {
   margin-right: 0.2rem;
   user-select: none;
 }
@@ -77,7 +78,12 @@ ul[data-type="taskList"] li > label {
   }
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"] {
+.ProseMirror [data-type="taskList"] li.is-empty::before {
+  width: fit-content;
+  margin-left: -0.5rem;
+}
+
+.ProseMirror [data-type="taskList"] li > label input[type="checkbox"] {
   @apply border-2 border-divider rounded-md bg-default-100 appearance-none m-0 cursor-pointer;
   -webkit-appearance: none;
   width: 1.2em;
@@ -112,7 +118,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   }
 }
 
-ul[data-type="taskList"] li[data-checked="true"] > div > p {
+.ProseMirror [data-type="taskList"] li[data-checked="true"] > div > p {
   color: var(--muted-foreground);
   text-decoration: line-through;
   text-decoration-thickness: 2px;
@@ -219,3 +225,30 @@ mark[style] > strong {
 .ProseMirror li::marker {
   @apply bg-default text-default-600;
 }
+
+
+/* Columns */
+.ProseMirror [data-type='columns'] {
+  @apply grid gap-4 mt-8 mb-8 border;
+
+  &.layout-sidebar-left {
+    grid-template-columns: 40fr 60fr;
+    @apply border-r
+  }
+
+  &.layout-sidebar-right {
+    grid-template-columns: 60fr 40fr;
+  }
+
+  &.layout-two-column {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ProseMirror [data-type='column'] {
+  @apply overflow-auto;
+}
+
+@import url(./partials/code.css);
+@import url(./partials/placeholder.css);
+@import url(./partials/nodepage.css);

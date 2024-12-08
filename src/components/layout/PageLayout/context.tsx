@@ -39,8 +39,11 @@ export const PageLayoutContextProvider = ({ children }: PropsWithChildren) => {
       if (!page) return
       try {
         await mutateAsync({
-          ...page,
-          cover_image: coverImage,
+          pkid: page.pkid,
+          body: {
+            ...page,
+            cover_image: coverImage,
+          }
         })
         queryClient.invalidateQueries({
           queryKey: QUERY_KEYS.GET_PAGE({ pageID }),

@@ -12,6 +12,15 @@ const config: Config = withUt({
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      xs: '375px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+      '3xl': '1920px',
+    },
     extend: {
       fontSize: {
         xxs: '11px',
@@ -21,10 +30,11 @@ const config: Config = withUt({
       container: {
         center: true,
         screens: {
+          DEFAULT: '100%',
           sm: '100%',
           md: '100%',
-          lg: '1024px',
-          xl: '1280px',
+          lg: '1224px',
+          xl: '1480px',
         },
       },
     },

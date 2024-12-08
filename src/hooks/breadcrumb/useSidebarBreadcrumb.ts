@@ -6,7 +6,7 @@ import { useMemo } from "react";
 
 
 export const useSidebarBreadcrumb = () => {
-    const { privatePages } = useSidebar()
+    const { orgPages } = useSidebar()
     const { pageID } = useParams<OrganizationPageParams>()
     const { data: {data: pageDetail} = {} } = useFetchPage({
         pageID,
@@ -16,16 +16,17 @@ export const useSidebarBreadcrumb = () => {
     // FIXME: fetch current page with page UUID from params
     // show title first -> waiting for sidebar to be ready
     const paths = useMemo(() => {
+        if (!pageID) return []
         if (!pageDetail) return []
-        if (privatePages === undefined) return []
+        if (orgPages === undefined) return []
         const path = [pageDetail]
-        let initPath =pageDetail 
+        let initPath = pageDetail 
         while (initPath?.parent_page_pkid) {
-            path.push(privatePages?.map[initPath.parent_page_pkid])
-            initPath = privatePages?.map[initPath.parent_page_pkid]
+            path.push(orgPages?.map[initPath.parent_page_pkid].page)
+            initPath = orgPages?.map[initPath.parent_page_pkid].page
         }
         return path.reverse()
-    }, [privatePages, pageDetail])
+    }, [orgPages, pageDetail, pageID])
     
     return paths
 }

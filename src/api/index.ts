@@ -2,18 +2,16 @@ import { Client } from "@/libs/client";
 import { authService } from "./auth";
 import { organizationService } from "./organization";
 import { userService } from "./user";
-import { spaceService } from "./space";
 import { pageService } from "./page";
-import { documentService } from "./document";
+import { uploadService } from "./uploader";
 
 
 const privateServices: Client[] = [
     // NOTE: add services ... 
     organizationService,
-    spaceService,
     userService,
     pageService,
-    documentService
+    uploadService,
 ]
 
 const servicesGuard = {

@@ -48,3 +48,4 @@ export default async function fetcher<JSON = any>(
     return await Promise.reject(error)
   }
 }
+
