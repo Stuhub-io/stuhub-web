@@ -1,12 +1,13 @@
 'use client'
 
-import { PageCoverImage } from '@/components/page/PageCoverImage'
+import { PageCoverImage } from '@/components/page/document/PageCoverImage'
 import { PropsWithChildren, ReactNode } from 'react'
 import { PageLayoutContextProvider } from './context'
 
 interface PageLayoutProps extends PropsWithChildren {
   breadCrumb?: ReactNode
   rightEl?: ReactNode
+  headAlert?: ReactNode
 }
 
 export interface PageLayoutContextValues {
@@ -15,7 +16,7 @@ export interface PageLayoutContextValues {
 }
 
 export const PageLayout = (props: PageLayoutProps) => {
-  const { children, breadCrumb, rightEl } = props
+  const { children, breadCrumb, rightEl, headAlert } = props
 
   return (
     <PageLayoutContextProvider>
@@ -24,6 +25,7 @@ export const PageLayout = (props: PageLayoutProps) => {
           <div className="flex-1 overflow-hidden">{breadCrumb}</div>
           <div className="flex flex-shrink-0 items-center justify-end pl-8">{rightEl}</div>
         </header>
+        {headAlert}
         <main className="mx-auto w-full overflow-y-auto overflow-x-hidden px-4 flex-1">
           <PageCoverImage />
           {children}

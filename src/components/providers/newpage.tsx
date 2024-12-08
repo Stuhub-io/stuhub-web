@@ -1,7 +1,7 @@
 import createContext from '@/libs/context'
 import { useDisclosure } from '@nextui-org/react'
 import { Dispatch, PropsWithChildren, SetStateAction, useId, useState } from 'react'
-import { CreateNewPageModal } from '../page/CreateNewPageModal'
+import { CreateNewPageModal } from '../page/common/CreateNewPageModal'
 import { CreatePageRequest, Page, PageViewType, PageViewTypeEnum } from '@/schema/page'
 import { newIdGenerator } from '@/libs/utils'
 import { useOrganization } from './organization'
@@ -15,28 +15,28 @@ export type IToCreatePage = CreatePageRequest & {
   status: 'loading' | 'success' | 'error'
 }
 
-export type ICreatingPage = {
+export type ICreatingDoc = {
   id: string
   input: CreatePageRequest
   result?: Page
 }
 
-type CreatePageData = Omit<CreatePageRequest, 'document'> & {
+type CreateDocData = Omit<CreatePageRequest, 'document'> & {
   document: {
     json_content: JSONContent
   }
 }
 interface CreatePageContextValue {
   selectedParent?: Page
-  onOpenCreatePage: (parentPage?: Page) => void
-  onCloseCreatePage: () => void
-  isOpenCreatePage: boolean
-  createPageData?: CreatePageData
-  setCreatePageData?: Dispatch<SetStateAction<CreatePageData | undefined>>
-  creatingPages: ICreatingPage[]
-  appendCreatingPages: (data: ICreatingPage) => void
+  onOpenCreateDoc: (parentPage?: Page) => void
+  onCloseCreateDoc: () => void
+  isOpenCreateDoc: boolean
+  createDocData?: CreateDocData
+  setCreateDocData?: Dispatch<SetStateAction<CreateDocData | undefined>>
+  creatingPages: ICreatingDoc[]
+  appendCreatingPages: (data: ICreatingDoc) => void
   doneCreatingPage: (id: string) => void
-  updateCreatingPages: (id: string, data: ICreatingPage) => void
+  updateCreatingPages: (id: string, data: ICreatingDoc) => void
   createID: string
 }
 
@@ -52,15 +52,15 @@ export const CreatePageProvider = ({ children }: PropsWithChildren) => {
   const { organization } = useOrganization()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedParent, setSelectedParent] = useState<Page>()
-  const [creatingPages, setCreatingPages] = useState<ICreatingPage[]>([])
-  const [createPageData, setCreatePageData] = useState<CreatePageData>()
+  const [creatingPages, setCreatingPages] = useState<ICreatingDoc[]>([])
+  const [createDocData, setCreateDocData] = useState<CreateDocData>()
   const [createID, setCreateID] = useState<string>('')
 
-  const appendCreatingPages = (data: ICreatingPage) => {
+  const appendCreatingPages = (data: ICreatingDoc) => {
     setCreatingPages((prev) => [...prev, data])
   }
 
-  const updateCreatingPages = (id: string, data: ICreatingPage) => {
+  const updateCreatingPages = (id: string, data: ICreatingDoc) => {
     setCreatingPages((prev) => prev.map((d) => (d.id === id ? data : d)))
   }
 
@@ -68,9 +68,9 @@ export const CreatePageProvider = ({ children }: PropsWithChildren) => {
     setCreatingPages((prev) => prev.filter((data) => data.id !== id))
   }
 
-  const onOpenCreatePage = (parentPage?: Page) => {
+  const onOpenCreateDoc = (parentPage?: Page) => {
     setSelectedParent(parentPage)
-    setCreatePageData({
+    setCreateDocData({
       name: '',
       org_pkid: organization?.pkid ?? -1,
       parent_page_pkid: parentPage?.pkid,
@@ -84,9 +84,9 @@ export const CreatePageProvider = ({ children }: PropsWithChildren) => {
     onOpen()
   }
 
-  const onCloseCreatePage = () => {
+  const onCloseCreateDoc = () => {
     setSelectedParent(undefined)
-    setCreatePageData(undefined)
+    setCreateDocData(undefined)
     setCreateID('')
     onClose()
   }
@@ -94,12 +94,12 @@ export const CreatePageProvider = ({ children }: PropsWithChildren) => {
   return (
     <Provider
       value={{
-        isOpenCreatePage: isOpen,
+        isOpenCreateDoc: isOpen,
         selectedParent,
-        onCloseCreatePage,
-        onOpenCreatePage,
-        createPageData,
-        setCreatePageData,
+        onCloseCreateDoc,
+        onOpenCreateDoc,
+        createDocData,
+        setCreateDocData,
         appendCreatingPages,
         doneCreatingPage,
         creatingPages,

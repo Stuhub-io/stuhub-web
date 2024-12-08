@@ -1,12 +1,12 @@
-import { SidebarIconButton } from '@/components/layout/SideBar/SidebarIconbutton'
-import { PageCard } from '@/components/page/PageCard'
+import { SidebarIconButton } from '@/components/common/Sidebar'
+import { PageCard } from '@/components/page/document/PageCard'
 import { RiEditBoxLine, RiMoreLine } from 'react-icons/ri'
 import { WidgetSection } from '../WidgetSection'
 import { useSidebar } from '@/components/providers/sidebar'
 import { RecentVisitPageMoreMenu } from './RecentVisitPageMoreMenu'
 import { ReactNode, useState } from 'react'
 import { ILayoutSettings } from './constants'
-import { PoperContentTrigger } from '@/components/common/PopoverTrigger'
+import { PopperContentTrigger } from '@/components/common/PopoverTrigger'
 
 export const RecentVisitPageWidget = () => {
   // FIXME: fetch recent visit pages
@@ -27,12 +27,12 @@ export const RecentVisitPageWidget = () => {
       icon={<RiEditBoxLine size={16} />}
       title="Continue your writing"
       rightEls={
-        <PoperContentTrigger>
+        <PopperContentTrigger>
           <SidebarIconButton isIconOnly size="sm" variant="light">
             <RiMoreLine size={16} />
           </SidebarIconButton>
           <RecentVisitPageMoreMenu config={layoutConfig} onConfigChanged={setLayoutConfig} />
-        </PoperContentTrigger>
+        </PopperContentTrigger>
       }
     >
       {renderLayout(orgPages?.list.map((page) => <PageCard pageDetail={page} key={page.id} />))}

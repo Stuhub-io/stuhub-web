@@ -63,6 +63,7 @@ export const withForm = <
     getOnBlur,
   } = Mapper ?? {}
   const Comp = forwardRef(
+    // @ts-expect-error allow miss match of props
     <Value extends TFieldValues>(
       props: P & {
         name: FieldPath<Value>
@@ -74,12 +75,12 @@ export const withForm = <
       const { setValue } = useFormContext<TFieldValues>()
 
       return (
-        <Controller<Value>
+        (<Controller<Value>
           name={name}
           disabled={disabled}
           render={({ field: { value, onChange, disabled: fieldDisabled, onBlur }, fieldState }) => (
             // @ts-expect-error allow miss match of props
-            <Component
+            (<Component
               ref={ref}
               {...getIsInvalid(Boolean(fieldState.error?.message))}
               {...getErrMsg(fieldState.error?.message ?? '')}
@@ -90,10 +91,10 @@ export const withForm = <
               )}
               {...getOnBlur?.(onBlur)}
               {...restProps}
-            />
+            />)
           )}
-        />
-      )
+        />)
+      );
     },
   )
   Comp.displayName = `withForm(${Component.displayName || Component.name})`

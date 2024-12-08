@@ -1,3 +1,4 @@
+
 {
   "name": "stuhub-web",
   "version": "0.1.0",
@@ -7,12 +8,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "analyze": "ANALYZE=true pnpm build",
+    "analyze": "ANALYZE=true bun run build",
     "format": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore .",
     "prepare": "husky"
   },
   "dependencies": {
+    "axios": "^1.7.9",
     "@hello-pangea/dnd": "^16.6.0",
     "@hookform/resolvers": "^3.6.0",
     "@next/bundle-analyzer": "^14.2.11",

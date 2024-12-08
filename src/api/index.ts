@@ -3,6 +3,7 @@ import { authService } from "./auth";
 import { organizationService } from "./organization";
 import { userService } from "./user";
 import { pageService } from "./page";
+import { uploadService } from "./uploader";
 
 
 const privateServices: Client[] = [
@@ -10,6 +11,7 @@ const privateServices: Client[] = [
     organizationService,
     userService,
     pageService,
+    uploadService,
 ]
 
 const servicesGuard = {

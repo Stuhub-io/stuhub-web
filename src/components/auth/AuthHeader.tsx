@@ -6,29 +6,28 @@ import { ThemeButton } from '../common/ThemeButton'
 
 export const AuthHeader = () => {
   return (
-    <Navbar
+    (<Navbar
       classNames={{
         wrapper: '!container backdrop-blur-md',
       }}
     >
       <NavbarContent>
         <NavbarBrand className="gap-4">
-          <Link href={ROUTES.LANDING_PAGE}>
+          <Link href={ROUTES.LANDING_PAGE} >
             <Typography level="h5">Stuhub 📖</Typography>
           </Link>
         </NavbarBrand>
       </NavbarContent>
-
       <NavbarContent>
         <NavbarContent justify="end">
           <ThemeButton/>
         </NavbarContent>
         <NavbarItem>
-          <Button color="primary" as={Link} href={ROUTES.SIGNIN_PAGE}>
+          <Button color="primary" as={Link} href={ROUTES.SIGNIN_PAGE} >
             Sign In
           </Button>
         </NavbarItem>
       </NavbarContent>
-    </Navbar>
-  )
+    </Navbar>)
+  );
 }

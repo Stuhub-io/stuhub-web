@@ -1,7 +1,7 @@
 import { Client } from '@/libs/client'
 import fetcher from '@/libs/fetcher'
 import { BaseResponse } from '@/schema/base'
-import { CreatePageRequest, GetPagesQuery, MovePageRequest, Page, UpdatePageRequest } from '@/schema/page'
+import { CreatePageAssetRequest, CreatePageRequest, GetPagesQuery, MovePageRequest, Page, PageViewTypeEnum, UpdatePageRequest } from '@/schema/page'
 import qs from 'querystring'
 
 class PageService extends Client {
@@ -81,6 +81,20 @@ class PageService extends Client {
         method: 'PUT',
         headers: this.privateHeaders,
         body: JSON.stringify(request.body),
+      }
+    )
+  }
+
+
+  // assets
+  public createAsset(request: CreatePageAssetRequest) {
+    request.view_type = PageViewTypeEnum.ASSET
+    return fetcher<BaseResponse<Page>>(
+      `${this.baseUrl}/v1/page-services/pages/assets`,
+      {
+        method: 'POST',
+        headers: this.privateHeaders,
+        body: JSON.stringify(request),
       }
     )
   }

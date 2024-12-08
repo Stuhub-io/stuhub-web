@@ -7,12 +7,12 @@ import {
   RiCheckboxFill,
   RiCheckLine,
   RiCodeBlock,
-  RiHeading,
-  RiHeading2,
+  RiH1 as RiHeading,
   RiListOrdered,
   RiListRadio,
   RiText,
   RiTextBlock,
+  RiH2 as RiHeading2,
 } from 'react-icons/ri'
 import { IconType } from 'react-icons/lib'
 

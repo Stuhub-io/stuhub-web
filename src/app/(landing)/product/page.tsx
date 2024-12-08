@@ -40,6 +40,7 @@ export default function Home() {
             size="lg"
             type="button"
             as={Link}
+            
             href={ROUTES.CHANGELOG_PAGE}
           >
             Learn more
@@ -100,7 +101,7 @@ export default function Home() {
         <Typography className="mx-auto w-full max-w-[900px] text-center" level="p4">
           Simple, powerful, beautiful. Next-gen notes & docs.{' '}
           <span className="ml-1 inline-flex items-center gap-2 text-primary">
-            <Link href={ROUTES.CHANGELOG_PAGE}>Learn more</Link>
+            <Link  href={ROUTES.CHANGELOG_PAGE}>Learn more</Link>
             <AiOutlineArrowRight size={14} />
           </span>
         </Typography>
