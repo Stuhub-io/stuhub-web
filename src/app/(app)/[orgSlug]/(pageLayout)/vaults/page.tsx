@@ -102,7 +102,7 @@ export default function RootFolderPage() {
     })
     refetch?.()
     refreshOrgPages?.()
-  }, [])
+  }, [createAsset, organization?.pkid, refetch, refreshOrgPages])
 
   const { getInputProps, getRootProps, isDragActive } = useDropzone({
     onDrop: handleDropFile,

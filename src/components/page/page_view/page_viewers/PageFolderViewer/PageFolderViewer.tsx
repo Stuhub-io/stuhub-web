@@ -95,7 +95,7 @@ export const PageFolderViewer: PageViewer = (props) => {
     files.forEach((file) => {
       handleUploadFile(file, page?.pkid)
     })
-  }, [])
+  }, [handleUploadFile, page?.pkid])
 
   const { getInputProps, getRootProps, isDragActive } = useDropzone({
     onDrop: handleDropFile,

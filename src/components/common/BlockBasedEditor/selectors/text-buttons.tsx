@@ -9,32 +9,32 @@ export const TextButtons = () => {
   const items: SelectorItem[] = [
     {
       name: 'bold',
-      isActive: (editor) => editor.isActive('bold'),
-      command: (editor) => editor.chain().focus().toggleBold().run(),
+      isActive: (e) => e.isActive('bold'),
+      command: (e) => e.chain().focus().toggleBold().run(),
       icon: RiBold,
     },
     {
       name: 'italic',
-      isActive: (editor) => editor.isActive('italic'),
-      command: (editor) => editor.chain().focus().toggleItalic().run(),
+      isActive: (e) => e.isActive('italic'),
+      command: (e) => e.chain().focus().toggleItalic().run(),
       icon: RiItalic,
     },
     {
       name: 'underline',
-      isActive: (editor) => editor.isActive('underline'),
-      command: (editor) => editor.chain().focus().toggleUnderline().run(),
+      isActive: (e) => e.isActive('underline'),
+      command: (e) => e.chain().focus().toggleUnderline().run(),
       icon: RiUnderline,
     },
     {
       name: 'strike',
-      isActive: (editor) => editor.isActive('strike'),
-      command: (editor) => editor.chain().focus().toggleStrike().run(),
+      isActive: (e) => e.isActive('strike'),
+      command: (e) => e.chain().focus().toggleStrike().run(),
       icon: RiStrikethrough,
     },
     {
       name: 'code',
-      isActive: (editor) => editor.isActive('code'),
-      command: (editor) => editor.chain().focus().toggleCode().run(),
+      isActive: (e) => e.isActive('code'),
+      command: (e) => e.chain().focus().toggleCode().run(),
       icon: RiCodeFill,
     },
   ]
@@ -45,8 +45,8 @@ export const TextButtons = () => {
           key={item.name}
           variant="light"
           as={EditorBubbleItem}
-          onSelect={(editor: any) => {
-            item.command(editor)
+          onSelect={(e: any) => {
+            item.command(e)
           }}
           isIconOnly
           color={item.isActive(editor) ? 'primary' : 'default'}
