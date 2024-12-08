@@ -24,11 +24,11 @@ export const SidebarUploadingSection = () => {
   const progress = useMemo(() => {
     const total = Object.keys(uploadingFiles ?? {}).length
     if (total === 0) return 100
-    const progress = Object.values(uploadingFiles ?? {}).reduce(
+    const p = Object.values(uploadingFiles ?? {}).reduce(
       (acc, { progress: fileProgress }) => acc + (fileProgress ?? 0),
       0,
     )
-    return Math.floor(progress / total)
+    return Math.floor(p / total)
   }, [uploadingFiles])
 
   const handleOpenUploadModal = () => {

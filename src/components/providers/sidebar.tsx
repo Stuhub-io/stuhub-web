@@ -96,8 +96,8 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     (pagePkId: number) => {
       if (!orgPages) return []
       const childPagePkIDs = orgPages.map[pagePkId]?.childrenPkids ?? []
-      const children = childPagePkIDs?.map((pkid) => orgPages.map[pkid].page)
-      return children.filter((p) => !p?.archived_at)
+      const child = childPagePkIDs?.map((pkid) => orgPages.map[pkid].page)
+      return child.filter((p) => !p?.archived_at)
     },
     [orgPages],
   )

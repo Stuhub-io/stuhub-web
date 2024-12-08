@@ -59,6 +59,6 @@
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "no-param-reassign": "warn",
-    "no-shadow": "warn"
+    "no-shadow": "off" 
   }
 }

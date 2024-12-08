@@ -63,7 +63,6 @@ export const withForm = <
     getOnBlur,
   } = Mapper ?? {}
   const Comp = forwardRef(
-    // @ts-expect-error allow miss match of props
     <Value extends TFieldValues>(
       props: P & {
         name: FieldPath<Value>

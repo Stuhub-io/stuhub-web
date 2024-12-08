@@ -78,6 +78,7 @@ export const getAssetPreviewContent = (asset: Asset) => {
         loading="lazy"
         src={asset.url}
         removeWrapper
+        alt={asset.extension}
         className="h-full w-full object-cover"
         radius="sm"
       />
