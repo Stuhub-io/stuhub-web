@@ -118,8 +118,6 @@ export const AssetUploaderContextProvider = ({ children }: PropsWithChildren) =>
     setSelectedFolder(folder)
   }
 
-  console.log('selectedFolder', selectedFolder)
-
   const onRemove = (tempId: string) => {
     setUploadingFileState((prev) => {
       const newState = { ...prev }

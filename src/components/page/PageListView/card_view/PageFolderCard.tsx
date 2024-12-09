@@ -4,13 +4,27 @@ import { Button, Card, CardBody } from '@nextui-org/react'
 import { BaseCardViewProps } from './type'
 import { PageActionMenuView } from '../../menu_view/MenuView'
 import { RiFolder3Fill, RiMore2Line } from 'react-icons/ri'
-import { useDropzone } from '@uploadthing/react'
+import { useDropzone } from 'react-dropzone'
 import { cn } from '@/libs/utils'
 import { useAssetUploadContext } from '@/components/providers/asset_upload'
+import { useToast } from '@/hooks/useToast'
+import { useMutationState } from '@tanstack/react-query'
+import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const FolderCard = (props: BaseCardViewProps) => {
   const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected } = props
   const { handleUpload } = useAssetUploadContext()
+  const { toast } = useToast()
+
+  const archiveStatus = useMutationState({
+    filters: {
+      mutationKey: MUTATION_KEYS.ARCHIVE_PAGE({ id: page.id }),
+    },
+    select: (state) => state.state.status,
+  })
+
+  const isArchiving = archiveStatus.includes("pending")
+  
 
   const handleDoubleClick = () => {
     onDoubleClick?.(page)
@@ -22,6 +36,10 @@ export const FolderCard = (props: BaseCardViewProps) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (files: File[]) => {
+      toast({
+        variant: 'default',
+        title: 'Uploading files',
+      })
       files.forEach((file) => {
         handleUpload?.(file, page.pkid)
       })
@@ -33,8 +51,8 @@ export const FolderCard = (props: BaseCardViewProps) => {
   }
 
   return (
+    // @ts-expect-error -- TSCONVERSION
     <Card
-      // @ts-expect-error -- ignore type
       as='div'
       className={cn(
         'w-full select-none',
@@ -43,6 +61,7 @@ export const FolderCard = (props: BaseCardViewProps) => {
           'outline-2 outline-primary outline-dashed bg-default-200': isDragActive,
           'bg-content2': isDragActive,
           'bg-primary-100 hover:bg-primary-100/90': isSelected,
+          'bg-opacity-80 pointer-events-none animate-pulse': isArchiving,
         },
         className
       )}

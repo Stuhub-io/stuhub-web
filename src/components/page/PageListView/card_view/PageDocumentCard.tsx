@@ -7,9 +7,20 @@ import { formatTimeToNow } from '@/utils/time'
 import { RiMore2Line } from 'react-icons/ri'
 import { PageActionMenuView } from '../../menu_view/MenuView'
 import { VscodeDocumentIcon } from '@/components/icons/VsCodeDocumentIcon'
+import { useMutationState } from '@tanstack/react-query'
+import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const PageDocumentCard = (props: BaseCardViewProps) => {
   const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected } = props
+
+  const archiveStatus = useMutationState({
+    filters: {
+      mutationKey: MUTATION_KEYS.ARCHIVE_PAGE({ id: page.id })
+    },
+    select: state => state.state.status
+  })
+
+  const isArchiving = archiveStatus.includes('pending')
 
   const handleClick = () => {
     onClick?.(page)
@@ -31,6 +42,7 @@ export const PageDocumentCard = (props: BaseCardViewProps) => {
         className,
         {
           'bg-primary-100 hover:bg-primary-100/90': isSelected,
+          'opacity-80 pointer-events-none animate-pulse': isArchiving
         }
       )}
       shadow="none"

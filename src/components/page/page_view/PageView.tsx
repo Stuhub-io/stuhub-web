@@ -6,6 +6,7 @@ import { usePageLayoutContext } from '@/components/layout/PageLayout/context'
 import { PageDocumentViewer } from './page_viewers/PageDocumentViewer'
 import { PageViewer } from './type'
 import { PageFolderViewer } from './page_viewers/PageFolderViewer'
+import { PageAssetViewer } from './page_viewers/PageAssetViewer'
 
 export const pageViewer: {
   viewer: PageViewer
@@ -18,6 +19,10 @@ export const pageViewer: {
     {
       viewType: PageViewTypeEnum.FOLDER,
       viewer: PageFolderViewer
+    },
+    {
+      viewType: PageViewTypeEnum.ASSET,
+      viewer: PageAssetViewer
     }
 ]
 
