@@ -10,9 +10,20 @@ import {
   getIconByExtension,
   isImageExtensionSupported,
 } from '@/utils/file'
+import { useMutationState } from '@tanstack/react-query'
+import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const PageAssetCard = (props: BaseCardViewProps) => {
   const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected } = props
+
+  const archiveStatus = useMutationState({
+    filters: {
+      mutationKey: MUTATION_KEYS.ARCHIVE_PAGE({ id: page.id }),
+    },
+    select: state => state.state.status,
+  })
+
+  const isArchiving = archiveStatus.includes('pending')
 
   const handleClick = () => {
     onClick?.(page)
@@ -32,6 +43,7 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
         'cursor-pointer bg-default-100 transition-background hover:bg-default-200',
         {
           'bg-primary-100 hover:bg-primary-100/90': isSelected,
+          'opacity-80 pointer-events-none animate-pulse': isArchiving
         },
         className,
       )}
