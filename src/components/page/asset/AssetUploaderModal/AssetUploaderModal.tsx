@@ -1,5 +1,13 @@
 import Typography from '@/components/common/Typography'
-import { Chip, Divider, Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react'
+import {
+  Button,
+  Chip,
+  Divider,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalHeader,
+} from '@nextui-org/react'
 import { useDropzone } from '@uploadthing/react'
 import { RiFileFill, RiFolder3Fill } from 'react-icons/ri'
 import { AssetUploadingItem } from './AssetUploadingItem'
@@ -29,10 +37,12 @@ interface AssetUploaderModalProps {
   uploadingFiles?: Record<string, UploadingFileState>
   onRemoveFile?: (uploadID: string) => void
   onCancelFile?: (uploadID: string) => void
+  onClearAll?: () => void
 }
 
 export const AssetUploaderModal = (props: AssetUploaderModalProps) => {
-  const { isOpen, onClose, folderPkID, onUploadFile, uploadingFiles, onCancelFile, onRemoveFile } = props
+  const { isOpen, onClose, folderPkID, onUploadFile, uploadingFiles, onCancelFile, onRemoveFile, onClearAll } =
+    props
 
   const { organization } = useOrganization()
 
@@ -62,12 +72,12 @@ export const AssetUploaderModal = (props: AssetUploaderModalProps) => {
           <Chip
             size="sm"
             startContent={
-              <div className='px-1'>
-              <RiFolder3Fill size={14} className='text-success' />
+              <div className="px-1">
+                <RiFolder3Fill size={14} className="text-success" />
               </div>
             }
           >
-            {!selectedPage ? "Root": (selectedPage.name || 'Untitled')}
+            {!selectedPage ? 'Root' : selectedPage.name || 'Untitled'}
           </Chip>
         </ModalHeader>
         <Divider />
@@ -88,6 +98,14 @@ export const AssetUploaderModal = (props: AssetUploaderModalProps) => {
               Drag and drop files here or <u>Choose file here</u>
             </Typography>
           </div>
+          {(Object.keys(uploadingFiles ?? {}).length > 0) && (
+            <div className="flex justify-end">
+              <Button onClick={() => {
+                onClearAll?.()
+                onClose?.()
+              }} variant="flat" size="sm" color="warning">Clear</Button>
+            </div>
+          )}
           <div className="flex flex-col gap-3">
             {Object.values(uploadingFiles ?? {}).map((file, index) => (
               <AssetUploadingItem
@@ -100,10 +118,12 @@ export const AssetUploaderModal = (props: AssetUploaderModalProps) => {
                 state={file.state}
                 extension={file.extension}
                 onDoneClick={() => {
-                  push(ROUTES.VAULT_PAGE({
-                    orgSlug: organization?.slug ?? "",
-                    pageID: file.resultPage?.id ?? "",
-                  }))
+                  push(
+                    ROUTES.VAULT_PAGE({
+                      orgSlug: organization?.slug ?? '',
+                      pageID: file.resultPage?.id ?? '',
+                    }),
+                  )
                   onClose?.()
                 }}
               />

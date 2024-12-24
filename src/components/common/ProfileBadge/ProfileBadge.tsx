@@ -11,6 +11,7 @@ interface ProfileBadgeProps extends ButtonProps {
   rightEl?: ReactNode
   description?: string
   isLoading?: boolean
+  rightElClassName?: string
 }
 
 const profileBadgeCva = cva(['flex justify-start'], {
@@ -44,6 +45,7 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
       rightEl,
       description,
       isLoading,
+      rightElClassName,
       ...restProps
     } = props
     const titleLevel = useMemo(() => {
@@ -96,7 +98,7 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
             </>
           )}
         </div>
-        <span className="opacity-60">{rightEl}</span>
+        <span className={cn("opacity-60", rightElClassName)}>{rightEl}</span>
       </Button>
     )
   },

@@ -17,6 +17,7 @@ import { useAssetUploadContext } from '@/components/providers/asset_upload'
 import { useNewPage } from '@/components/providers/newpage'
 import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { FolderViewToolbar } from '@/components/page/page_view/page_viewers/PageFolderViewer/Toolbar'
+import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
 
 export default function RootFolderPage() {
   const { organization } = useOrganization()
@@ -159,6 +160,9 @@ export default function RootFolderPage() {
             onItemDoubleClick={handlePageClick}
             selectedItemPkIDs={selectedPagePkIDs}
             onSelectedPkIDsChanged={setSelectedPagePkIDs}
+            emptyState={
+              <EmptyListPlaceholder onClick={() => onOpenUploadModal()} />
+            }
           />
         </div>
       </div>

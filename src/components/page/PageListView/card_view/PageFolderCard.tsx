@@ -12,7 +12,8 @@ import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const FolderCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected } = props
+  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, onShareClick } =
+    props
   const { handleUpload } = useAssetUploadContext()
   const { toast } = useToast()
 
@@ -23,8 +24,7 @@ export const FolderCard = (props: BaseCardViewProps) => {
     select: (state) => state.state.status,
   })
 
-  const isArchiving = archiveStatus.includes("pending")
-  
+  const isArchiving = archiveStatus.includes('pending')
 
   const handleDoubleClick = () => {
     onDoubleClick?.(page)
@@ -53,17 +53,17 @@ export const FolderCard = (props: BaseCardViewProps) => {
   return (
     // @ts-expect-error -- TSCONVERSION
     <Card
-      as='div'
+      as="div"
       className={cn(
         'w-full select-none',
         'cursor-pointer bg-default-100 transition-background hover:bg-default-200',
         {
-          'outline-2 outline-primary outline-dashed bg-default-200': isDragActive,
+          'bg-default-200 outline-dashed outline-2 outline-primary': isDragActive,
           'bg-content2': isDragActive,
           'bg-primary-100 hover:bg-primary-100/90': isSelected,
-          'bg-opacity-80 pointer-events-none animate-pulse': isArchiving,
+          'pointer-events-none animate-pulse bg-opacity-80': isArchiving,
         },
-        className
+        className,
       )}
       shadow="none"
       {...getRootProps()}
@@ -78,10 +78,12 @@ export const FolderCard = (props: BaseCardViewProps) => {
             <RiFolder3Fill size={20} />
           </div>
           <div className="flex-1 overflow-hidden">
-            <Typography level="p5" noWrap>{page.name || 'Untitled'}</Typography>
+            <Typography level="p5" noWrap>
+              {page.name || 'Untitled'}
+            </Typography>
           </div>
           <div className="shrink-0">
-            <PageActionMenuView page={page} onSuccess={onMutateSuccess}>
+            <PageActionMenuView page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
               <Button isIconOnly size="sm" variant="light" radius="full">
                 <RiMore2Line size={16} />
               </Button>

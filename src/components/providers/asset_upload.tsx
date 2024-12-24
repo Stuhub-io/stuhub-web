@@ -39,6 +39,10 @@ export const AssetUploaderContextProvider = ({ children }: PropsWithChildren) =>
 
   const [uploadingFileState, setUploadingFileState] = useState<Record<string, UploadingFileState>>({})
 
+  const onClearAll = () => {
+    setUploadingFileState({})
+  }
+
   const handeUploadFile = async (file: File, folderPkID?: number) => {
     const tempId = genID()
 
@@ -155,6 +159,7 @@ export const AssetUploaderContextProvider = ({ children }: PropsWithChildren) =>
         onCancelFile={onCancel}
         onUploadFile={handeUploadFile}
         uploadingFiles={uploadingFileState}
+        onClearAll={onClearAll}
       />
     </Provider>
   )

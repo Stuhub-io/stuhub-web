@@ -1,5 +1,6 @@
 import { GetOrgBySlugParams, GetOrgInviteByIdParams } from '@/schema/organization'
 import { CreatePageRequest, GetPagesQuery } from '@/schema/page'
+import { SearchUserBody } from '@/schema/user'
 
 const PAGE_KEYS = {
   GET: 'GET_PAGE',
@@ -22,6 +23,8 @@ export const QUERY_KEYS = {
     JSON.stringify(query.view_types),
     ],
   GET_PAGE: ({ pageID }: { pageID: string }) => [PAGE_KEYS.GET, pageID],
+  GET_PAGE_PERMISSION_ROLES: ({ pagePkID }: { pagePkID: number }) => ['GET_PAGE_PERMISSION_ROLES', pagePkID],
+  SEARCH_USERS: (params: SearchUserBody) => ['SEARCH_USERS', params.page, params.size, params.search, params.org_pkid, JSON.stringify(params.emails)],
 }
 
 export const MUTATION_KEYS = {
@@ -56,4 +59,10 @@ export const MUTATION_KEYS = {
     org_pkid,
     tempId,
   ],
+  // page roles
+  UPDATE_PAGE_GENERAL_ACCESS: ({ pagePkID }: { pagePkID: number }) => ['UPDATE_PAGE_GENERAL_ACCESS', pagePkID],
+
+  ADD_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['ADD_USER_PAGE_ROLE', pagePkID],
+  UPDATE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['UPDATE_USER_PAGE_ROLE', pagePkID],
+  REMOVE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['REMOVE_USER_PAGE_ROLE', pagePkID],
 }

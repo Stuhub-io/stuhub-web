@@ -3,7 +3,7 @@
 import { Client } from "@/libs/client";
 import fetcher from "@/libs/fetcher";
 import { BaseResponse } from "@/schema/base";
-import { FindUserByEmail, UpdateUserInfoBody, User } from "@/schema/user";
+import { FindUserByEmail, SearchUserBody, UpdateUserInfoBody, User } from "@/schema/user";
 
 class UserService extends Client {
     public findUserByEmail(body: FindUserByEmail){
@@ -20,6 +20,16 @@ class UserService extends Client {
             headers: this.privateHeaders,
             body: JSON.stringify(body)
         })
+    }
+
+    public searchUser(body: SearchUserBody){
+        return fetcher<BaseResponse<User[]>>(
+            `${this.baseUrl}/v1/user-services/search`, {
+                method: 'POST',
+                headers: this.privateHeaders,
+                body: JSON.stringify(body)
+            }
+        )
     }
 }
 

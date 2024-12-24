@@ -1,4 +1,4 @@
-import { RiArrowRightUpLine, RiDeleteBinFill, RiEditBoxFill, RiFileCopyFill, RiLink, RiNewsFill, RiStarFill } from 'react-icons/ri'
+import { RiArrowRightUpLine, RiDeleteBinFill, RiEditBoxFill, RiFileCopyFill, RiLink, RiNewsFill, RiShareFill, RiStarFill } from 'react-icons/ri'
 
 export type PageItemKey =
   | 'star'
@@ -8,6 +8,7 @@ export type PageItemKey =
   | 'move'
   | 'trash'
   | 'newtab'
+  | 'share'
 
 export interface IPageMenuItem {
   key: PageItemKey
@@ -27,6 +28,11 @@ export const MenuItems: IPageMenuItem[] = [
     title: 'Copy link',
     bottomDivider: true,
     icon: <RiLink size={16} />,
+  },
+  {
+    key: 'share',
+    title: 'Share',
+    icon: <RiShareFill size={16} />,
   },
   {
     key: 'duplicate',

@@ -6,17 +6,20 @@ import { SidebarProvider } from './sidebar'
 import { CreatePageProvider } from './newpage'
 import { CollapsePersistProvider } from './collapse'
 import { AssetUploaderContextProvider } from './asset_upload'
+import { InfoProvider } from './info'
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
-    <OrganizationProvider>
-      <CollapsePersistProvider>
-        <CreatePageProvider>
-          <SidebarProvider>
-            <AssetUploaderContextProvider>{children}</AssetUploaderContextProvider>
-          </SidebarProvider>
-        </CreatePageProvider>
-      </CollapsePersistProvider>
-    </OrganizationProvider>
+    <InfoProvider>
+      <OrganizationProvider>
+        <CollapsePersistProvider>
+          <CreatePageProvider>
+            <SidebarProvider>
+              <AssetUploaderContextProvider>{children}</AssetUploaderContextProvider>
+            </SidebarProvider>
+          </CreatePageProvider>
+        </CollapsePersistProvider>
+      </OrganizationProvider>
+    </InfoProvider>
   )
 }

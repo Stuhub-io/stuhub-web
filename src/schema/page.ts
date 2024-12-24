@@ -1,4 +1,5 @@
 import { Pagination } from "./base"
+import { User } from "./user"
 
 
 export type PageViewType = 1 | 2 | 3
@@ -24,6 +25,9 @@ export interface Page {
     child_pages?: Page[]
     document?: Document
     asset?: Asset
+    is_general_access?: boolean
+    general_role?: PageRole
+    author?: User
 }
 
 export interface Asset {
@@ -95,4 +99,26 @@ export interface CreatePageAssetRequest extends Omit<CreatePageRequest, 'documen
       large: string
     }
   }
+}
+
+export type PageRole = 1 | 2 
+
+export const PageRoleEnum = {
+  EDITOR: 1 as PageRole,
+  VIEWER: 2 as PageRole,
+} as const
+
+export interface UpdatePageGeneralAccessRequest {
+  is_general_access: boolean
+  general_role?: PageRole
+}
+
+export interface PagePermissionRole {
+  pkid: number
+  page_pkid: number
+  user: User
+  email: string
+  role: PageRole
+  created_at: string
+  updated_at: string
 }
