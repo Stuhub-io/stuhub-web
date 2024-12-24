@@ -26,7 +26,6 @@ import { useUpdatePageGeneralAccess } from '@/mutation/mutator/page/permissions/
 import { useToast } from '@/hooks/useToast'
 import { SharePageAddUserRole } from './SharePageAddUserRole'
 import { useUpdateUserPageRole } from '@/mutation/mutator/page/permissions/useUpdateUserPageRole'
-import { User } from '@/schema/user'
 import { useRemoveUserPageRole } from '@/mutation/mutator/page/permissions/useRemoveUserPageRole'
 
 type IPermissionMap = Record<
@@ -79,7 +78,7 @@ export const SharePageModal = (props: SharePageModalProps) => {
     onClose: onCloseConfirmRemove,
     onOpen: onOpenConfirmRemove,
   } = useDisclosure()
-  const [toRemoveUser, setToRemoveUser] = useState<User>()
+  const [toRemoveUser, setToRemoveUser] = useState<string>()
 
   const [copied, copy, setIsCopied] = useCopy('shareLink')
   const {
@@ -310,9 +309,9 @@ export const SharePageModal = (props: SharePageModalProps) => {
                     const fullName = getUserFullName({
                       firstName: permission?.user?.first_name,
                       lastName: permission?.user?.last_name,
-                      email: permission?.user?.email,
+                      email: permission.email,
                     })
-                    const hasName = Boolean(fullName !== permission?.user?.email)
+                    const hasName = Boolean(fullName !== permission.email)
                     console.log('permission', permission)
                     return (
                       <ProfileBadge
@@ -322,9 +321,9 @@ export const SharePageModal = (props: SharePageModalProps) => {
                         disableRipple
                         radius="none"
                         disableAnimation
-                        avatar={permission.user.avatar}
+                        avatar={permission.user?.avatar}
                         firstName={fullName}
-                        description={hasName ? permission.user.email : undefined}
+                        description={hasName ? permission.email : undefined}
                         variant="light"
                         name={user?.first_name}
                         rightElClassName="!opacity-100"
@@ -341,8 +340,7 @@ export const SharePageModal = (props: SharePageModalProps) => {
                               {
                                 label: 'Remove Access',
                                 onClick: () => {
-                                  console.log('permission.user', permission.user)
-                                  setToRemoveUser(permission.user)
+                                  setToRemoveUser(permission.email)
                                   onOpenConfirmRemove()
                                 },
                               },
@@ -429,9 +427,7 @@ export const SharePageModal = (props: SharePageModalProps) => {
       {toRemoveUser && (
         <ConfirmRemoveAccess
           fullName={getUserFullName({
-            firstName: toRemoveUser?.first_name,
-            lastName: toRemoveUser?.last_name,
-            email: toRemoveUser?.email,
+            email: toRemoveUser,
           })}
           isOpen={isOpenConfirmRemove}
           onCancel={onCloseConfirmRemove}
@@ -440,13 +436,13 @@ export const SharePageModal = (props: SharePageModalProps) => {
             try {
               setDirectPermissions((prev) => ({
                 ...prev,
-                [toRemoveUser.email]: {
+                [toRemoveUser]: {
                   value: undefined,
                   isLoading: true,
                 },
               }))
               await removeUserPageRole({
-                email: toRemoveUser.email,
+                email: toRemoveUser,
                 pagePkID: page?.pkid ?? -1,
               })
               await refetchPageRoles()
@@ -459,7 +455,7 @@ export const SharePageModal = (props: SharePageModalProps) => {
             }
             setDirectPermissions((prev) => ({
               ...prev,
-              [toRemoveUser.email]: {
+              [toRemoveUser]: {
                 value: undefined,
                 isLoading: false,
               },
@@ -483,8 +479,8 @@ const ConfirmRemoveAccess = (props: {
       <ModalContent>
         <ModalHeader>Remove Access</ModalHeader>
         <ModalBody>
-          <Typography level="p6" color="textTertiary">
-            Are you sure you want to remove access for {props.fullName}?
+          <Typography level="p4" color="textTertiary">
+            Are you sure you want to remove access for <b>{props.fullName}</b>?
           </Typography>
         </ModalBody>
         <ModalFooter>

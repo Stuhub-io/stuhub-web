@@ -116,7 +116,7 @@ export interface UpdatePageGeneralAccessRequest {
 export interface PagePermissionRole {
   pkid: number
   page_pkid: number
-  user: User
+  user?: User
   email: string
   role: PageRole
   created_at: string

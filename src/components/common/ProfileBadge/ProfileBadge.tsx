@@ -73,6 +73,9 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
       >
         <Avatar
           src={avatar}
+          classNames={{
+            'base': 'uppercase',
+          }}
           fallback={`${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`}
           className="shrink-0"
           size={size === 'lg' ? 'md' : 'sm'}
