@@ -151,7 +151,7 @@ export const AutocompleteMultiple = <T extends ACValue = ACValue>(
   }, [inputRef])
 
   const remainItems = useMemo(() => {
-    return items?.filter((item) => !valueKeys.has(item.key))
+    return items?.filter((item) => !valueKeys.has(item.key)) ?? []
   }, [items, valueKeys])
 
   return (
@@ -189,13 +189,14 @@ export const AutocompleteMultiple = <T extends ACValue = ACValue>(
         onKeyDown={(e) => {
           switch (e.key) {
             case 'Enter':
-              if (items?.length) {
+              if (remainItems?.length) {
                 e.preventDefault() // prevent form submit
-                handleSelectItem(items[willSelected])
+                handleSelectItem(remainItems[willSelected])
                 return
               }
               if (search) {
                 e.preventDefault() // prevent form submit
+                console.log('search', search)
                 handleNewCustomItem?.(search)
                 return
               }

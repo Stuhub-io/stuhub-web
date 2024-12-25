@@ -8,6 +8,7 @@ import { useMemo } from "react";
 export const useSidebarBreadcrumb = () => {
     const { orgPages } = useSidebar()
     const { pageID } = useParams<OrganizationPageParams>()
+
     const { data: {data: pageDetail} = {} } = useFetchPage({
         pageID,
         allowFetch: !!pageID
@@ -18,8 +19,11 @@ export const useSidebarBreadcrumb = () => {
     const paths = useMemo(() => {
         if (!pageID) return []
         if (!pageDetail) return []
-        if (orgPages === undefined) return []
+
         const path = [pageDetail]
+
+        if (orgPages === undefined) return path
+        
         let initPath = pageDetail 
         while (initPath?.parent_page_pkid) {
             path.push(orgPages?.map[initPath.parent_page_pkid].page)

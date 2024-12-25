@@ -14,7 +14,7 @@ export const SidebarFooter = () => {
         variant="light"
         firstName={user?.first_name}
         lastName={user?.last_name}
-        description={getPermissionText(currentUserRole ?? 'other')}
+        description={getPermissionText(currentUserRole ?? 'guest')}
         size="sm"
       />
       <Button isIconOnly variant="flat">

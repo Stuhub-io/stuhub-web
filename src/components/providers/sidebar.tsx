@@ -7,6 +7,7 @@ import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { useThrottledCallback } from 'use-debounce'
 import { Page, PageViewTypeEnum } from '@/schema/page'
 import { usePersistCollapseContext } from './collapse'
+import { useAuthContext } from '../auth/AuthGuard'
 
 export type ChildMap = Record<
   number,
@@ -27,7 +28,7 @@ interface SidebarContextValue {
   refreshOrgPages: () => void
   getChildrenPageByPkID: (pagePkId: number) => Page[]
   showSidebar?: boolean
-  setShowSidebar: (_:boolean) => void
+  setShowSidebar: (_: boolean) => void
 }
 
 const [Provider, useSidebar] = createContext<SidebarContextValue>({
@@ -37,10 +38,12 @@ const [Provider, useSidebar] = createContext<SidebarContextValue>({
 export { useSidebar }
 
 export const SidebarProvider = ({ children }: PropsWithChildren) => {
-  const { organization } = useOrganization()
+  const { organization, isGuest } = useOrganization()
 
   const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
-  const [showSidebar, setShowSidebar ] = useState(() => getCollapseState(`main-layout-sidebar`))
+  const [showSidebar, setShowSidebar] = useState(() => getCollapseState(`main-layout-sidebar`))
+
+  const { status } = useAuthContext()
 
   useEffect(() => {
     persistCollapseData(`main-layout-sidebar`, showSidebar)
@@ -51,10 +54,10 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     refetch: refreshOrgPages,
     isPending: isPendingOrgPages,
   } = useFetchPages({
-    allowFetch: Boolean(organization?.pkid),
+    allowFetch: Boolean(organization?.pkid) && status === 'authenticated' && !isGuest,
     is_archived: false,
     org_pkid: organization?.pkid ?? -1,
-    view_types: [ PageViewTypeEnum.FOLDER ],
+    view_types: [PageViewTypeEnum.FOLDER],
     all: true,
   })
 
@@ -110,7 +113,7 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
         showSidebar,
         setShowSidebar,
         isPendingOrgPages,
-       getChildrenPageByPkID 
+        getChildrenPageByPkID,
       }}
     >
       {children}

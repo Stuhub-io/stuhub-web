@@ -10,15 +10,25 @@ import { useQueryClient } from '@tanstack/react-query'
 import createContext from '@/libs/context'
 import { User } from '@/schema/user'
 import { Session } from 'next-auth'
+import { compareRoute } from '@/utils/routes'
 
 const publicRoutes = [
   ROUTES.SIGNIN_PAGE,
   ROUTES.AUTH_EMAIL,
   ROUTES.LANDING_PAGE,
   ROUTES.CHANGELOG_PAGE,
+  ROUTES.VAULT_PAGE({
+    orgSlug: '*',
+    pageID: '*',
+  })
 ]
 
 const authRoutes = [ROUTES.SIGNIN_PAGE, ROUTES.AUTH_EMAIL]
+
+const isPublicRoute = (pathName: string) => publicRoutes.some((route) => compareRoute(pathName, route))
+
+const isAuthRoute = (pathName: string) => authRoutes.some((route) => compareRoute(pathName, route))
+
 
 interface AuthGuardProps extends PropsWithChildren {}
 
@@ -72,14 +82,15 @@ export const AuthGuard = (props: AuthGuardProps) => {
   }, [data?.user.accessToken])
 
   useEffect(() => {
-    if (authStatus === 'unauthenticated' && !publicRoutes.includes(pathName)) {
+    // Redirect to sign in page if user is not authenticated
+    if (authStatus === 'unauthenticated' && !isPublicRoute(pathName)) {
       router.push(`${ROUTES.SIGNIN_PAGE}?from=${pathName}`)
       servicesGuard.clearAuthToken()
       queryClient.clear()
       return
     }
 
-    if (authStatus === 'authenticated' && authRoutes.includes(pathName)) {
+    if (authStatus === 'authenticated' && isAuthRoute(pathName)) {
       if (from) {
         router.push(from)
         return
@@ -91,8 +102,8 @@ export const AuthGuard = (props: AuthGuardProps) => {
 
   const isLoading =
     authStatus === 'loading' ||
-    (!publicRoutes.includes(pathName) && authStatus === 'unauthenticated') ||
-    (authRoutes.includes(pathName) && authStatus === 'authenticated')
+    (!isPublicRoute(pathName) && authStatus === 'unauthenticated') ||
+    (isAuthRoute(pathName) && authStatus === 'authenticated')
 
   if (isLoading) {
     return (

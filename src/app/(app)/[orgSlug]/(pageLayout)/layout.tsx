@@ -1,5 +1,5 @@
 import { PageLayout } from '@/components/layout/PageLayout'
-import { PageHeaderMoreMenu } from '@/components/page/common/PageHeaderMoreMenu'
+import { PageRightHeader } from '@/components/layout/PageLayout/PageRightHeader'
 import { PageArchivedAlert } from '@/components/page/document/PageArchivedAlert'
 import { PageBreadCrumbs } from '@/components/page/document/PageBreadCrumbs'
 import { Metadata } from 'next'
@@ -14,7 +14,7 @@ export default function WithHeaderPageDetailLayout({
   return (
     <PageLayout
       breadCrumb={<PageBreadCrumbs />}
-      rightEl={<PageHeaderMoreMenu />}
+      rightEl={<PageRightHeader />}
       headAlert={<PageArchivedAlert />}
     >
       {children}

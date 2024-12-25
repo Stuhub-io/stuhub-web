@@ -34,13 +34,15 @@ export const PageBreadCrumbs = () => {
     pageID,
   })
 
+  const { isGuest } = useOrganization()
+
   const { isPendingOrgPages } = useSidebar()
 
   const onSelectPage = (selectedPageID: string) => {
     push(ROUTES.VAULT_PAGE({ orgSlug: organization?.slug ?? '', pageID: selectedPageID }))
   }
 
-  const isLoading = isPending || isPendingOrgPages
+  const isLoading = isPending || (!isGuest && isPendingOrgPages)
   const [openRename, setOpenRename] = useState(false)
 
   useEffect(() => {
@@ -93,7 +95,21 @@ export const PageBreadCrumbs = () => {
               <Skeleton className="h-3.5 w-28 rounded-medium" />
             </BreadcrumbItem>,
           ]}
-        {(!isLoading || !pageID) && (
+        {!!isGuest && (
+          <BreadcrumbItem
+            className="truncate text-nowrap"
+            onClick={() => {
+              push(
+                ROUTES.ROOT_VAULTS({
+                  orgSlug: organization?.slug ?? '',
+                }),
+              )
+            }}
+          >
+            Share With Me
+          </BreadcrumbItem>
+        )}
+        {(!isGuest && !isLoading || !pageID) && (
           <BreadcrumbItem
             className="truncate text-nowrap"
             onClick={() => {

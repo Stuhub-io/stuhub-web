@@ -18,11 +18,15 @@ import { useNewPage } from '@/components/providers/newpage'
 import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { FolderViewToolbar } from '@/components/page/page_view/page_viewers/PageFolderViewer/Toolbar'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
+import { SharePageModal, useSharePageModal } from '@/components/page/common/SharePageModal'
 
 export default function RootFolderPage() {
   const { organization } = useOrganization()
   const { refreshOrgPages } = useSidebar()
   const router = useRouter()
+
+  const { selectedSharePage, onOpenShareModal, onCloseShareModal, isOpenShareModal } =
+    useSharePageModal()
 
   const [typeFilter, setTypeFilter] = useState<Selection>('all')
 
@@ -79,93 +83,103 @@ export default function RootFolderPage() {
   }
 
   // drop files
-  const handleDropFile = useCallback(async (files: File[]) => {
-    const data = await uploadService.uploadFile({
-      file: files[0],
-      resourceType: 'auto',
-      publicID: files[0].name,
-    })
-    await createAsset({
-      cover_image: '',
-      name: files[0].name,
-      org_pkid: organization?.pkid ?? -1,
-      view_type: PageViewTypeEnum.ASSET,
-      asset: {
-        extension: data.format,
-        size: data.bytes,
-        thumbnails: {
-          small: '',
-          medium: '',
-          large: '',
+  const handleDropFile = useCallback(
+    async (files: File[]) => {
+      const data = await uploadService.uploadFile({
+        file: files[0],
+        resourceType: 'auto',
+        publicID: files[0].name,
+      })
+      await createAsset({
+        cover_image: '',
+        name: files[0].name,
+        org_pkid: organization?.pkid ?? -1,
+        view_type: PageViewTypeEnum.ASSET,
+        asset: {
+          extension: data.format,
+          size: data.bytes,
+          thumbnails: {
+            small: '',
+            medium: '',
+            large: '',
+          },
+          url: data.secure_url,
         },
-        url: data.secure_url,
-      },
-    })
-    refetch?.()
-    refreshOrgPages?.()
-  }, [createAsset, organization?.pkid, refetch, refreshOrgPages])
+      })
+      refetch?.()
+      refreshOrgPages?.()
+    },
+    [createAsset, organization?.pkid, refetch, refreshOrgPages],
+  )
 
   const { getInputProps, getRootProps, isDragActive } = useDropzone({
     onDrop: handleDropFile,
   })
 
   return (
-    <div className="pb-[80px] md:px-4">
-      <div className="mt-8 py-2">
-        <Typography className="!text-2xl font-semibold">My Vault</Typography>
-      </div>
-      <FolderViewToolbar
-        typeFilter={typeFilter}
-        onCreateFolderClick={() => {
-          onCreateFolder(() => {
-            refetch()
-          })
-        }}
-        onTypeFilterChange={setTypeFilter}
-        onUploadClick={() => {
-          onOpenUploadModal()
-        }}
-      />
+    <>
+      <div className="pb-[80px] md:px-4">
+        <div className="mt-8 py-2">
+          <Typography className="!text-2xl font-semibold">My Vault</Typography>
+        </div>
+        <FolderViewToolbar
+          typeFilter={typeFilter}
+          onCreateFolderClick={() => {
+            onCreateFolder(() => {
+              refetch()
+            })
+          }}
+          onTypeFilterChange={setTypeFilter}
+          onUploadClick={() => {
+            onOpenUploadModal()
+          }}
+        />
 
-      <div className="mt-8 space-y-8">
-        {!!folders?.length && (
-          <div className="space-y-4">
+        <div className="mt-8 space-y-8">
+          {!!folders?.length && (
+            <div className="space-y-4">
+              <Typography level="p5" color="textTertiary">
+                Folders
+              </Typography>
+              <PageListView
+                items={folders}
+                onItemMutateSuccess={refetch}
+                onItemDoubleClick={handlePageClick}
+                selectedItemPkIDs={selectedPagePkIDs}
+                onSelectedPkIDsChanged={setSelectedPagePkIDs}
+                onShareClick={onOpenShareModal}
+              />
+            </div>
+          )}
+          <div
+            className={cn('mt-4 space-y-4', {
+              'rounded-md outline-dashed outline-2 outline-offset-[8px] outline-primary':
+                isDragActive,
+            })}
+            {...getRootProps()}
+            onClick={() => {}} // prevent click
+          >
+            <input {...getInputProps()} className="invisible" />
             <Typography level="p5" color="textTertiary">
-              Folders
+              Files and Documents
             </Typography>
             <PageListView
-              items={folders}
+              items={filesAndDocs}
               onItemMutateSuccess={refetch}
               onItemDoubleClick={handlePageClick}
               selectedItemPkIDs={selectedPagePkIDs}
               onSelectedPkIDsChanged={setSelectedPagePkIDs}
+              emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal()} />}
+              onShareClick={onOpenShareModal}
             />
           </div>
-        )}
-        <div
-          className={cn('mt-4 space-y-4', {
-            'rounded-md outline-dashed outline-2 outline-offset-[8px] outline-primary':
-              isDragActive,
-          })}
-          {...getRootProps()}
-          onClick={() => {}} // prevent click
-        >
-          <input {...getInputProps()} className="invisible" />
-          <Typography level="p5" color="textTertiary">
-            Files and Documents
-          </Typography>
-          <PageListView
-            items={filesAndDocs}
-            onItemMutateSuccess={refetch}
-            onItemDoubleClick={handlePageClick}
-            selectedItemPkIDs={selectedPagePkIDs}
-            onSelectedPkIDsChanged={setSelectedPagePkIDs}
-            emptyState={
-              <EmptyListPlaceholder onClick={() => onOpenUploadModal()} />
-            }
-          />
         </div>
       </div>
-    </div>
+      <SharePageModal
+        page={selectedSharePage}
+        onClose={onCloseShareModal}
+        open={isOpenShareModal}
+      />
+    </>
   )
 }

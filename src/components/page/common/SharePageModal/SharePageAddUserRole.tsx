@@ -94,6 +94,7 @@ export const SharePageAddUserRole = (props: SharePageAddUserRoleProps) => {
 
       onSuccess?.()
     } catch (error: any) {
+      onSuccess?.()
       toast({
         variant: 'danger',
         title: 'Error',

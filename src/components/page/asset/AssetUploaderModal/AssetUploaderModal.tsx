@@ -63,7 +63,7 @@ export const AssetUploaderModal = (props: AssetUploaderModalProps) => {
   }, [folderPkID, orgPages])
 
   return (
-    <Modal size="lg" isOpen={isOpen} hideCloseButton onClose={onClose} scrollBehavior="outside">
+    <Modal size="lg" isOpen={isOpen} hideCloseButton onClose={onClose} scrollBehavior="outside" className="top-1/2 -translate-y-full">
       <ModalContent>
         <ModalHeader className="flex items-center gap-3 pb-3">
           <Typography className="flex-1" level="h7" noWrap>
