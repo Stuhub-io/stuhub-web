@@ -23,7 +23,7 @@ const [Provider, useOrganization] = createContext<OrganizationProviderValues>({
   name: 'OrganizationContext',
 })
 
-const WHITE_LIST_ROUTES = [ROUTES.INVITE_PAGE, ROUTES.HOME_PAGE]
+const WHITE_LIST_ROUTES = [ROUTES.INVITE_PAGE]
 
 const checkInWhiteList = (pathName: string) =>
   WHITE_LIST_ROUTES.some((route) => compareRoute(pathName, route))
@@ -62,15 +62,22 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
 
   // check isNavigating
   useEffect(() => {
-    if (isNavigating && selectedOrg && pathName.startsWith(`/${selectedOrg?.slug}`)) {
+    if (
+      (isNavigating && selectedOrg && pathName.startsWith(`/${selectedOrg?.slug}`)) ||
+      (isNavigating && isInWhiteList) || 
+      (isNavigating && !selectedOrg && pathName === ROUTES.HOME_PAGE)
+    ) {
       setIsNavigating(false)
     }
-  }, [isNavigating, pathName, selectedOrg])
+  }, [isInWhiteList, isNavigating, pathName, selectedOrg])
 
   // Handle select org and navigate on init
+
   useEffect(() => {
     // skip if joinOrg or orgDetail is pending
-    if (!internalJoinedOrgs || selectedOrg || isPendingOrgDetail) return
+    if (!internalJoinedOrgs || selectedOrg) return
+
+    if (orgSlug && isPendingOrgDetail) return
 
     const selectOrg =
       orgDetail ??
@@ -80,7 +87,6 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
           true,
       )
     setSelectedOrg(selectOrg)
-
     // Navigate if need
     if (!selectOrg) {
       router.push(ROUTES.HOME_PAGE)
@@ -89,11 +95,22 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     }
 
     if (isInWhiteList) return
+
     if (selectOrg?.slug !== orgSlug) {
       router.push(ROUTES.ORGANIZATION({ orgSlug: selectOrg?.slug ?? '' }))
       setIsNavigating(true)
     }
-  }, [user?.pkid, internalJoinedOrgs, isInWhiteList, orgSlug, router, selectedOrg, orgDetail, isPendingOrgDetail])
+  }, [
+    user?.pkid,
+    internalJoinedOrgs,
+    isInWhiteList,
+    orgSlug,
+    router,
+    selectedOrg,
+    orgDetail,
+    isPendingOrgDetail,
+    pathName,
+  ])
 
   // Redirect back to org if already selected org
   useEffect(() => {
@@ -115,10 +132,10 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
         organization: selectedOrg,
         organizations: internalJoinedOrgs,
         refetchOrgs: refetch,
-        isLoadingOrganization: isPending,
+        isLoadingOrganization: isPending || isPendingOrgDetail,
         isNavigating,
         currentUserRole,
-        isGuest
+        isGuest,
       }}
     >
       {children}
