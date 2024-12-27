@@ -120,7 +120,7 @@ export default function RootFolderPage() {
     <>
       <div className="pb-[80px] md:px-4">
         <div className="mt-8 py-2">
-          <Typography className="!text-2xl font-semibold">My Vault</Typography>
+          <Typography className="!text-2xl font-semibold">Vault</Typography>
         </div>
         <FolderViewToolbar
           typeFilter={typeFilter}

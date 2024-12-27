@@ -4,7 +4,7 @@ import { useFetchJoinedOrgs } from '@/mutation/querier/organization/useFetchJoin
 import { Organization, OrgRole } from '@/schema/organization'
 import { getUserOrgPermission } from '@/utils/organization'
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, useEffect, useMemo } from 'react'
 import { useAuthContext } from '../auth/AuthGuard'
 import { compareRoute } from '@/utils/routes'
 import { useFetchOrgBySlug } from '@/mutation/querier/organization/useFetchOrgBySlug'
@@ -17,13 +17,18 @@ interface OrganizationProviderValues {
   currentUserRole?: OrgRole
   refetchOrgs: () => void
   isGuest?: boolean
+  changeOrganization?: (org: Organization) => void
 }
 
 const [Provider, useOrganization] = createContext<OrganizationProviderValues>({
   name: 'OrganizationContext',
 })
 
-const WHITE_LIST_ROUTES = [ROUTES.INVITE_PAGE]
+const WHITE_LIST_ROUTES = [
+  ROUTES.INVITE_PAGE({
+    inviteID: '*',
+  }),
+]
 
 const checkInWhiteList = (pathName: string) =>
   WHITE_LIST_ROUTES.some((route) => compareRoute(pathName, route))
@@ -36,10 +41,8 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
   const pathName = usePathname()
   const router = useRouter()
 
-  const [selectedOrg, setSelectedOrg] = useState<Organization>()
   const isInWhiteList = checkInWhiteList(pathName)
-
-  const [isNavigating, setIsNavigating] = useState(false)
+  console.log('isInWhiteList', pathName, WHITE_LIST_ROUTES)
 
   const {
     data: { data: internalJoinedOrgs } = {},
@@ -54,73 +57,41 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     allowFetch: !!orgSlug,
   })
 
+  const selectedOrg = useMemo(() => {
+    // url do not contain org slug
+    if (!orgSlug) return undefined
+    if (orgDetail) return orgDetail
+    if (internalJoinedOrgs) {
+      return internalJoinedOrgs.find((org) => org.slug === orgSlug)
+    }
+    return undefined
+  }, [internalJoinedOrgs, orgDetail, orgSlug])
+
+  // Redirect if org detail with given slug not found
+  const toRedirectOrg = useMemo(() => {
+    // return Boolean(orgDetailError) && !selectedOrg && (internalJoinedOrgs?.length ?? 0) !== 0
+    if (selectedOrg) return undefined
+    if (isInWhiteList) return undefined
+    const redirectOrg = internalJoinedOrgs?.find(
+      (org) => getUserOrgPermission(org, user?.pkid ?? -1) === 'owner',
+    )
+    return redirectOrg
+  }, [internalJoinedOrgs, isInWhiteList, selectedOrg, user?.pkid])
+
+  useEffect(() => {
+    if (toRedirectOrg) {
+      router.push(ROUTES.ORGANIZATION({ orgSlug: toRedirectOrg.slug }))
+    }
+  }, [router, toRedirectOrg])
+
   const currentUserRole = useMemo(
-    () =>
-      isPending || !selectedOrg ? undefined : getUserOrgPermission(selectedOrg, user?.pkid ?? -1),
-    [isPending, selectedOrg, user?.pkid],
+    () => (selectedOrg ? getUserOrgPermission(selectedOrg, user?.pkid ?? -1) : undefined),
+    [selectedOrg, user?.pkid],
   )
 
-  // check isNavigating
-  useEffect(() => {
-    if (
-      (isNavigating && selectedOrg && pathName.startsWith(`/${selectedOrg?.slug}`)) ||
-      (isNavigating && isInWhiteList) || 
-      (isNavigating && !selectedOrg && pathName === ROUTES.HOME_PAGE)
-    ) {
-      setIsNavigating(false)
-    }
-  }, [isInWhiteList, isNavigating, pathName, selectedOrg])
-
-  // Handle select org and navigate on init
-
-  useEffect(() => {
-    // skip if joinOrg or orgDetail is pending
-    if (!internalJoinedOrgs || selectedOrg) return
-
-    if (orgSlug && isPendingOrgDetail) return
-
-    const selectOrg =
-      orgDetail ??
-      internalJoinedOrgs.find(
-        (org) =>
-          (org.slug === orgSlug && getUserOrgPermission(org, user?.pkid ?? -1) !== undefined) ||
-          true,
-      )
-    setSelectedOrg(selectOrg)
-    // Navigate if need
-    if (!selectOrg) {
-      router.push(ROUTES.HOME_PAGE)
-      setIsNavigating(true)
-      return
-    }
-
-    if (isInWhiteList) return
-
-    if (selectOrg?.slug !== orgSlug) {
-      router.push(ROUTES.ORGANIZATION({ orgSlug: selectOrg?.slug ?? '' }))
-      setIsNavigating(true)
-    }
-  }, [
-    user?.pkid,
-    internalJoinedOrgs,
-    isInWhiteList,
-    orgSlug,
-    router,
-    selectedOrg,
-    orgDetail,
-    isPendingOrgDetail,
-    pathName,
-  ])
-
-  // Redirect back to org if already selected org
-  useEffect(() => {
-    if (!selectedOrg) return
-    if (isInWhiteList) return
-    if (selectedOrg?.slug !== orgSlug) {
-      router.push(ROUTES.ORGANIZATION({ orgSlug: selectedOrg.slug }))
-      setIsNavigating(true)
-    }
-  }, [isInWhiteList, orgSlug, router, selectedOrg])
+  const onChangeOrganization = (org: Organization) => {
+    router.push(ROUTES.ORGANIZATION({ orgSlug: org.slug }))
+  }
 
   const isGuest = useMemo(() => {
     return !internalJoinedOrgs?.some((org) => org.slug === selectedOrg?.slug)
@@ -132,18 +103,14 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
         organization: selectedOrg,
         organizations: internalJoinedOrgs,
         refetchOrgs: refetch,
-        isLoadingOrganization: isPending || isPendingOrgDetail,
-        isNavigating,
+        isLoadingOrganization: isPending || (isPendingOrgDetail && Boolean(orgSlug)),
+        isNavigating: Boolean(toRedirectOrg),
         currentUserRole,
         isGuest,
+        changeOrganization: onChangeOrganization,
       }}
     >
       {children}
     </Provider>
   )
 }
-
-// export const PublicOrganizationViewProvider = ({ children }: PropsWithChildren) => {
-
-//   return <>{children}</>
-// }

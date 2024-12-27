@@ -95,7 +95,7 @@ export const PageBreadCrumbs = () => {
               <Skeleton className="h-3.5 w-28 rounded-medium" />
             </BreadcrumbItem>,
           ]}
-        {!!isGuest && (
+        {(!isLoading || !pageID) && (
           <BreadcrumbItem
             className="truncate text-nowrap"
             onClick={() => {
@@ -106,21 +106,7 @@ export const PageBreadCrumbs = () => {
               )
             }}
           >
-            Share With Me
-          </BreadcrumbItem>
-        )}
-        {(!isGuest && !isLoading || !pageID) && (
-          <BreadcrumbItem
-            className="truncate text-nowrap"
-            onClick={() => {
-              push(
-                ROUTES.ROOT_VAULTS({
-                  orgSlug: organization?.slug ?? '',
-                }),
-              )
-            }}
-          >
-            My Vault
+            {organization?.name || 'Untitled Organization'} vault
           </BreadcrumbItem>
         )}
         {pagePaths.map((page) => {

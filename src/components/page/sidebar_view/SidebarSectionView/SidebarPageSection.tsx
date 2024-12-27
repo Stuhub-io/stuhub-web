@@ -63,7 +63,7 @@ export const SidebarPageSectionView = () => {
           </PopperContentTrigger>
         }
       >
-        My Vault
+        Vault
       </SidebarItem>
       <CollapsibleContent>
         <ActiveCreatingPageItem />

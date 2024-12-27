@@ -1,6 +1,20 @@
 import createContext from '@/libs/context'
+import { OrgRole } from '@/schema/organization'
 
 export const Permissions = {
+  org: {
+    setting: {
+      view: (curUserOrgRole?: OrgRole) => {
+        return [
+          "owner",
+          "member"
+        ].includes(curUserOrgRole || '')
+      },
+      edit: (curUserOrgRole?: OrgRole) => {
+        return curUserOrgRole === 'owner'
+      }
+    }
+  },
   page: {
     // canView: (user: User, page: Page) => {
     //   return true
