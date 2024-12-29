@@ -121,4 +121,5 @@ export interface PagePermissionRole {
   role: PageRole
   created_at: string
   updated_at: string
+  inherit_from_page?: Page
 }

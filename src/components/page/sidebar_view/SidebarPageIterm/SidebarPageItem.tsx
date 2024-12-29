@@ -1,8 +1,8 @@
 import { PageViewType, PageViewTypeEnum } from '@/schema/page'
+import { FolderSidebarItemView } from './FolderSidebarItemView'
+import { DocSidebarItemView } from './DocSidebarItemView'
+import { AssetSidebarItemView } from './AssetSidebarItemView'
 import { BaseSidebarViewer, BaseSidebarViewerProps } from './type'
-import { FolderSidebarItemView } from './sidebar_viewers/FolderSidebarItemView'
-import { DocSidebarItemView } from './sidebar_viewers/DocSidebarItemView'
-import { AssetSidebarItemView } from './sidebar_viewers/AssetSidebarItemView'
 
 const sidebarPageItemViewers: {
   viewer: BaseSidebarViewer

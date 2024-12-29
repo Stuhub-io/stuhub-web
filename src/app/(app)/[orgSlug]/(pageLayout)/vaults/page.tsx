@@ -12,7 +12,7 @@ import { cn } from '@/libs/utils'
 import { uploadService } from '@/api/uploader'
 import { useCreateAsset } from '@/mutation/mutator/page/useCreateAsset'
 import { useSidebar } from '@/components/providers/sidebar'
-import { Selection } from '@nextui-org/react'
+import { Avatar, Selection } from '@nextui-org/react'
 import { useAssetUploadContext } from '@/components/providers/asset_upload'
 import { useNewPage } from '@/components/providers/newpage'
 import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
@@ -119,8 +119,14 @@ export default function RootFolderPage() {
   return (
     <>
       <div className="pb-[80px] md:px-4">
-        <div className="mt-8 py-2">
-          <Typography className="!text-2xl font-semibold">Vault</Typography>
+        <div className="mt-8 flex items-center gap-4 py-2">
+          <Avatar src={organization?.avatar} size="lg" radius="md" />
+          <div className="flex flex-col">
+            <Typography className="!text-2xl font-semibold">{organization?.name}</Typography>
+            <Typography level="p4" color="textTertiary">
+              {organization?.members.length} members
+            </Typography>
+          </div>
         </div>
         <FolderViewToolbar
           typeFilter={typeFilter}

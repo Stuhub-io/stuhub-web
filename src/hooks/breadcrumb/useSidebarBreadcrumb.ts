@@ -22,7 +22,10 @@ export const useSidebarBreadcrumb = () => {
 
         const path = [pageDetail]
 
+        // if page is archived, return only the page itself
         if (orgPages === undefined) return path
+        // if page is archived, return only the page itself
+        if (pageDetail.archived_at) return path
         
         let initPath = pageDetail 
         while (initPath?.parent_page_pkid) {

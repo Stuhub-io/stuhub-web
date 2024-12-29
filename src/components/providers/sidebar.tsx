@@ -38,7 +38,7 @@ const [Provider, useSidebar] = createContext<SidebarContextValue>({
 export { useSidebar }
 
 export const SidebarProvider = ({ children }: PropsWithChildren) => {
-  const { organization, isGuest } = useOrganization()
+  const { organization } = useOrganization()
 
   const { getCollapseState, persistCollapseData } = usePersistCollapseContext()
   const [showSidebar, setShowSidebar] = useState(() => getCollapseState(`main-layout-sidebar`))
@@ -54,7 +54,7 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     refetch: refreshOrgPages,
     isPending: isPendingOrgPages,
   } = useFetchPages({
-    allowFetch: Boolean(organization?.pkid) && status === 'authenticated' && !isGuest,
+    allowFetch: Boolean(organization?.pkid) && status === 'authenticated',
     is_archived: false,
     org_pkid: organization?.pkid ?? -1,
     view_types: [PageViewTypeEnum.FOLDER],

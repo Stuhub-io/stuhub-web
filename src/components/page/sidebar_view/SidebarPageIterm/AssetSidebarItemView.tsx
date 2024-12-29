@@ -1,5 +1,5 @@
 import { useParams, useRouter } from 'next/navigation'
-import { BaseSidebarViewerProps } from '../type'
+import { BaseSidebarViewerProps } from './type'
 import { SidebarItem, SidebarItemLeftSpacer, SidebarIconButton } from '@/components/common/Sidebar'
 import { useOrganization } from '@/components/providers/organization'
 import { OrganizationPageParams, ROUTES } from '@/constants/routes'
@@ -7,18 +7,16 @@ import { MUTATION_KEYS } from '@/mutation/keys'
 import { useMutationState } from '@tanstack/react-query'
 import { RiMoreLine } from 'react-icons/ri'
 import { PageActionMenuView } from '../../menu_view/MenuView'
-import { VscodeDocumentIcon } from '@/components/icons/VsCodeDocumentIcon'
+import { getIconByExtension } from '@/utils/file'
 
-export const DocSidebarItemView = (props: BaseSidebarViewerProps) => {
-  const {
-    page,
-    level = 0,
-  } = props
+export const AssetSidebarItemView = (props: BaseSidebarViewerProps) => {
+  const { page, level = 0 } = props
   const router = useRouter()
-  
+
   const { organization } = useOrganization()
 
   const { pageID } = useParams<Partial<OrganizationPageParams>>()
+
   const archiveStatus = useMutationState({
     filters: {
       mutationKey: MUTATION_KEYS.ARCHIVE_PAGE({ id: page.id }),
@@ -37,6 +35,9 @@ export const DocSidebarItemView = (props: BaseSidebarViewerProps) => {
     )
   }
 
+  const Icon = getIconByExtension(page?.asset?.extension ?? "")
+  
+
   return (
     <SidebarItem
       onClick={(e) => {
@@ -51,7 +52,7 @@ export const DocSidebarItemView = (props: BaseSidebarViewerProps) => {
         <>
           <SidebarItemLeftSpacer level={level} />
           <SidebarIconButton>
-            <VscodeDocumentIcon width={16} height={16} />
+            <Icon size={16} width={16} height={16} />
           </SidebarIconButton>
         </>
       }

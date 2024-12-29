@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { BaseSidebarViewerProps } from '../type'
+import { BaseSidebarViewerProps } from './type'
 import { usePersistCollapseContext } from '@/components/providers/collapse'
 import { useParams, useRouter } from 'next/navigation'
 import { OrganizationPageParams, ROUTES } from '@/constants/routes'
 import { MUTATION_KEYS, QUERY_KEYS } from '@/mutation/keys'
 import { useMutationState, useQueryClient } from '@tanstack/react-query'
-import { useCreatePageContext } from '@/components/providers/newpage'
 import { useSidebar } from '@/components/providers/sidebar'
 import { PopperContentTrigger } from '@/components/common/PopoverTrigger'
 import { SidebarItem, SidebarItemLeftSpacer, SidebarIconButton } from '@/components/common/Sidebar'
@@ -19,8 +18,6 @@ export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
   const {
     page,
     level = 0,
-    CreatingPageItemView,
-    ActiveCreatingPageItem,
     SidebarPageItemViewer,
   } = props
   const { getChildrenPageByPkID } = useSidebar()
@@ -40,14 +37,6 @@ export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
   })
 
   const disabled = archiveStatus.includes('pending')
-
-  const { creatingPages, selectedParent } = useCreatePageContext()
-
-  const isRenderCreatingPage = selectedParent?.pkid === page.pkid
-
-  const toCreatPages = useMemo(() => {
-    return creatingPages.filter((p) => p.input.parent_page_pkid === page.pkid)
-  }, [creatingPages, page.pkid])
 
   const childPages = useMemo(() => {
     return getChildrenPageByPkID(page.pkid)
@@ -131,13 +120,6 @@ export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
       </SidebarItem>
 
       <CollapsibleContent>
-        {ActiveCreatingPageItem && (
-          <ActiveCreatingPageItem parentPagePkID={page.pkid} level={level + 1} />
-        )}
-        {CreatingPageItemView &&
-          Boolean(toCreatPages.length) &&
-          toCreatPages.map((p) => <CreatingPageItemView key={p.id} data={p} level={level + 1} />)}
-
         {childPages?.map((childPage) => {
           return (
             <SidebarPageItemViewer
@@ -148,7 +130,7 @@ export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
             />
           )
         })}
-        {!isRenderCreatingPage && !toCreatPages.length && childPages?.length === 0 && (
+        {childPages?.length === 0 && (
           <SidebarItem startContent={<SidebarItemLeftSpacer level={level + 1} />}>
             <span className="text-sm text-gray-500">No folder inside</span>
           </SidebarItem>

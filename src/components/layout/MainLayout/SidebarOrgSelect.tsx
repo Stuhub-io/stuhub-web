@@ -13,7 +13,8 @@ import { RiMoreLine } from 'react-icons/ri'
 import _ from 'lodash'
 
 export const SidebarOrgSelect = () => {
-  const { organization, currentUserRole, organizations, isGuest, changeOrganization } = useOrganization()
+  const { organization, currentUserRole, organizations, isGuest, changeOrganization } =
+    useOrganization()
   const { user } = useAuthContext()
   const { permissionChecker } = usePermissions()
 
@@ -53,7 +54,9 @@ export const SidebarOrgSelect = () => {
             {organization?.members.length} members
           </Typography>
         </div>
-        <Chip size="sm">{getUserOrgRoleDisplay(currentUserRole ?? 'guest')}</Chip>
+        <Chip size="sm" color={getRoleColor(currentUserRole ?? 'guest')}>
+          {getUserOrgRoleDisplay(currentUserRole ?? 'guest')}
+        </Chip>
       </div>
       <PopoverContent className="w-[270px] gap-3 px-3 py-2">
         <div className="flex w-full items-center gap-3 text-text-tertiary">
