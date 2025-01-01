@@ -1,26 +1,22 @@
 import { SideBar } from '@/components/common/Sidebar'
 import { SidebarToolItems } from './SidebarToolItems'
-import { SidebarOrgSwitcher } from './SidebarOrgSwitcher'
 import { SidebarFooter } from './SidebarFooterTool'
 import { SidebarPageSectionView } from '@/components/page/sidebar_view/SidebarSectionView'
 import { SidebarUploadingSection } from '@/components/page/sidebar_view/SidebarUploadingSection'
-
-const dump = () => {}
+import { SidebarOrgSelect } from './SidebarOrgSelect'
 
 export const MainSideBar = () => {
   return (
     <SideBar
-      headerSection={<SidebarOrgSwitcher openAccountSettings={dump} openInviteMembers={dump} />}
+      headerSection={<SidebarFooter />}
       bodySection={
         <>
-        <SidebarUploadingSection/>
-        <SidebarPageSectionView/>
+          <SidebarOrgSelect />
+          <SidebarUploadingSection />
+          <SidebarPageSectionView />
         </>
       }
       toolSection={<SidebarToolItems />}
-      footerSection={
-        <SidebarFooter/>
-      }
     />
   )
 }

@@ -13,6 +13,7 @@ export const GridView = (props: BaseListViewProps) => {
     selectedItemPkIDs,
     onSelectedPkIDsChanged,
     emptyState,
+    onShareClick
   } = props
   const { showSidebar } = useSidebar()
 
@@ -46,6 +47,7 @@ export const GridView = (props: BaseListViewProps) => {
       {!loading &&
         items?.map((item) => (
           <PageCardView
+            onShareClick={onShareClick}
             key={item.id}
             page={item}
             isSelected={selectedItemPkIDs?.includes(item.pkid)}

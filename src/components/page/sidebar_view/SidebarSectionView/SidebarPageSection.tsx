@@ -1,14 +1,12 @@
 import { PopperContentTrigger } from '@/components/common/PopoverTrigger'
 import { SidebarItem, SidebarIconButton } from '@/components/common/Sidebar'
-import { useCreatePageContext } from '@/components/providers/newpage'
 import { useSidebar } from '@/components/providers/sidebar'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@radix-ui/react-collapsible'
 import { useState, useMemo } from 'react'
 import { RiAddFill, RiArrowRightSLine, RiHardDrive2Fill } from 'react-icons/ri'
 import { PageCreateMenu } from '../../common/PageCreateMenu'
-import { PageCreateButton } from '../PageCreateButton'
 import { CreatingSidebarPageItem } from '../PageCreatingItemView'
-import { SidebarPageItemView } from '../SidebarPageItemView'
+import { SidebarPageItemView } from '../SidebarPageIterm'
 import { ActiveCreatingPageItem } from '../ActiveCreatingPageItemView'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/constants/routes'
@@ -16,15 +14,10 @@ import { useOrganization } from '@/components/providers/organization'
 
 export const SidebarPageSectionView = () => {
   const { orgPages } = useSidebar()
-  const { creatingPages, isOpenCreateDoc } = useCreatePageContext()
   const [isExpanded, setIsExpanded] = useState(true)
-  const { organization } = useOrganization()
+  const { organization, isGuest } = useOrganization()
 
   const router = useRouter()
-
-  const createPagesData = useMemo(() => {
-    return creatingPages.filter((page) => page.input.parent_page_pkid === undefined)
-  }, [creatingPages])
 
   const outerPages = useMemo(() => {
     return orgPages?.list?.filter((page) => !page.parent_page_pkid && !page.archived_at)
@@ -63,13 +56,9 @@ export const SidebarPageSectionView = () => {
           </PopperContentTrigger>
         }
       >
-        My Vault
+        {isGuest ? "Shared with me" : "Vault"}
       </SidebarItem>
       <CollapsibleContent>
-        <ActiveCreatingPageItem />
-        {createPagesData?.map((toCreate) => (
-          <CreatingSidebarPageItem key={toCreate.id} data={toCreate} level={0} />
-        ))}
         {outerPages?.map((page) => {
           return (
             <SidebarPageItemView
@@ -82,8 +71,10 @@ export const SidebarPageSectionView = () => {
             />
           )
         })}
-        {!isOpenCreateDoc && !createPagesData.length && (outerPages?.length ?? 0) === 0 && (
-          <PageCreateButton />
+        {(outerPages?.length ?? 0) === 0 && (
+          <SidebarItem startContent={<div className="w-6" />}>
+            <span className="text-sm text-gray-500">No folder inside</span>
+          </SidebarItem>
         )}
       </CollapsibleContent>
     </Collapsible>

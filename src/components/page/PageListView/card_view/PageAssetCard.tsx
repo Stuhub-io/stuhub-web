@@ -14,13 +14,14 @@ import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const PageAssetCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected } = props
+  const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected, onShareClick } =
+    props
 
   const archiveStatus = useMutationState({
     filters: {
       mutationKey: MUTATION_KEYS.ARCHIVE_PAGE({ id: page.id }),
     },
-    select: state => state.state.status,
+    select: (state) => state.state.status,
   })
 
   const isArchiving = archiveStatus.includes('pending')
@@ -43,14 +44,18 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
         'cursor-pointer bg-default-100 transition-background hover:bg-default-200',
         {
           'bg-primary-100 hover:bg-primary-100/90': isSelected,
-          'opacity-80 pointer-events-none animate-pulse': isArchiving
+          'pointer-events-none animate-pulse opacity-80': isArchiving,
         },
         className,
       )}
       shadow="none"
-      onClick={e => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
     >
-      <CardBody className="flex flex-col p-2 select-none" onClick={handleClick} onDoubleClick={handleDoubleClick}>
+      <CardBody
+        className="flex select-none flex-col p-2"
+        onClick={handleClick}
+        onDoubleClick={handleDoubleClick}
+      >
         <div className="relative w-full overflow-hidden pb-[45%]">
           <div className="absolute inset-0 h-full w-full">{getAssetPreviewContent(page.asset)}</div>
         </div>
@@ -71,7 +76,7 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageActionMenuView page={page} onSuccess={onMutateSuccess}>
+          <PageActionMenuView page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
             <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0">
               <RiMore2Line size={16} />
             </Button>

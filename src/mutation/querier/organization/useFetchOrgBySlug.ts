@@ -12,5 +12,6 @@ export const useFetchOrgBySlug = (args: UseFetchOrgBySlugArgs) => {
     queryKey: QUERY_KEYS.GET_ORG_BY_SLUG({ slug: args.slug }),
     queryFn: () => organizationService.getOrgBySlug({ slug }),
     enabled: args.allowFetch,
+    retry: false
   })
 }
