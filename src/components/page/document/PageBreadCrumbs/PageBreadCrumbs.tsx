@@ -29,12 +29,12 @@ export const PageBreadCrumbs = () => {
   const { organization } = useOrganization()
   const pagePaths = useSidebarBreadcrumb()
 
-  const { data: { data: pageDetail } = {}, isPending } = useFetchPage({
+  const { data: { data: pageDetail } = {} } = useFetchPage({
     allowFetch: Boolean(pageID),
     pageID,
   })
 
-  const { isGuest } = useOrganization()
+  const { isGuest, isLoadingOrganization } = useOrganization()
 
   const { isPendingOrgPages } = useSidebar()
 
@@ -42,8 +42,18 @@ export const PageBreadCrumbs = () => {
     push(ROUTES.VAULT_PAGE({ orgSlug: organization?.slug ?? '', pageID: selectedPageID }))
   }
 
-  const isLoading = isPending || (!isGuest && isPendingOrgPages)
   const [openRename, setOpenRename] = useState(false)
+
+  const state = (() => {
+    if (!isGuest) {
+      if (isLoadingOrganization) return 'loading'
+      if (isPendingOrgPages) return 'loading'
+      if (!pageID) return 'root'
+      return pageDetail ? 'loaded' : 'loading'
+    }
+    if (!pageID) return 'root-guest'
+    return pageDetail ? 'loaded-guest' : 'loading'
+  })()
 
   useEffect(() => {
     setOpenRename(false)
@@ -86,8 +96,7 @@ export const PageBreadCrumbs = () => {
           </div>
         )}
       >
-        {pageID &&
-          isLoading && [
+        {state === 'loading' && [
             <BreadcrumbItem key="loading1">
               <Skeleton className="h-3.5 w-20 rounded-medium" />
             </BreadcrumbItem>,
@@ -95,7 +104,7 @@ export const PageBreadCrumbs = () => {
               <Skeleton className="h-3.5 w-28 rounded-medium" />
             </BreadcrumbItem>,
           ]}
-        {(!isLoading || !pageID) && (
+        {state === 'loaded' && (
           <BreadcrumbItem
             className="truncate text-nowrap"
             onClick={() => {
@@ -109,6 +118,21 @@ export const PageBreadCrumbs = () => {
             {organization?.name || 'Untitled Organization'} vault
           </BreadcrumbItem>
         )}
+        {state === 'loaded-guest' && (
+          <BreadcrumbItem
+            className="truncate text-nowrap"
+            onClick={() => {
+              push(
+                ROUTES.ROOT_VAULTS({
+                  orgSlug: organization?.slug ?? '',
+                }),
+              )
+            }}
+          >
+            {organization?.name || 'Untitled Organization'} Share Vault
+          </BreadcrumbItem>
+        )}
+        
         {pagePaths.map((page) => {
           const isCurrentPage = page.id === pageDetail?.id
           const child = (

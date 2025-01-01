@@ -1,7 +1,7 @@
 import { useAuthContext } from '@/components/auth/AuthGuard'
 import { ProfileBadge } from '@/components/common/ProfileBadge'
 import Typography from '@/components/common/Typography'
-import { Page, PageRole } from '@/schema/page'
+import { Page, PageRole, PageRoleEnum } from '@/schema/page'
 import { getUserFullName } from '@/utils/user'
 import {
   Button,
@@ -121,16 +121,6 @@ export const SharePageModal = (props: SharePageModalProps) => {
     pagePkID: page?.pkid ?? -1,
   })
 
-  const [internalEnableGeneralAccess, setEnableGeneralAccess] = useState<{
-    value?: boolean
-    isLoading?: boolean
-  }>({})
-
-  const enableGeneralAccess =
-    internalEnableGeneralAccess.value !== undefined
-      ? internalEnableGeneralAccess.value
-      : pageDetail?.is_general_access
-
   const [internalGeneralRole, setGeneralRole] = useState<{
     isLoading?: boolean
     role?: PageRole
@@ -190,7 +180,7 @@ export const SharePageModal = (props: SharePageModalProps) => {
   }
 
   const handleUpdateGeneralRole = async (newRole: PageRole) => {
-    if (enableGeneralAccess === undefined) return
+    if (newRole === generalRole) return
     setGeneralRole({
       isLoading: true,
       role: newRole,
@@ -200,7 +190,6 @@ export const SharePageModal = (props: SharePageModalProps) => {
       await updatePageGeneralAccess({
         pagePkID: page?.pkid ?? -1,
         body: {
-          is_general_access: enableGeneralAccess,
           general_role: newRole,
         },
       })
@@ -219,43 +208,12 @@ export const SharePageModal = (props: SharePageModalProps) => {
     })
   }
 
-  const handleUpdateGeneralAccess = async (enable: boolean) => {
-    if (enable === enableGeneralAccess) return
-    if (generalRole === undefined) return
-    setEnableGeneralAccess({
-      value: enable,
-      isLoading: true,
-    })
-    try {
-      await updatePageGeneralAccess({
-        pagePkID: page?.pkid ?? -1,
-        body: {
-          is_general_access: enable,
-          general_role: generalRole,
-        },
-      })
-      await refetchPageDetail()
-    } catch (e) {
-      toast({
-        variant: 'danger',
-        title: 'Some error occurred',
-        description: 'Failed to update general role',
-      })
-    }
-
-    setEnableGeneralAccess({
-      value: undefined,
-      isLoading: false,
-    })
-  }
-
   return (
     <>
       <Modal isOpen={open} onClose={onClose} size="xl">
         <ModalContent>
           {loadingAddUser ||
-            ((internalEnableGeneralAccess.isLoading ||
-              internalGeneralRole.isLoading ||
+            ((internalGeneralRole.isLoading ||
               Object.values(directPermissions).reduce(
                 (p, c) => Boolean(p || c.isLoading),
                 false,
@@ -365,18 +323,18 @@ export const SharePageModal = (props: SharePageModalProps) => {
                 <div className="-mx-6 -my-2 flex items-center px-6 hover:bg-default/40">
                   <div className="flex flex-1 items-center gap-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-default">
-                      {enableGeneralAccess ? <RiEarthFill size={16} /> : <RiLockLine size={16} />}
+                      {!(generalRole === PageRoleEnum.RESTRICTED) ? <RiEarthFill size={16} /> : <RiLockLine size={16} />}
                     </div>
                     <div className="flex flex-1 flex-col py-2">
                       <Select
-                        key={enableGeneralAccess === undefined ? 'pending' : 'loaded'}
+                        key={generalRole === undefined ? 'pending' : 'loaded'}
                         size="sm"
                         className="-ml-3 max-w-[180px] scale-85"
                         selectionMode="single"
-                        selectedKeys={[enableGeneralAccess ? 'enable' : 'disabled']}
+                        selectedKeys={[generalRole === PageRoleEnum.RESTRICTED ? 'disabled': 'enable']}
                         disallowEmptySelection
-                        onChange={(e) => handleUpdateGeneralAccess(e.target.value === 'enable')}
-                        isDisabled={internalEnableGeneralAccess.isLoading}
+                        onChange={(e) => handleUpdateGeneralRole(e.target.value === 'enable' ? PageRoleEnum.VIEWER: PageRoleEnum.RESTRICTED)}
+                        isDisabled={internalGeneralRole.isLoading}
                         classNames={{
                           popoverContent: '!max-w-[200px] !w-[200px]',
                         }}
@@ -389,18 +347,18 @@ export const SharePageModal = (props: SharePageModalProps) => {
                         </SelectItem>
                       </Select>
                       <Typography level="p6" className="ml-2 line-clamp-2" color="textTertiary">
-                        {enableGeneralAccess
+                        {generalRole !== PageRoleEnum.RESTRICTED
                           ? 'Anyone on the internet with the link can view'
                           : 'Only people you invited can view'}
                       </Typography>
                     </div>
                   </div>
-                  {enableGeneralAccess && (
+                  {generalRole !== PageRoleEnum.RESTRICTED && (
                     <PageRolesMenu
-                      value={internalEnableGeneralAccess.isLoading ? undefined : generalRole}
+                      value={internalGeneralRole.isLoading ? undefined : generalRole}
                       onChange={handleUpdateGeneralRole}
                       disabled={
-                        internalGeneralRole.isLoading || internalEnableGeneralAccess.isLoading
+                        internalGeneralRole.isLoading
                       }
                     />
                   )}

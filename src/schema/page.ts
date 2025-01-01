@@ -25,7 +25,6 @@ export interface Page {
     child_pages?: Page[]
     document?: Document
     asset?: Asset
-    is_general_access?: boolean
     general_role?: PageRole
     author?: User
 }
@@ -101,15 +100,15 @@ export interface CreatePageAssetRequest extends Omit<CreatePageRequest, 'documen
   }
 }
 
-export type PageRole = 1 | 2 
+export type PageRole = 1 | 2 | 4
 
 export const PageRoleEnum = {
   EDITOR: 1 as PageRole,
   VIEWER: 2 as PageRole,
+  RESTRICTED : 4 as PageRole
 } as const
 
 export interface UpdatePageGeneralAccessRequest {
-  is_general_access: boolean
   general_role?: PageRole
 }
 
