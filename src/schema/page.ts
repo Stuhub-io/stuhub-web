@@ -103,8 +103,8 @@ export interface CreatePageAssetRequest extends Omit<CreatePageRequest, 'documen
 export type PageRole = 1 | 2 | 4
 
 export const PageRoleEnum = {
-  EDITOR: 1 as PageRole,
-  VIEWER: 2 as PageRole,
+  VIEWER: 1 as PageRole,
+  EDITOR: 2 as PageRole,
   RESTRICTED : 4 as PageRole
 } as const
 
