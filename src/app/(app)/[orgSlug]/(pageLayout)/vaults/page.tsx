@@ -40,6 +40,8 @@ export default function RootFolderPage() {
     org_pkid: organization?.pkid ?? -1,
   })
 
+  console.log('childPages', childPages)
+
   const { onCreate: onCreateFolder } = useNewPage({
     type: PageViewTypeEnum.FOLDER,
   })

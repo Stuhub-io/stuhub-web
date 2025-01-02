@@ -27,6 +27,9 @@ import { useToast } from '@/hooks/useToast'
 import { SharePageAddUserRole } from './SharePageAddUserRole'
 import { useUpdateUserPageRole } from '@/mutation/mutator/page/permissions/useUpdateUserPageRole'
 import { useRemoveUserPageRole } from '@/mutation/mutator/page/permissions/useRemoveUserPageRole'
+import { ROUTES } from '@/constants/routes'
+import { useOrganization } from '@/components/providers/organization'
+import { BASE_URL } from '@/constants/envs'
 
 type IPermissionMap = Record<
   string,
@@ -71,6 +74,7 @@ export const SharePageModal = (props: SharePageModalProps) => {
   const { onClose, open, page } = props
   const { toast } = useToast()
   const { user } = useAuthContext()
+  const { organization } = useOrganization()
   const [loadingAddUser, setLoadingAddUser] = useState(false)
 
   const {
@@ -80,7 +84,14 @@ export const SharePageModal = (props: SharePageModalProps) => {
   } = useDisclosure()
   const [toRemoveUser, setToRemoveUser] = useState<string>()
 
-  const [copied, copy, setIsCopied] = useCopy('shareLink')
+    const pageHref =
+    BASE_URL +
+    ROUTES.VAULT_PAGE({
+      orgSlug: organization?.slug ?? '',
+      pageID: page?.id ?? "",
+    })
+
+  const [copied, copy, setIsCopied] = useCopy(pageHref)
   const {
     data: { data: pageDetail } = {},
     isPending: isPendingPageDetail,
@@ -243,16 +254,11 @@ export const SharePageModal = (props: SharePageModalProps) => {
                     disableRipple
                     radius="none"
                     disableAnimation
-                    avatar={user?.avatar}
-                    firstName={
-                      getUserFullName({
-                        firstName: page?.author?.first_name,
-                        lastName: page?.author?.last_name,
-                      }) || page?.author?.email
-                    }
-                    description={user?.email}
+                    avatar={page?.author?.avatar}
+                    firstName={page?.author?.first_name}
+                    lastName={page?.author?.last_name}
+                    description={page?.author?.email}
                     variant="light"
-                    name={user?.first_name}
                     size="md"
                     rightEl={
                       <Typography level="p6" color="textTertiary">
@@ -270,7 +276,6 @@ export const SharePageModal = (props: SharePageModalProps) => {
                       email: permission.email,
                     })
                     const hasName = Boolean(fullName !== permission.email)
-                    console.log('permission', permission)
                     return (
                       <ProfileBadge
                         as="div"

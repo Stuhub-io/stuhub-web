@@ -57,26 +57,30 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     allowFetch: !!orgSlug,
   })
 
+  const isLoading = (isPendingOrgDetail && orgSlug) || isPending
+
   const selectedOrg = useMemo(() => {
     // url do not contain org slug
     if (!orgSlug) return undefined
-    if (orgDetail) return orgDetail
-    if (internalJoinedOrgs) {
-      return internalJoinedOrgs.find((org) => org.slug === orgSlug)
+    if (!isLoading) {
+      if (orgDetail) return orgDetail
+      if (internalJoinedOrgs) {
+        return internalJoinedOrgs.find((org) => org.slug === orgSlug)
+      }
     }
     return undefined
-  }, [internalJoinedOrgs, orgDetail, orgSlug])
+  }, [internalJoinedOrgs, isLoading, orgDetail, orgSlug])
 
   // Redirect if org detail with given slug not found
   const toRedirectOrg = useMemo(() => {
-    // return Boolean(orgDetailError) && !selectedOrg && (internalJoinedOrgs?.length ?? 0) !== 0
     if (selectedOrg) return undefined
     if (isInWhiteList) return undefined
+    if (isLoading) return undefined
     const redirectOrg = internalJoinedOrgs?.find(
       (org) => getUserOrgPermission(org, user?.pkid ?? -1) === 'owner',
     )
     return redirectOrg
-  }, [internalJoinedOrgs, isInWhiteList, selectedOrg, user?.pkid])
+  }, [internalJoinedOrgs, isInWhiteList, isLoading, selectedOrg, user?.pkid])
 
   useEffect(() => {
     if (toRedirectOrg) {

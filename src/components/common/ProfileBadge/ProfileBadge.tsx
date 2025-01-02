@@ -48,6 +48,8 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
       rightElClassName,
       ...restProps
     } = props
+    console.log('ProfileBadge', description, )
+    
     const titleLevel = useMemo(() => {
       if (size === 'sm') return 'p6'
       if (size === 'md') return 'p5'
@@ -59,6 +61,7 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
       if (size === 'md') return 'p6'
       if (size === 'lg') return 'p5'
     }, [size])
+
     const fullName = [firstName, lastName].filter(Boolean).join(' ')
 
     return (

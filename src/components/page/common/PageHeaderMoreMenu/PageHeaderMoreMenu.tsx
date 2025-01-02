@@ -10,10 +10,12 @@ import { SharePageModal, useSharePageModal } from '../SharePageModal'
 
 export const PageHeaderMoreMenu = () => {
   const { pageID } = useParams<OrganizationPageParams>()
+
   const { data: { data: page } = {}, isPending } = useFetchPage({
     allowFetch: Boolean(pageID),
     pageID,
   })
+  
   const { isOpenShareModal, onOpenShareModal, onCloseShareModal, selectedSharePage } =
     useSharePageModal()
 

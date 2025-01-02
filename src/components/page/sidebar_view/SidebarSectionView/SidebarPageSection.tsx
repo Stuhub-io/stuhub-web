@@ -20,7 +20,8 @@ export const SidebarPageSectionView = () => {
   const router = useRouter()
 
   const outerPages = useMemo(() => {
-    return orgPages?.list?.filter((page) => !page.parent_page_pkid && !page.archived_at)
+    // filter out pages that have no parent or parent is in the list
+    return orgPages?.list?.filter((page) => (!page.parent_page_pkid || !orgPages.map[page.parent_page_pkid ?? -1])&& !page.archived_at )
   }, [orgPages])
 
   return (
