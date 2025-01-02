@@ -4,7 +4,7 @@ import { useSidebar } from "@/components/providers/sidebar"
 import { PageViewTypeEnum } from "@/schema/page"
 import { useMemo, useEffect } from "react"
 import { RiFileLine, RiFolderFill } from "react-icons/ri"
-import { CreatingPageItemView } from "./type"
+import { CreatingPageItemView } from "./SidebarPageIterm/type"
 
 export const CreatingSidebarPageItem: CreatingPageItemView = (props) => {
   const { data, level = 0 } = props

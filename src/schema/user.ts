@@ -1,3 +1,5 @@
+import { Pagination } from "./base"
+
 // Entities
 export interface User {
   pkid: number
@@ -21,4 +23,11 @@ export interface UpdateUserInfoBody {
   first_name: string
   last_name: string
   avatar: string
+}
+
+export interface SearchUserBody extends Partial<Pagination> {
+  search: string
+  emails?: string[]
+  org_pkid?: number
+
 }

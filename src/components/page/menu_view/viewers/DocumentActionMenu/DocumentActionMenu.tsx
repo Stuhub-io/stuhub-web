@@ -14,8 +14,10 @@ import { useMovePage } from '@/mutation/mutator/page/useMovePage'
 import { PageMoreMenuPopoverContent } from './PageMoreMenuPopover'
 import { BasePageMenuProps } from '../../type'
 
+// FIXME: move page action handlers to outer component
+
 export const PageDocumentActionMenu = (props: BasePageMenuProps) => {
-  const { children, page, onSuccess } = props
+  const { children, page, onSuccess, onShareClick } = props
 
   const queryClient = useQueryClient()
 
@@ -72,6 +74,10 @@ export const PageDocumentActionMenu = (props: BasePageMenuProps) => {
     }
   }
 
+  const handleShare = () => {
+    onShareClick?.(page)
+  }
+
   return (
     <WrapperRegistry
       wrappers={[
@@ -113,6 +119,7 @@ export const PageDocumentActionMenu = (props: BasePageMenuProps) => {
           {children}
           <PageMoreMenuPopoverContent
             page={page}
+            onShare={handleShare}
             onRename={onOpenRename}
             onOpenMove={onOpenMove}
             onArchive={handleArchive}

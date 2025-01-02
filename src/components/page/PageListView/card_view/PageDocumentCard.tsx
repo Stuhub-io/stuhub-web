@@ -11,13 +11,14 @@ import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const PageDocumentCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected } = props
+  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, onShareClick } =
+    props
 
   const archiveStatus = useMutationState({
     filters: {
-      mutationKey: MUTATION_KEYS.ARCHIVE_PAGE({ id: page.id })
+      mutationKey: MUTATION_KEYS.ARCHIVE_PAGE({ id: page.id }),
     },
-    select: state => state.state.status
+    select: (state) => state.state.status,
   })
 
   const isArchiving = archiveStatus.includes('pending')
@@ -42,11 +43,11 @@ export const PageDocumentCard = (props: BaseCardViewProps) => {
         className,
         {
           'bg-primary-100 hover:bg-primary-100/90': isSelected,
-          'opacity-80 pointer-events-none animate-pulse': isArchiving
-        }
+          'pointer-events-none animate-pulse opacity-80': isArchiving,
+        },
       )}
       shadow="none"
-      onClick={e => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
     >
       <CardBody
         className="flex flex-col p-2 pb-3"
@@ -75,7 +76,7 @@ export const PageDocumentCard = (props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageActionMenuView page={page} onSuccess={onMutateSuccess}>
+          <PageActionMenuView page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
             <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0">
               <RiMore2Line size={16} />
             </Button>

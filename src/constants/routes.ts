@@ -22,7 +22,7 @@ export const ROUTES = {
 
   // app
   HOME_PAGE: '/',
-  INVITE_PAGE: '/invite',
+  INVITE_PAGE: ({inviteID}: {inviteID: string}) => `/invite/${inviteID}`,
   AUTH_EMAIL: '/auth-email',
   ORGANIZATION: ({ orgSlug }: OrganizationParams) => `/${orgSlug}`,
   VAULT_PAGE: ({ orgSlug, pageID }: OrganizationPageParams) => `/${orgSlug}/${pageID}`,

@@ -5,10 +5,18 @@ export const getUserOrgPermission = (org: Organization, userPkID: number) => {
     return currentMember?.role
 }
 
-export const getPermissionText = (role: OrgRole | "other") => {
+export const getUserOrgRoleDisplay = (role: OrgRole | "guest") => {
     return {
         owner: 'Owner',
         member: 'Member',
-        other: '',
+        guest: 'Guest',
     }[role]
+}
+
+export const getRoleColor = (role: OrgRole | "guest") => {
+    return ({
+        owner: 'primary',
+        member: 'success',
+        guest: 'warning',
+    } as const)[role]
 }

@@ -9,6 +9,7 @@ import { Button } from '@nextui-org/react'
 import { RiArrowRightSLine } from 'react-icons/ri'
 import { cn } from '@/libs/utils'
 import { useSidebar } from '@/components/providers/sidebar'
+import { useAuthContext } from '@/components/auth/AuthGuard'
 
 const MIN_SIZE = 200
 
@@ -19,8 +20,7 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
   const [maxSize, setMaxSize] = useState(30)
 
   const { showSidebar, setShowSidebar } = useSidebar()
-
-
+  const { status } = useAuthContext()
 
   const setMinSizeDebounce = useDebouncedCallback(setMinSize, 100)
   const setMaxSizeDebounce = useDebouncedCallback(setMaxSize, 100)
@@ -28,7 +28,7 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
 
   useLayoutEffect(() => {
-    if (!wrapperRef.current) {
+    if (!wrapperRef.current || status == 'unauthenticated') {
       return
     }
     const observer = new ResizeObserver(() => {
@@ -41,38 +41,46 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
     return () => {
       observer.disconnect()
     }
-  }, [setMaxSizeDebounce, setMinSizeDebounce])
+  }, [setMaxSizeDebounce, setMinSizeDebounce, status])
 
   return (
-    <Layout container={false} ref={wrapperRef} wrapperClassName="overflow-y-hidden">
+    <Layout container={false} ref={wrapperRef} wrapperClassName="overflow-y-hidden" key={status}>
       <PanelGroup direction="horizontal" autoSaveId="main-layout-sidebar">
-        <Panel
-          defaultSize={showSidebar ? minSize: 0}
-          order={1}
-          minSize={minSize}
-          maxSize={maxSize}
-          className={cn("bg-background",{
-            hidden: !showSidebar,
-          })}
-        >
-          <MainSideBar />
-        </Panel>
-        <PanelResizeHandle />
-        <Panel order={2} className="relative bg-background">
-          <Button
-            isIconOnly
-            className="absolute left-0 top-16 !w-6 min-w-0 rounded-l-none z-50"
-            onClick={() => setShowSidebar(!showSidebar)}
-            size="md"
-            variant="solid"
-          >
-            <RiArrowRightSLine
-              size={16}
-              className={cn({
-                'rotate-180': showSidebar,
+        {status === 'authenticated' && (
+          <>
+            <Panel
+              defaultSize={showSidebar ? minSize : 0}
+              order={1}
+              minSize={minSize}
+              maxSize={maxSize}
+              className={cn('bg-background', {
+                hidden: !showSidebar,
               })}
-            />
-          </Button>
+            >
+              <MainSideBar />
+            </Panel>
+            <PanelResizeHandle />
+          </>
+        )}
+        <Panel order={2} className="relative bg-background">
+          {status === 'authenticated' && (
+            <div className='absolute left-0 top-16 z-50 group h-[200px] w-6'>
+              <Button
+                isIconOnly
+                className="!w-6 min-w-0 rounded-l-none opacity-0 group-hover:opacity-100 transition duration-300"
+                onClick={() => setShowSidebar(!showSidebar)}
+                size="md"
+                variant="solid"
+              >
+                <RiArrowRightSLine
+                  size={16}
+                  className={cn({
+                    'rotate-180': showSidebar,
+                  })}
+                />
+              </Button>
+            </div>
+          )}
           {children}
         </Panel>
       </PanelGroup>
