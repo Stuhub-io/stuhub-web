@@ -106,9 +106,10 @@ export const PageTitle = (props: PageTitleProps) => {
     <div className={cn('group', className)}>
       <div className="h-8 opacity-0 transition duration-200 group-hover:opacity-100">
         {!isPending && (
-          <div className="hidden gap-1 opacity-70 group-hover:flex">
+          <div className="flex gap-1 opacity-70">
             {!hasIcon && (
               <Button
+                className="hidden group-hover:flex"
                 startContent={<RiUserSmileFill size={16} />}
                 size="sm"
                 variant="light"
@@ -119,6 +120,7 @@ export const PageTitle = (props: PageTitleProps) => {
             )}
             {!hasCoverImg && (
               <Button
+                className="hidden group-hover:flex"
                 startContent={<RiImage2Fill size={16} />}
                 size="sm"
                 variant="light"
@@ -129,6 +131,7 @@ export const PageTitle = (props: PageTitleProps) => {
             )}
             {page && (
               <PageActionMenu
+                placement="right-start"
                 page={page}
                 onSuccess={() => {
                   queryClient.invalidateQueries({
@@ -138,7 +141,7 @@ export const PageTitle = (props: PageTitleProps) => {
                   })
                 }}
               >
-                <Button size="sm" variant="light" isIconOnly>
+                <Button size="sm" variant="light" isIconOnly className="hidden group-hover:flex">
                   <RiMoreLine size={16} />
                 </Button>
               </PageActionMenu>

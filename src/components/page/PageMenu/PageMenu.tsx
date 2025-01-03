@@ -1,4 +1,4 @@
-import { useDisclosure } from '@nextui-org/react'
+import { PopoverProps, useDisclosure } from '@nextui-org/react'
 import { PopperContentTrigger } from '@/components/common/PopoverTrigger'
 import { RenamePageInput } from '@/components/page/common/RenamePageInput'
 import { PopperCard } from '@/components/common/PopperCard'
@@ -20,10 +20,11 @@ export interface BasePageMenuProps extends PropsWithChildren {
   onShareClick?: (page: Page) => void
   anchorEl?: HTMLElement
   onClose?: () => void
+  placement?: PopoverProps['placement']
 }
 
 export const PageActionMenu = (props: BasePageMenuProps) => {
-  const {children ,page, onSuccess, onShareClick } = props
+  const {children ,page, onSuccess, onShareClick, placement= 'bottom'} = props
 
   const queryClient = useQueryClient()
 
@@ -125,7 +126,7 @@ export const PageActionMenu = (props: BasePageMenuProps) => {
           e.stopPropagation()
         }}
       >
-        <PopperContentTrigger>
+        <PopperContentTrigger placement={placement}>
           {children}
           <PageMoreMenuPopoverContent
             page={page}
