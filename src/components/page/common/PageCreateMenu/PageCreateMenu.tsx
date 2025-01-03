@@ -1,3 +1,4 @@
+import { VscodeDocumentIcon } from '@/components/icons/VsCodeDocumentIcon'
 import { useAssetUploadContext } from '@/components/providers/asset_upload'
 import { useCreatePageContext, useNewPage } from '@/components/providers/newpage'
 import { QUERY_KEYS } from '@/mutation/keys'
@@ -5,7 +6,7 @@ import { Page, PageViewTypeEnum } from '@/schema/page'
 import { Listbox, ListboxItem } from '@nextui-org/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Key } from 'react'
-import { RiFileFill, RiFolderFill, RiRedPacketFill } from 'react-icons/ri'
+import { RiFolderFill, RiUpload2Fill } from 'react-icons/ri'
 
 interface PageCreateMenuProps {
   onClose?: () => void
@@ -60,13 +61,13 @@ export const PageCreateMenu = (props: PageCreateMenuProps) => {
         base: 'w-[160px]',
       }}
     >
-      <ListboxItem key="doc" startContent={<RiFileFill size={16} />}>
+      <ListboxItem key="doc" startContent={<VscodeDocumentIcon width={16} height={16} />}>
         New Document
       </ListboxItem>
-      <ListboxItem key="folder" startContent={<RiFolderFill size={16} />}>
+      <ListboxItem key="folder" startContent={<RiFolderFill className="fill-success" size={16} />}>
         New Folder
       </ListboxItem>
-      <ListboxItem key="asset" startContent={<RiRedPacketFill size={16} />}>
+      <ListboxItem key="asset" startContent={<RiUpload2Fill className="fill-warning" size={16} />}>
         New Assets
       </ListboxItem>
     </Listbox>

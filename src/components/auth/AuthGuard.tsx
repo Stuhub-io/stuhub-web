@@ -17,6 +17,7 @@ const publicRoutes = [
   ROUTES.AUTH_EMAIL,
   ROUTES.LANDING_PAGE,
   ROUTES.CHANGELOG_PAGE,
+  '/test',
   ROUTES.VAULT_PAGE({
     orgSlug: '*',
     pageID: '*',

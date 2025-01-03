@@ -2,7 +2,7 @@ import Typography from '@/components/common/Typography'
 import { PageViewTypeEnum } from '@/schema/page'
 import { Button, Card, CardBody } from '@nextui-org/react'
 import { BaseCardViewProps } from './type'
-import { PageActionMenuView } from '../../menu_view/MenuView'
+import { PageActionMenu } from '../../PageMenu'
 import { RiFolder3Fill, RiMore2Line } from 'react-icons/ri'
 import { useDropzone } from 'react-dropzone'
 import { cn } from '@/libs/utils'
@@ -83,11 +83,11 @@ export const FolderCard = (props: BaseCardViewProps) => {
             </Typography>
           </div>
           <div className="shrink-0">
-            <PageActionMenuView page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
+            <PageActionMenu page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
               <Button isIconOnly size="sm" variant="light" radius="full">
                 <RiMore2Line size={16} />
               </Button>
-            </PageActionMenuView>
+            </PageActionMenu>
           </div>
         </div>
       </CardBody>

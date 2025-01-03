@@ -11,15 +11,11 @@ import { SidebarItem, SidebarItemLeftSpacer, SidebarIconButton } from '@/compone
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@radix-ui/react-collapsible'
 import { RiFolderOpenFill, RiFolder3Fill, RiMoreLine, RiAddFill } from 'react-icons/ri'
 import { PageCreateMenu } from '../../common/PageCreateMenu'
-import { PageActionMenuView } from '../../menu_view/MenuView'
+import { PageActionMenu } from '../../PageMenu'
 import { useOrganization } from '@/components/providers/organization'
 
 export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
-  const {
-    page,
-    level = 0,
-    SidebarPageItemViewer,
-  } = props
+  const { page, level = 0, SidebarPageItemViewer } = props
   const { getChildrenPageByPkID } = useSidebar()
   const { organization } = useOrganization()
 
@@ -96,11 +92,11 @@ export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
           <>
             <div onClick={(e) => e.stopPropagation()}>
               {/* Prevents the click event from bubbling up to the parent */}
-              <PageActionMenuView page={page} onSuccess={onSuccessUpdated}>
+              <PageActionMenu page={page} onSuccess={onSuccessUpdated}>
                 <SidebarIconButton showOnGroupHoverOnly>
                   <RiMoreLine />
                 </SidebarIconButton>
-              </PageActionMenuView>
+              </PageActionMenu>
             </div>
             <PopperContentTrigger>
               <SidebarIconButton showOnGroupHoverOnly>

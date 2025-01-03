@@ -5,7 +5,7 @@ import { cn } from '@/libs/utils'
 import Typography from '@/components/common/Typography'
 import { formatTimeToNow } from '@/utils/time'
 import { RiMore2Line } from 'react-icons/ri'
-import { PageActionMenuView } from '../../menu_view/MenuView'
+import { PageActionMenu } from '../../PageMenu'
 import { VscodeDocumentIcon } from '@/components/icons/VsCodeDocumentIcon'
 import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
@@ -76,11 +76,11 @@ export const PageDocumentCard = (props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageActionMenuView page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
+          <PageActionMenu page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
             <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0">
               <RiMore2Line size={16} />
             </Button>
-          </PageActionMenuView>
+          </PageActionMenu>
         </div>
       </CardBody>
     </Card>

@@ -11,13 +11,19 @@ import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
 import { useArchivePage } from '@/mutation/mutator/page/useArchivePage'
 import { useMovePage } from '@/mutation/mutator/page/useMovePage'
-import { PageMoreMenuPopoverContent } from './PageMoreMenuPopover'
-import { BasePageMenuProps } from '../../type'
+import { PageMoreMenuPopoverContent } from './PageMenuPopover'
+import { PropsWithChildren } from 'react'
 
-// FIXME: move page action handlers to outer component
+export interface BasePageMenuProps extends PropsWithChildren {
+  page: Page
+  onSuccess?: () => void
+  onShareClick?: (page: Page) => void
+  anchorEl?: HTMLElement
+  onClose?: () => void
+}
 
-export const PageDocumentActionMenu = (props: BasePageMenuProps) => {
-  const { children, page, onSuccess, onShareClick } = props
+export const PageActionMenu = (props: BasePageMenuProps) => {
+  const {children ,page, onSuccess, onShareClick } = props
 
   const queryClient = useQueryClient()
 
@@ -114,7 +120,11 @@ export const PageDocumentActionMenu = (props: BasePageMenuProps) => {
         />,
       ]}
     >
-      <div>
+      <div
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
         <PopperContentTrigger>
           {children}
           <PageMoreMenuPopoverContent

@@ -5,12 +5,13 @@ import { useToast } from '@/hooks/useToast'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { Button, Skeleton, TextAreaProps } from '@nextui-org/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { RiUserSmileFill, RiImage2Fill } from 'react-icons/ri'
+import { RiUserSmileFill, RiImage2Fill, RiMoreLine } from 'react-icons/ri'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { dump } from '@/constants/common'
 import { cn } from '@/libs/utils'
+import { PageActionMenu } from '../../PageMenu'
 
 export interface PageTitleProps {
   pageID: string
@@ -125,6 +126,22 @@ export const PageTitle = (props: PageTitleProps) => {
               >
                 Add cover
               </Button>
+            )}
+            {page && (
+              <PageActionMenu
+                page={page}
+                onSuccess={() => {
+                  queryClient.invalidateQueries({
+                    queryKey: QUERY_KEYS.GET_PAGE({
+                      pageID: page.id,
+                    }),
+                  })
+                }}
+              >
+                <Button size="sm" variant="light" isIconOnly>
+                  <RiMoreLine size={16} />
+                </Button>
+              </PageActionMenu>
             )}
           </div>
         )}
