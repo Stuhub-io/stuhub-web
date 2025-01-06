@@ -49,15 +49,19 @@ export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProp
   }
 
   const filteredMenu = useMemo(() => {
-    return menu.map((item) => {
-      if (item.key === 'organize-menu') {
-        return {
-          ...item,
-          title: getOrgMenuSectionLabel(page),
-        } as MenuSection
-      }
-      return item
-    })
+    return menu
+      .map((item) => {
+        if (item.key === 'organize-menu') {
+          return {
+            ...item,
+            title: getOrgMenuSectionLabel(page),
+          } as MenuSection
+        }
+        return item
+      })
+      .filter((item) =>
+        page.view_type === PageViewTypeEnum.FOLDER ? item.key !== 'download' : true,
+      )
   }, [menu, page])
 
   return (
@@ -137,7 +141,12 @@ export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProp
         }}
       >
         {filteredMenu.map((item) => (
-          <ListboxItem key={item.key} startContent={item.icon} showDivider={item.bottomDivider} endContent={item.rightEl}>
+          <ListboxItem
+            key={item.key}
+            startContent={item.icon}
+            showDivider={item.bottomDivider}
+            endContent={item.rightEl}
+          >
             {item.title}
           </ListboxItem>
         ))}
@@ -152,7 +161,7 @@ const getOrgMenuSectionLabel = (page: Page) => {
       return 'Organize Folder'
     case PageViewTypeEnum.DOCUMENT:
       return 'Organize Document'
-    case PageViewTypeEnum.ASSET: 
+    case PageViewTypeEnum.ASSET:
       return 'Organize File'
     default:
       return 'Organize'

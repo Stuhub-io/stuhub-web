@@ -82,7 +82,7 @@ export const FolderCard = (props: BaseCardViewProps) => {
               {page.name || 'Untitled'}
             </Typography>
           </div>
-          <div className="shrink-0">
+          <div className="shrink-0" onDoubleClick={e => e.stopPropagation()}>
             <PageActionMenu page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
               <Button isIconOnly size="sm" variant="light" radius="full">
                 <RiMore2Line size={16} />

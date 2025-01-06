@@ -61,7 +61,7 @@ export const PageDocumentCard = (props: BaseCardViewProps) => {
             </div>
           </div>
         </div>
-        <div className="flex w-full items-center gap-2 pl-2 pt-2">
+        <div className="flex w-full items-center gap-2 pl-2 pt-2" onDoubleClick={e => e.stopPropagation()}>
           <div className="flex flex-1 flex-col overflow-hidden">
             <Typography level="p5" noWrap className="w-full">
               {page.name || 'Untitled'}
