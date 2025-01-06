@@ -74,6 +74,7 @@ export const PageFolderViewer: PageViewer = (props) => {
   }, [childPages])
 
   const handlePageClick = (folder: Page) => {
+    console.log('folder', organization?.slug, folder)
     router.push(
       ROUTES.VAULT_PAGE({
         orgSlug: organization?.slug ?? '',

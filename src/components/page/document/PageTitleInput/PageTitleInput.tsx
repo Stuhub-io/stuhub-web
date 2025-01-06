@@ -11,7 +11,7 @@ import { QUERY_KEYS } from '@/mutation/keys'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { dump } from '@/constants/common'
 import { cn } from '@/libs/utils'
-import { PageActionMenu } from '../../PageMenu'
+import { PageMenu } from '../../PageMenu'
 
 export interface PageTitleProps {
   pageID: string
@@ -130,7 +130,7 @@ export const PageTitle = (props: PageTitleProps) => {
               </Button>
             )}
             {page && (
-              <PageActionMenu
+              <PageMenu
                 placement="right-start"
                 page={page}
                 onSuccess={() => {
@@ -144,7 +144,7 @@ export const PageTitle = (props: PageTitleProps) => {
                 <Button size="sm" variant="light" isIconOnly className="hidden group-hover:flex">
                   <RiMoreLine size={16} />
                 </Button>
-              </PageActionMenu>
+              </PageMenu>
             )}
           </div>
         )}

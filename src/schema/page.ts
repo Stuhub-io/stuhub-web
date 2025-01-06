@@ -1,32 +1,41 @@
-import { Pagination } from "./base"
-import { User } from "./user"
-
+import { Pagination } from './base'
+import { User } from './user'
 
 export type PageViewType = 1 | 2 | 3
 
 export const PageViewTypeEnum = {
   DOCUMENT: 1 as PageViewType,
   FOLDER: 2 as PageViewType,
-  ASSET: 3 as PageViewType
+  ASSET: 3 as PageViewType,
 } as const
 
 export interface Page {
-    id: string
-    pkid: number
-    parent_page_pkid?: number
-    organization_pkid: number
-    created_at: string
-    updated_at: string
-    archived_at?: string
-    view_type: PageViewType 
-    cover_image: string
-    node_id: string
-    name: string
-    child_pages?: Page[]
-    document?: Document
-    asset?: Asset
-    general_role?: PageRole
-    author?: User
+  id: string
+  pkid: number
+  parent_page_pkid?: number
+  organization_pkid: number
+  created_at: string
+  updated_at: string
+  archived_at?: string
+  view_type: PageViewType
+  cover_image: string
+  node_id: string
+  name: string
+  child_pages?: Page[]
+  document?: Document
+  asset?: Asset
+  general_role?: PageRole
+  author?: User
+  permissions?: PagePermissions
+}
+
+export interface PagePermissions {
+  can_edit: boolean
+  can_view: boolean
+  can_download: boolean
+  can_share: boolean
+  can_delete: boolean
+  can_move: boolean
 }
 
 export interface Asset {
@@ -86,7 +95,6 @@ export interface MovePageRequest {
   parent_page_pkid?: number
 }
 
-
 export interface CreatePageAssetRequest extends Omit<CreatePageRequest, 'document'> {
   asset: {
     url: string
@@ -105,7 +113,7 @@ export type PageRole = 1 | 2 | 4
 export const PageRoleEnum = {
   VIEWER: 1 as PageRole,
   EDITOR: 2 as PageRole,
-  RESTRICTED : 4 as PageRole
+  RESTRICTED: 4 as PageRole,
 } as const
 
 export interface UpdatePageGeneralAccessRequest {

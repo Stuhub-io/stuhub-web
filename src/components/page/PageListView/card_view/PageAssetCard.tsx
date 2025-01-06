@@ -1,7 +1,7 @@
 import Typography from '@/components/common/Typography'
 import { Card, cn, CardBody, Button, Image, Divider } from '@nextui-org/react'
 import { RiMore2Line } from 'react-icons/ri'
-import { PageActionMenu } from '../../PageMenu'
+import { PageMenu } from '../../PageMenu'
 import { BaseCardViewProps } from './type'
 import { Asset, PageViewTypeEnum } from '@/schema/page'
 import {
@@ -76,7 +76,7 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageActionMenu page={page} onSuccess={onMutateSuccess}>
+          <PageMenu page={page} onSuccess={onMutateSuccess}>
             <Button
               isIconOnly
               size="sm"
@@ -86,7 +86,7 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
             >
               <RiMore2Line size={16} />
             </Button>
-          </PageActionMenu>
+          </PageMenu>
         </div>
       </CardBody>
     </Card>
