@@ -17,7 +17,6 @@ import { FolderViewToolbar } from './Toolbar'
 import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { formatReadableFileSize } from '@/utils/file'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
-import { SharePageModal, useSharePageModal } from '@/components/page/common/SharePageModal'
 
 export const PageFolderViewer: PageViewer = (props) => {
   const { page, onAddCoverImage, hasCoverImage } = props
@@ -37,9 +36,6 @@ export const PageFolderViewer: PageViewer = (props) => {
     org_pkid: page?.organization_pkid ?? -1,
     parent_page_pkid: page?.pkid,
   })
-
-  const { selectedSharePage, onOpenShareModal, onCloseShareModal, isOpenShareModal } =
-    useSharePageModal()
 
   const { onCreate: onCreateFolder } = useNewPage({
     parentPagePkID: page?.pkid,
@@ -78,6 +74,7 @@ export const PageFolderViewer: PageViewer = (props) => {
   }, [childPages])
 
   const handlePageClick = (folder: Page) => {
+    console.log('folder', organization?.slug, folder)
     router.push(
       ROUTES.VAULT_PAGE({
         orgSlug: organization?.slug ?? '',
@@ -157,7 +154,6 @@ export const PageFolderViewer: PageViewer = (props) => {
                 selectedItemPkIDs={selectedPagePkIDs}
                 onSelectedPkIDsChanged={setSelectedPagePkIDs}
                 onItemDoubleClick={handlePageClick}
-                onShareClick={onOpenShareModal}
               />
             </div>
           )}
@@ -180,16 +176,10 @@ export const PageFolderViewer: PageViewer = (props) => {
               onItemMutateSuccess={refetch}
               onSelectedPkIDsChanged={setSelectedPagePkIDs}
               onItemDoubleClick={handlePageClick}
-              onShareClick={onOpenShareModal}
             />
           </div>
         </div>
       </div>
-      <SharePageModal
-        open={isOpenShareModal}
-        onClose={onCloseShareModal}
-        page={selectedSharePage}
-      />
     </>
   )
 }

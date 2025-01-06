@@ -140,7 +140,9 @@ export const PageBreadCrumbs = () => {
               {page.name || 'Untitled'}
             </Typography>
           )
-          const body = !isCurrentPage ? (
+
+          const hasEditPermission = page.permissions?.can_edit
+          const body = (!isCurrentPage || !hasEditPermission) ? (
             child
           ) : (
             <PopperCard

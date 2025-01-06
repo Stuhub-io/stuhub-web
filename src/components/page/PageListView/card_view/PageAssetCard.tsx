@@ -1,7 +1,7 @@
 import Typography from '@/components/common/Typography'
 import { Card, cn, CardBody, Button, Image, Divider } from '@nextui-org/react'
 import { RiMore2Line } from 'react-icons/ri'
-import { PageActionMenuView } from '../../menu_view/MenuView'
+import { PageMenu } from '../../PageMenu'
 import { BaseCardViewProps } from './type'
 import { Asset, PageViewTypeEnum } from '@/schema/page'
 import {
@@ -14,7 +14,7 @@ import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const PageAssetCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected, onShareClick } =
+  const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected } =
     props
 
   const archiveStatus = useMutationState({
@@ -59,7 +59,7 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
         <div className="relative w-full overflow-hidden pb-[45%]">
           <div className="absolute inset-0 h-full w-full">{getAssetPreviewContent(page.asset)}</div>
         </div>
-        <div className="flex w-full items-center gap-2 pl-2 pt-2">
+        <div className="flex w-full items-center gap-2 pl-2 pt-2" onDoubleClick={(e) => e.stopPropagation()}>
           <div className="flex flex-1 flex-col overflow-hidden">
             <Typography level="p5" noWrap className="w-full">
               {page.name || 'Untitled'}
@@ -76,11 +76,17 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageActionMenuView page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
-            <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0">
+          <PageMenu page={page} onSuccess={onMutateSuccess}>
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              radius="full"
+              className="shrink-0"
+            >
               <RiMore2Line size={16} />
             </Button>
-          </PageActionMenuView>
+          </PageMenu>
         </div>
       </CardBody>
     </Card>
@@ -107,5 +113,4 @@ export const getAssetPreviewContent = (asset: Asset) => {
       <Icon size={38} width={38} height={38} />
     </div>
   )
-  return null
 }

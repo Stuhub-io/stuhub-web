@@ -1,29 +1,53 @@
-import { useDisclosure } from '@nextui-org/react'
+import { PopoverProps, useDisclosure } from '@nextui-org/react'
 import { PopperContentTrigger } from '@/components/common/PopoverTrigger'
 import { RenamePageInput } from '@/components/page/common/RenamePageInput'
 import { PopperCard } from '@/components/common/PopperCard'
 import { PageSearchSelector } from '@/components/page/common/PageSearchSelector'
 import { WrapperRegistry } from '@/components/common/WrapperRegistry/WrapperRegistry'
-import { Page } from '@/schema/page'
+import { Page, PageViewTypeEnum } from '@/schema/page'
 import { useSidebar } from '@/components/providers/sidebar'
 import { useToast } from '@/hooks/useToast'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
 import { useArchivePage } from '@/mutation/mutator/page/useArchivePage'
 import { useMovePage } from '@/mutation/mutator/page/useMovePage'
-import { PageMoreMenuPopoverContent } from './PageMoreMenuPopover'
-import { BasePageMenuProps } from '../../type'
+import { PageMoreMenuPopoverContent } from './PageMenuPopover'
+import { PropsWithChildren, useCallback } from 'react'
+import { useSharePageContext } from '@/components/providers/share'
+import { BASE_URL } from '@/constants/envs'
+import { ROUTES } from '@/constants/routes'
+import { useOrganization } from '@/components/providers/organization'
+import useCopy from 'use-copy'
+import { MenuSection } from './PageMenuPopover/const'
 
-// FIXME: move page action handlers to outer component
+export interface BasePageMenuProps extends PropsWithChildren {
+  page: Page
+  onSuccess?: () => void
+  anchorEl?: HTMLElement
+  onClose?: () => void
+  placement?: PopoverProps['placement']
+}
 
-export const PageDocumentActionMenu = (props: BasePageMenuProps) => {
-  const { children, page, onSuccess, onShareClick } = props
+export const PageMenu = (props: BasePageMenuProps) => {
+  const { children, page, onSuccess, placement = 'bottom' } = props
+  const { organization } = useOrganization()
 
   const queryClient = useQueryClient()
+
+  const pageHref =
+    BASE_URL +
+    ROUTES.VAULT_PAGE({
+      orgSlug: organization?.slug ?? '',
+      pageID: page.id,
+    })
+
+  const [, copy] = useCopy(pageHref)
 
   const { isOpen: isOpenRename, onOpen: onOpenRename, onClose: onCloseRename } = useDisclosure()
 
   const { isOpen: isOpenMove, onClose: onCloseMove, onOpen: onOpenMove } = useDisclosure()
+
+  const { onOpenShareModal } = useSharePageContext()
 
   const { refreshOrgPages } = useSidebar()
   const { toast } = useToast()
@@ -75,8 +99,42 @@ export const PageDocumentActionMenu = (props: BasePageMenuProps) => {
   }
 
   const handleShare = () => {
-    onShareClick?.(page)
+    onOpenShareModal?.(page)
   }
+
+  const menuFilter = useCallback((menuItems: MenuSection[]) => {
+    return menuItems
+      // Modify UI
+      .map((item) => {
+        switch (item.key) {
+          case "organize-menu":
+            return {
+              ...item,
+              title: getOrgMenuSectionLabel(page),
+            } as MenuSection
+          default:
+            return item
+        }
+      })
+      // Filter out section
+      .filter((item) => {
+        switch (item.key) {
+          case 'download':
+            return page.view_type !== PageViewTypeEnum.FOLDER && page.permissions?.can_download
+          case 'share-menu':
+            return page.permissions?.can_share
+          case 'rename':
+            return page.permissions?.can_edit
+          case 'organize-menu':
+            return page.permissions?.can_move
+          case 'trash':
+            return page.permissions?.can_delete
+          default:
+            return page.permissions?.can_view
+        }
+      }
+      )
+  }, [page])
 
   return (
     <WrapperRegistry
@@ -114,18 +172,39 @@ export const PageDocumentActionMenu = (props: BasePageMenuProps) => {
         />,
       ]}
     >
-      <div>
-        <PopperContentTrigger>
+      <div
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
+        <PopperContentTrigger placement={placement}>
           {children}
           <PageMoreMenuPopoverContent
-            page={page}
+            onCopy={copy}
+            onNewTab={() => {
+              window.open(pageHref)
+            }}
             onShare={handleShare}
             onRename={onOpenRename}
             onOpenMove={onOpenMove}
             onArchive={handleArchive}
+            filterMenu={menuFilter}
           />
         </PopperContentTrigger>
       </div>
     </WrapperRegistry>
   )
+}
+
+const getOrgMenuSectionLabel = (page: Page) => {
+  switch (page.view_type) {
+    case PageViewTypeEnum.FOLDER:
+      return 'Organize Folder'
+    case PageViewTypeEnum.DOCUMENT:
+      return 'Organize Document'
+    case PageViewTypeEnum.ASSET:
+      return 'Organize File'
+    default:
+      return 'Organize'
+  }
 }

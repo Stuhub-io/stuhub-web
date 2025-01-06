@@ -10,6 +10,10 @@ const views: {
     Component: GridView,
     type: 'grid',
   },
+  // {
+  //   Component: ListView,
+  //   type: 'list',
+  // }
 ]
 
 export const PageListView = (props: BaseListViewProps) => {

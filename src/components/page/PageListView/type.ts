@@ -10,7 +10,6 @@ export interface BaseListViewProps {
     onItemDoubleClick?: (page: Page) => void
     onSelectedPkIDsChanged?: Dispatch<SetStateAction<number[]>>
     emptyState?: ReactNode
-    onShareClick?: (page: Page) => void
     // FIXME: move page action handlers to outer component
     // onAddToFavoritesClick?: (page: Page) => void
 }

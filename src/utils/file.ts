@@ -18,10 +18,10 @@ export function isAudioExtension(extension = ''): boolean {
   return ['mp3', 'wav', 'ogg', 'm4a', 'aac'].includes(extension.toLowerCase())
 }
 
-const imageFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'tiff', 'heic']
+const imageFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'tiff', 'webp', 'heic']
 
 export const isImageExtensionSupported = (extension: string) => {
-  return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'tiff'].includes(extension)
+  return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'tiff', 'webp'].includes(extension)
 }
 
 export function isImageExtension(extension = ''): boolean {

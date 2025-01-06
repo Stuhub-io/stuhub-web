@@ -2,7 +2,7 @@ import Typography from '@/components/common/Typography'
 import { PageViewTypeEnum } from '@/schema/page'
 import { Button, Card, CardBody } from '@nextui-org/react'
 import { BaseCardViewProps } from './type'
-import { PageActionMenuView } from '../../menu_view/MenuView'
+import { PageMenu } from '../../PageMenu'
 import { RiFolder3Fill, RiMore2Line } from 'react-icons/ri'
 import { useDropzone } from 'react-dropzone'
 import { cn } from '@/libs/utils'
@@ -12,7 +12,7 @@ import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const FolderCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, onShareClick } =
+  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected } =
     props
   const { handleUpload } = useAssetUploadContext()
   const { toast } = useToast()
@@ -82,12 +82,12 @@ export const FolderCard = (props: BaseCardViewProps) => {
               {page.name || 'Untitled'}
             </Typography>
           </div>
-          <div className="shrink-0">
-            <PageActionMenuView page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
+          <div className="shrink-0" onDoubleClick={e => e.stopPropagation()}>
+            <PageMenu page={page} onSuccess={onMutateSuccess}>
               <Button isIconOnly size="sm" variant="light" radius="full">
                 <RiMore2Line size={16} />
               </Button>
-            </PageActionMenuView>
+            </PageMenu>
           </div>
         </div>
       </CardBody>

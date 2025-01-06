@@ -6,7 +6,7 @@ import { OrganizationPageParams, ROUTES } from '@/constants/routes'
 import { MUTATION_KEYS } from '@/mutation/keys'
 import { useMutationState } from '@tanstack/react-query'
 import { RiMoreLine } from 'react-icons/ri'
-import { PageActionMenuView } from '../../menu_view/MenuView'
+import { PageMenu } from '../../PageMenu'
 import { VscodeDocumentIcon } from '@/components/icons/VsCodeDocumentIcon'
 
 export const DocSidebarItemView = (props: BaseSidebarViewerProps) => {
@@ -58,11 +58,11 @@ export const DocSidebarItemView = (props: BaseSidebarViewerProps) => {
       endContent={
         <div onClick={(e) => e.stopPropagation()}>
           {/* Prevents the click event from bubbling up to the parent */}
-          <PageActionMenuView page={page}>
+          <PageMenu page={page}>
             <SidebarIconButton showOnGroupHoverOnly>
               <RiMoreLine />
             </SidebarIconButton>
-          </PageActionMenuView>
+          </PageMenu>
         </div>
       }
     >

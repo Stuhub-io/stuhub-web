@@ -5,12 +5,13 @@ import { useToast } from '@/hooks/useToast'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { Button, Skeleton, TextAreaProps } from '@nextui-org/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { RiUserSmileFill, RiImage2Fill } from 'react-icons/ri'
+import { RiUserSmileFill, RiImage2Fill, RiMoreLine } from 'react-icons/ri'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { dump } from '@/constants/common'
 import { cn } from '@/libs/utils'
+import { PageMenu } from '../../PageMenu'
 
 export interface PageTitleProps {
   pageID: string
@@ -105,9 +106,10 @@ export const PageTitle = (props: PageTitleProps) => {
     <div className={cn('group', className)}>
       <div className="h-8 opacity-0 transition duration-200 group-hover:opacity-100">
         {!isPending && (
-          <div className="hidden gap-1 opacity-70 group-hover:flex">
+          <div className="flex gap-1 opacity-70">
             {!hasIcon && (
               <Button
+                className="hidden group-hover:flex"
                 startContent={<RiUserSmileFill size={16} />}
                 size="sm"
                 variant="light"
@@ -118,6 +120,7 @@ export const PageTitle = (props: PageTitleProps) => {
             )}
             {!hasCoverImg && (
               <Button
+                className="hidden group-hover:flex"
                 startContent={<RiImage2Fill size={16} />}
                 size="sm"
                 variant="light"
@@ -125,6 +128,23 @@ export const PageTitle = (props: PageTitleProps) => {
               >
                 Add cover
               </Button>
+            )}
+            {page && (
+              <PageMenu
+                placement="right-start"
+                page={page}
+                onSuccess={() => {
+                  queryClient.invalidateQueries({
+                    queryKey: QUERY_KEYS.GET_PAGE({
+                      pageID: page.id,
+                    }),
+                  })
+                }}
+              >
+                <Button size="sm" variant="light" isIconOnly className="hidden group-hover:flex">
+                  <RiMoreLine size={16} />
+                </Button>
+              </PageMenu>
             )}
           </div>
         )}

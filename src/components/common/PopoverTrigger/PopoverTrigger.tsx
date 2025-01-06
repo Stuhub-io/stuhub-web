@@ -1,10 +1,12 @@
 import callAllHandlers, { cn } from '@/libs/utils'
-import { Popover, PopoverContent, PopoverProps, PopoverTrigger } from '@nextui-org/react'
+import { PopoverProps } from '@nextui-org/react'
 import { Children, cloneElement, ReactElement, useState } from 'react'
+import { PopoverWithAnchor } from '../PopoverWithAnchor/PopoverWithAnchor'
 
 export const PopperContentTrigger = ({
   children,
   hasPadding,
+  placement = 'bottom',
   ...rest
 }: {
   children: React.ReactNode
@@ -13,10 +15,11 @@ export const PopperContentTrigger = ({
   if (Children.count(children) !== 2) throw Error('PopoverTrigger must have exactly 2 children')
   const trigger = Children.toArray(children)[0] as ReactElement
   const poper = Children.toArray(children)[1] as ReactElement
-  const [open, setIsOpen] = useState(false)
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>()
 
   const onClose = () => {
-    setIsOpen(false)
+    setAnchorEl(undefined)
   }
 
   const poperContent = cloneElement(poper, {
@@ -24,26 +27,29 @@ export const PopperContentTrigger = ({
     onClose: callAllHandlers(poper.props.onClose, onClose),
   })
 
+  const popoverTrigger = cloneElement(trigger, {
+    ...trigger.props,
+    onClick: callAllHandlers(trigger.props.onClick, (e: any) => {
+      setAnchorEl(e.currentTarget)
+    }),
+  })
+
   return (
-    <Popover
-      isOpen={open}
-      onOpenChange={setIsOpen}
-      placement="bottom"
-      {...rest}
+    <>
+    {popoverTrigger}
+    <PopoverWithAnchor
+      anchorEl={anchorEl}
+      onClose={onClose}
+      placement={placement}
       classNames={{
         content: cn({
           'p-0': !hasPadding,
         }),
       }}
+      {...rest}
     >
-      <PopoverTrigger>{trigger}</PopoverTrigger>
-      <PopoverContent
-        onClick={(e) => {
-          e.preventDefault()
-        }}
-      >
-        {poperContent}
-      </PopoverContent>
-    </Popover>
+      {poperContent}
+    </PopoverWithAnchor>
+    </>
   )
 }
