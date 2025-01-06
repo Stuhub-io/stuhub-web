@@ -14,7 +14,7 @@ import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const PageAssetCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected, onShareClick } =
+  const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected } =
     props
 
   const archiveStatus = useMutationState({
@@ -76,7 +76,7 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageActionMenu page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
+          <PageActionMenu page={page} onSuccess={onMutateSuccess}>
             <Button
               isIconOnly
               size="sm"

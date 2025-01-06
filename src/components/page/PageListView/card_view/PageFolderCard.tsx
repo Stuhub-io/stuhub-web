@@ -12,7 +12,7 @@ import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const FolderCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, onShareClick } =
+  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected } =
     props
   const { handleUpload } = useAssetUploadContext()
   const { toast } = useToast()
@@ -83,7 +83,7 @@ export const FolderCard = (props: BaseCardViewProps) => {
             </Typography>
           </div>
           <div className="shrink-0" onDoubleClick={e => e.stopPropagation()}>
-            <PageActionMenu page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
+            <PageActionMenu page={page} onSuccess={onMutateSuccess}>
               <Button isIconOnly size="sm" variant="light" radius="full">
                 <RiMore2Line size={16} />
               </Button>

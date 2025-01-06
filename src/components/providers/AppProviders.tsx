@@ -8,6 +8,7 @@ import { CollapsePersistProvider } from './collapse'
 import { AssetUploaderContextProvider } from './asset_upload'
 import { InfoProvider } from './info'
 import { PermissionProvider } from './permissions'
+import { SharePageProvider } from './share'
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
@@ -16,9 +17,11 @@ export function AppProviders({ children }: PropsWithChildren) {
         <OrganizationProvider>
           <CollapsePersistProvider>
             <CreatePageProvider>
-              <SidebarProvider>
-                <AssetUploaderContextProvider>{children}</AssetUploaderContextProvider>
-              </SidebarProvider>
+              <SharePageProvider>
+                <SidebarProvider>
+                  <AssetUploaderContextProvider>{children}</AssetUploaderContextProvider>
+                </SidebarProvider>
+              </SharePageProvider>
             </CreatePageProvider>
           </CollapsePersistProvider>
         </OrganizationProvider>

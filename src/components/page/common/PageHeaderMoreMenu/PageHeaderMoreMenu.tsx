@@ -6,18 +6,17 @@ import { PageActionMenu } from '../../PageMenu'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { useParams } from 'next/navigation'
 import { OrganizationPageParams } from '@/constants/routes'
-import { SharePageModal, useSharePageModal } from '../SharePageModal'
+import { useSharePageContext } from '@/components/providers/share'
 
 export const PageHeaderMoreMenu = () => {
   const { pageID } = useParams<OrganizationPageParams>()
+
+  const { onOpenShareModal } = useSharePageContext()
 
   const { data: { data: page } = {}, isPending } = useFetchPage({
     allowFetch: Boolean(pageID),
     pageID,
   })
-  
-  const { isOpenShareModal, onOpenShareModal, onCloseShareModal, selectedSharePage } =
-    useSharePageModal()
 
   if (!pageID) {
     return null
@@ -49,11 +48,6 @@ export const PageHeaderMoreMenu = () => {
           </PageActionMenu>
         )}
       </div>
-      <SharePageModal
-        open={isOpenShareModal}
-        onClose={onCloseShareModal}
-        page={selectedSharePage}
-      />
     </>
   )
 }

@@ -13,24 +13,26 @@ import { useArchivePage } from '@/mutation/mutator/page/useArchivePage'
 import { useMovePage } from '@/mutation/mutator/page/useMovePage'
 import { PageMoreMenuPopoverContent } from './PageMenuPopover'
 import { PropsWithChildren } from 'react'
+import { useSharePageContext } from '@/components/providers/share'
 
 export interface BasePageMenuProps extends PropsWithChildren {
   page: Page
   onSuccess?: () => void
-  onShareClick?: (page: Page) => void
   anchorEl?: HTMLElement
   onClose?: () => void
   placement?: PopoverProps['placement']
 }
 
 export const PageActionMenu = (props: BasePageMenuProps) => {
-  const {children ,page, onSuccess, onShareClick, placement= 'bottom'} = props
+  const {children ,page, onSuccess, placement= 'bottom'} = props
 
   const queryClient = useQueryClient()
 
   const { isOpen: isOpenRename, onOpen: onOpenRename, onClose: onCloseRename } = useDisclosure()
 
   const { isOpen: isOpenMove, onClose: onCloseMove, onOpen: onOpenMove } = useDisclosure()
+
+  const { onOpenShareModal } = useSharePageContext()
 
   const { refreshOrgPages } = useSidebar()
   const { toast } = useToast()
@@ -82,7 +84,7 @@ export const PageActionMenu = (props: BasePageMenuProps) => {
   }
 
   const handleShare = () => {
-    onShareClick?.(page)
+    onOpenShareModal?.(page)
   }
 
   return (

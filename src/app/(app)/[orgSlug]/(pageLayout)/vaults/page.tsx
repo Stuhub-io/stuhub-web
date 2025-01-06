@@ -18,15 +18,11 @@ import { useNewPage } from '@/components/providers/newpage'
 import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { FolderViewToolbar } from '@/components/page/page_view/page_viewers/PageFolderViewer/Toolbar'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
-import { SharePageModal, useSharePageModal } from '@/components/page/common/SharePageModal'
 
 export default function RootFolderPage() {
   const { organization } = useOrganization()
   const { refreshOrgPages } = useSidebar()
   const router = useRouter()
-
-  const { selectedSharePage, onOpenShareModal, onCloseShareModal, isOpenShareModal } =
-    useSharePageModal()
 
   const [typeFilter, setTypeFilter] = useState<Selection>('all')
 
@@ -155,7 +151,6 @@ export default function RootFolderPage() {
                 onItemDoubleClick={handlePageClick}
                 selectedItemPkIDs={selectedPagePkIDs}
                 onSelectedPkIDsChanged={setSelectedPagePkIDs}
-                onShareClick={onOpenShareModal}
               />
             </div>
           )}
@@ -178,16 +173,10 @@ export default function RootFolderPage() {
               selectedItemPkIDs={selectedPagePkIDs}
               onSelectedPkIDsChanged={setSelectedPagePkIDs}
               emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal()} />}
-              onShareClick={onOpenShareModal}
             />
           </div>
         </div>
       </div>
-      <SharePageModal
-        page={selectedSharePage}
-        onClose={onCloseShareModal}
-        open={isOpenShareModal}
-      />
     </>
   )
 }
