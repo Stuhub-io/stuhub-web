@@ -9,6 +9,8 @@ import { useAuthContext } from '@/components/auth/AuthGuard'
 import { useToast } from '@/hooks/useToast'
 import { useUpdateUserInfo } from '@/mutation/mutator/useUpdateUserInfo'
 import { isSameObjects, pick } from '@/libs/utils'
+import { uploadService } from '@/api/uploader'
+import { excludeExtension } from '@/utils/file'
 
 const profileSchema = z.object({
   first_name: z.string().trim().min(1, 'This field is required!'),
@@ -32,31 +34,25 @@ const ProfileSetting = () => {
     resolver: zodResolver(profileSchema),
   })
 
-  // const { startUpload } = useUploadThing('profileImage')
-
   const handleSubmit = profileForm.handleSubmit(async (values) => {
     setIsSaving(true)
 
     let avatar = user?.avatar ?? ''
 
     if (file) {
-      // const data = await startUpload([file])
-      const data = await new Promise<{url: string}[]>((resolve) => {
-        resolve([{
-          url: 'https://example.com',
-        }] as const)
-      })
-
-      if (data === undefined) {
+      try {
+        const fileData = await uploadService.uploadFile({
+          file,
+          publicID: excludeExtension(file.name),
+        })
+        avatar = fileData.secure_url
+      } catch (e) {
         toast({
           variant: 'danger',
           title: 'Upload avatar fail!',
-          description: 'Something wrong with upload avatar. Please try again',
+          description: 'Something wrong! Please try again',
         })
-        setIsSaving(false)
-        return
       }
-      avatar = data[0].url
     }
 
     const payload = {

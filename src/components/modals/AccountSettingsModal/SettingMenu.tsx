@@ -10,7 +10,7 @@ interface SettingMenuProps {
 
 export const SettingMenu = (props: SettingMenuProps) => {
   return (
-    <div className="flex w-[250px] flex-col items-start gap-4 bg-content2 p-3">
+    <div className="flex w-[250px] flex-col items-start gap-2 bg-content2 p-3 rounded-l-large">
       <SettingCluster title="Account" settings={ACCOUNT_SETTINGS} {...props} />
       <SettingCluster title="Workplace" settings={WORKPLACE_SETTINGS} {...props} />
     </div>

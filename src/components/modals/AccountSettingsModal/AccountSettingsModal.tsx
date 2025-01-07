@@ -16,9 +16,18 @@ export const AccountSettingsModal = ({ isOpen, onClose }: AccountSettingsModalPr
   const [selectedSetting, setSelectedSetting] = useState<Setting>(ACCOUNT_SETTINGS[0])
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="5xl" hideCloseButton className="h-[800px]">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="5xl"
+      hideCloseButton
+      scrollBehavior="inside"
+      classNames={{
+        body: 'min-h-[calc(100vh-200px)]',
+      }}
+    >
       <ModalContent>
-        <ModalBody className="flex-row gap-0 p-0">
+        <ModalBody className="h-full flex-row gap-0 p-0">
           <SettingMenu {...{ selectedSetting, setSelectedSetting }} />
           <SettingDisplay title={selectedSetting.title}>
             <selectedSetting.content />
