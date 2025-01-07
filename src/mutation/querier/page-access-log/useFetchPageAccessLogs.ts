@@ -15,7 +15,7 @@ export const useFetchPageAccessLogs = (
   const { allowFetch = true } = args
   return useQuery({
     queryKey: QUERY_KEYS.GET_PAGE_ACCESS_LOGS,
-    queryFn: async () => pageAccessLogService.getLogs(),
+    queryFn: pageAccessLogService.getLogs.bind(pageAccessLogService),
     enabled: allowFetch,
     ...option,
   })

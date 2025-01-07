@@ -6,9 +6,12 @@ import { PageAccessLog } from '@/schema/page-access-log'
 
 class PageAccessLogService extends Client {
   public getLogs() {
-    return fetcher<BaseResponse<PageAccessLog[]>>(`${this.baseUrl}/v1/page-access-log-services`, {
-      headers: this.privateHeaders,
-    })
+    return fetcher<BaseResponse<PageAccessLog[]>>(
+      `${this.baseUrl}/v1/page-access-log-services/logs`,
+      {
+        headers: this.privateHeaders,
+      },
+    )
   }
 }
 
