@@ -7,8 +7,6 @@ export type BaseCardViewProps<T extends Record<string, any> = Record<string, any
     onDoubleClick?: (page: Page) => void
     className?: string
     isSelected?: boolean
-
-    onShareClick?: (page: Page) => void
     // onAddToFavoritesClick?: (page: Page) => void
 }
 

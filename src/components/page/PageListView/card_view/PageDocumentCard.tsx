@@ -5,13 +5,13 @@ import { cn } from '@/libs/utils'
 import Typography from '@/components/common/Typography'
 import { formatTimeToNow } from '@/utils/time'
 import { RiMore2Line } from 'react-icons/ri'
-import { PageActionMenu } from '../../PageMenu'
+import { PageMenu } from '../../PageMenu'
 import { VscodeDocumentIcon } from '@/components/icons/VsCodeDocumentIcon'
 import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
 
 export const PageDocumentCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, onShareClick } =
+  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected } =
     props
 
   const archiveStatus = useMutationState({
@@ -61,7 +61,7 @@ export const PageDocumentCard = (props: BaseCardViewProps) => {
             </div>
           </div>
         </div>
-        <div className="flex w-full items-center gap-2 pl-2 pt-2">
+        <div className="flex w-full items-center gap-2 pl-2 pt-2" onDoubleClick={e => e.stopPropagation()}>
           <div className="flex flex-1 flex-col overflow-hidden">
             <Typography level="p5" noWrap className="w-full">
               {page.name || 'Untitled'}
@@ -76,11 +76,11 @@ export const PageDocumentCard = (props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageActionMenu page={page} onSuccess={onMutateSuccess} onShareClick={onShareClick}>
+          <PageMenu page={page} onSuccess={onMutateSuccess}>
             <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0">
               <RiMore2Line size={16} />
             </Button>
-          </PageActionMenu>
+          </PageMenu>
         </div>
       </CardBody>
     </Card>

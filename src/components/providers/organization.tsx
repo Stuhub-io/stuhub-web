@@ -42,7 +42,6 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter()
 
   const isInWhiteList = checkInWhiteList(pathName)
-  console.log('isInWhiteList', pathName, WHITE_LIST_ROUTES)
 
   const {
     data: { data: internalJoinedOrgs } = {},
@@ -57,7 +56,9 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     allowFetch: !!orgSlug,
   })
 
-  const isLoading = (isPendingOrgDetail && orgSlug) || isPending
+  console.log('internalJoinedOrgs', orgDetail)
+
+  const isLoading = (isPendingOrgDetail && orgSlug) || (isPending && status === 'authenticated')
 
   const selectedOrg = useMemo(() => {
     // url do not contain org slug

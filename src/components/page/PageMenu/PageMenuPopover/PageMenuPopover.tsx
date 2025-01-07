@@ -1,10 +1,5 @@
 import { Listbox, ListboxItem } from '@nextui-org/react'
-import { Page, PageViewTypeEnum } from '@/schema/page'
-import { ROUTES } from '@/constants/routes'
-import { useOrganization } from '@/components/providers/organization'
-import useCopy from 'use-copy'
-import { BASE_URL } from '@/constants/envs'
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import {
   MainMenuKeys,
   MainMenuSections,
@@ -20,24 +15,16 @@ interface PageMoreMenuPopoverContentProps {
   onClose?: () => void
   onRename?: () => void
   onOpenMove?: () => void
-  page: Page
   onArchive?: () => void
   onShare?: () => void
+  onCopy?: () => void
+  onNewTab?: () => void
+  filterMenu?: (menu: MenuSection[]) => MenuSection[]
 }
 
-export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProps) => {
-  const { onClose, page, onRename, onOpenMove, onArchive, onShare } = props
-  const { organization } = useOrganization()
+export const PageMoreMenuPopoverContent = memo((props: PageMoreMenuPopoverContentProps) => {
+  const { onClose, onRename, onOpenMove, onArchive, onShare, onCopy, onNewTab, filterMenu } = props
   const { toast } = useToast()
-
-  const pageHref =
-    BASE_URL +
-    ROUTES.VAULT_PAGE({
-      orgSlug: organization?.slug ?? '',
-      pageID: page.id,
-    })
-
-  const [, copy] = useCopy(pageHref)
 
   const [menu, setMenu] = useState<MenuSection[]>(MainMenuSections)
 
@@ -49,16 +36,8 @@ export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProp
   }
 
   const filteredMenu = useMemo(() => {
-    return menu.map((item) => {
-      if (item.key === 'organize-menu') {
-        return {
-          ...item,
-          title: getOrgMenuSectionLabel(page),
-        } as MenuSection
-      }
-      return item
-    })
-  }, [menu, page])
+    return filterMenu ? filterMenu(menu) : menu
+  }, [filterMenu, menu])
 
   return (
     <>
@@ -66,7 +45,7 @@ export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProp
         onAction={(key) => {
           switch (key as MainMenuKeys) {
             case 'newtab':
-              window.open(pageHref)
+              onNewTab?.()
               handleClose?.()
               break
             case 'rename':
@@ -106,7 +85,7 @@ export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProp
               setMenu(MainMenuSections)
               break
             case 'Copy link':
-              copy()
+              onCopy?.()
               handleClose?.()
               break
             case 'share':
@@ -137,24 +116,18 @@ export const PageMoreMenuPopoverContent = (props: PageMoreMenuPopoverContentProp
         }}
       >
         {filteredMenu.map((item) => (
-          <ListboxItem key={item.key} startContent={item.icon} showDivider={item.bottomDivider} endContent={item.rightEl}>
+          <ListboxItem
+            key={item.key}
+            startContent={item.icon}
+            showDivider={item.bottomDivider}
+            endContent={item.rightEl}
+          >
             {item.title}
           </ListboxItem>
         ))}
       </Listbox>
     </>
   )
-}
+})
 
-const getOrgMenuSectionLabel = (page: Page) => {
-  switch (page.view_type) {
-    case PageViewTypeEnum.FOLDER:
-      return 'Organize Folder'
-    case PageViewTypeEnum.DOCUMENT:
-      return 'Organize Document'
-    case PageViewTypeEnum.ASSET: 
-      return 'Organize File'
-    default:
-      return 'Organize'
-  }
-}
+PageMoreMenuPopoverContent.displayName = "PageMoreMenuPopoverContent"

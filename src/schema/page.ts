@@ -26,6 +26,16 @@ export interface Page {
   asset?: Asset
   general_role?: PageRole
   author?: User
+  permissions?: PagePermissions
+}
+
+export interface PagePermissions {
+  can_edit: boolean
+  can_view: boolean
+  can_download: boolean
+  can_share: boolean
+  can_delete: boolean
+  can_move: boolean
 }
 
 export interface Asset {

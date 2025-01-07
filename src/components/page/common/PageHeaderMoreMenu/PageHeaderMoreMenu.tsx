@@ -2,22 +2,21 @@
 
 import { Button, Skeleton } from '@nextui-org/react'
 import { RiMore2Fill, RiShareFill, RiStarLine } from 'react-icons/ri'
-import { PageActionMenu } from '../../PageMenu'
+import { PageMenu } from '../../PageMenu'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { useParams } from 'next/navigation'
 import { OrganizationPageParams } from '@/constants/routes'
-import { SharePageModal, useSharePageModal } from '../SharePageModal'
+import { useSharePageContext } from '@/components/providers/share'
 
 export const PageHeaderMoreMenu = () => {
   const { pageID } = useParams<OrganizationPageParams>()
+
+  const { onOpenShareModal } = useSharePageContext()
 
   const { data: { data: page } = {}, isPending } = useFetchPage({
     allowFetch: Boolean(pageID),
     pageID,
   })
-  
-  const { isOpenShareModal, onOpenShareModal, onCloseShareModal, selectedSharePage } =
-    useSharePageModal()
 
   if (!pageID) {
     return null
@@ -42,18 +41,13 @@ export const PageHeaderMoreMenu = () => {
         </Button>
         {isPending && <Skeleton className=" h-6 w-6 rounded-md" />}
         {!isPending && page && (
-          <PageActionMenu page={page}>
+          <PageMenu page={page}>
             <Button isIconOnly size="sm" variant="flat">
               <RiMore2Fill size={20} />
             </Button>
-          </PageActionMenu>
+          </PageMenu>
         )}
       </div>
-      <SharePageModal
-        open={isOpenShareModal}
-        onClose={onCloseShareModal}
-        page={selectedSharePage}
-      />
     </>
   )
 }
