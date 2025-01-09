@@ -22,9 +22,10 @@ export const ROUTES = {
 
   // app
   HOME_PAGE: '/',
-  INVITE_PAGE: ({inviteID}: {inviteID: string}) => `/invite/${inviteID}`,
+  INVITE_PAGE: ({ inviteID }: { inviteID: string }) => `/invite/${inviteID}`,
   AUTH_EMAIL: '/auth-email',
   ORGANIZATION: ({ orgSlug }: OrganizationParams) => `/${orgSlug}`,
   VAULT_PAGE: ({ orgSlug, pageID }: OrganizationPageParams) => `/${orgSlug}/${pageID}`,
   ROOT_VAULTS: ({ orgSlug }: OrganizationParams) => `/${orgSlug}/vaults`,
+  RECENT_PAGE: ({ orgSlug }: OrganizationParams) => `/${orgSlug}/recent`,
 }

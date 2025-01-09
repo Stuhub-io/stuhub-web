@@ -13,7 +13,7 @@ export const QUERY_KEYS = {
   GET_ORG_INVITE_BY_ID: ({ id }: GetOrgInviteByIdParams) => ['GET_ORG_INVITE_BY_ID', id],
 
   GET_ORG_PAGES: (query: GetPagesQuery) => [
-    PAGE_KEYS.GET ,
+    PAGE_KEYS.GET,
     query.page,
     query.size,
     query.is_archived,
@@ -21,10 +21,21 @@ export const QUERY_KEYS = {
     query.parent_page_pkid || -1,
     query.all,
     JSON.stringify(query.view_types),
-    ],
+  ],
   GET_PAGE: ({ pageID }: { pageID: string }) => [PAGE_KEYS.GET, pageID],
-  GET_PAGE_PERMISSION_ROLES: ({ pagePkID }: { pagePkID: number }) => ['GET_PAGE_PERMISSION_ROLES', pagePkID],
-  SEARCH_USERS: (params: SearchUserBody) => ['SEARCH_USERS', params.page, params.size, params.search, params.org_pkid, JSON.stringify(params.emails)],
+  GET_PAGE_PERMISSION_ROLES: ({ pagePkID }: { pagePkID: number }) => [
+    'GET_PAGE_PERMISSION_ROLES',
+    pagePkID,
+  ],
+  SEARCH_USERS: (params: SearchUserBody) => [
+    'SEARCH_USERS',
+    params.page,
+    params.size,
+    params.search,
+    params.org_pkid,
+    JSON.stringify(params.emails),
+  ],
+  GET_PAGE_ACCESS_LOGS: ['GET_PAGE_ACCESS_LOGS'],
 }
 
 export const MUTATION_KEYS = {
@@ -46,10 +57,9 @@ export const MUTATION_KEYS = {
   ],
   UPDATE_PAGE: ({ id }: { id: string }) => ['UPDATE_PAGE', id],
   MOVE_PAGE: ({ id }: { id: string }) => ['MOVE_PAGE', id],
-  UPDATE_PAGE_CONTENT : ({ id }: { id: string }) => ['UPDATE_PAGE_CONTENT', id],
+  UPDATE_PAGE_CONTENT: ({ id }: { id: string }) => ['UPDATE_PAGE_CONTENT', id],
   ARCHIVE_PAGE: ({ id }: { id: string }) => ['ARCHIVE_PAGE', id],
-  CREATE_ASSET: 
-  ({
+  CREATE_ASSET: ({
     parent_page_pkid,
     org_pkid,
     tempId,
@@ -60,9 +70,18 @@ export const MUTATION_KEYS = {
     tempId,
   ],
   // page roles
-  UPDATE_PAGE_GENERAL_ACCESS: ({ pagePkID }: { pagePkID: number }) => ['UPDATE_PAGE_GENERAL_ACCESS', pagePkID],
+  UPDATE_PAGE_GENERAL_ACCESS: ({ pagePkID }: { pagePkID: number }) => [
+    'UPDATE_PAGE_GENERAL_ACCESS',
+    pagePkID,
+  ],
 
   ADD_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['ADD_USER_PAGE_ROLE', pagePkID],
-  UPDATE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['UPDATE_USER_PAGE_ROLE', pagePkID],
-  REMOVE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['REMOVE_USER_PAGE_ROLE', pagePkID],
+  UPDATE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => [
+    'UPDATE_USER_PAGE_ROLE',
+    pagePkID,
+  ],
+  REMOVE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => [
+    'REMOVE_USER_PAGE_ROLE',
+    pagePkID,
+  ],
 }
