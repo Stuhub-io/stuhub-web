@@ -6,6 +6,7 @@ export type CreatingPageItemView = FC<{ data: ICreatingDoc; level: number }>
 export type ActiveCreatingPageItem = FC<{ level?: number; parentPagePkID?: number }>
 
 export interface BaseSidebarViewerProps {
+  parentPage?: Page
   page: Page
   level?: number
   CreatingPageItemView?: CreatingPageItemView

@@ -1,8 +1,10 @@
+import { ViewType } from "@/hooks/useViewType"
 import { Page } from "@/schema/page"
 import { Dispatch, ReactNode, SetStateAction } from "react"
 
 
 export interface BaseListViewProps {
+    viewType?: ViewType
     selectedItemPkIDs?: number[]
     items?: Page[]
     loading?: boolean

@@ -3,6 +3,7 @@ import {
   PageFileTypeSelector,
   PageViewTypeOptions,
 } from '@/components/page/common/PageViewTypeDropdown'
+import { ViewType } from '@/hooks/useViewType'
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Selection } from '@nextui-org/react'
 import { ButtonGroup, Button } from '@nextui-org/react'
 import {
@@ -24,6 +25,8 @@ interface Props {
   onCreateFolderClick: () => void
   onUploadClick: () => void
   onCreateDocumentClick?: () => void
+  viewType?: ViewType
+  onViewTypeChange?: (viewType: ViewType) => void
 }
 
 export const FolderViewToolbar = (props: Props) => {
@@ -34,6 +37,8 @@ export const FolderViewToolbar = (props: Props) => {
     onCreateFolderClick,
     onUploadClick,
     onCreateDocumentClick,
+    viewType,
+   onViewTypeChange 
   } = props
   return (
     <div className="mt-4 flex flex-col-reverse justify-between gap-y-4 md:flex-row">
@@ -124,10 +129,10 @@ export const FolderViewToolbar = (props: Props) => {
         )}
 
         <ButtonGroup>
-          <Button isIconOnly size="sm">
+          <Button isIconOnly size="sm" onClick={() => onViewTypeChange?.('grid')} color={viewType === 'grid' ? 'primary' : 'default'}>
             <RiTableLine size={16} />
           </Button>
-          <Button isIconOnly size="sm" color="primary">
+          <Button isIconOnly size="sm" onClick={() => onViewTypeChange?.('list')} color={viewType === 'list' ? 'primary' : 'default'}>
             <RiListCheck size={16} />
           </Button>
         </ButtonGroup>
