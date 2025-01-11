@@ -25,7 +25,6 @@ export interface BasePageMenuProps extends PropsWithChildren {
   page: Page
   parentPage?: Page
   onSuccess?: () => void
-  anchorEl?: HTMLElement
   onClose?: () => void
   placement?: PopoverProps['placement']
   isAtRoot?: boolean
@@ -106,39 +105,45 @@ export const PageMenu = (props: BasePageMenuProps) => {
     onOpenShareModal?.(page)
   }
 
-  const menuFilter = useCallback((menuItems: MenuSection[]) => {
-    return menuItems
-      // Modify UI
-      .map((item) => {
-        switch (item.key) {
-          case "organize-menu":
-            return {
-              ...item,
-              title: getOrgMenuSectionLabel(page),
-            } as MenuSection
-          default:
-            return item
-        }
-      })
-      // Filter out section
-      .filter((item) => {
-        switch (item.key) {
-          case 'download':
-            return permissionChecker.page.canDownload(page)
-          case 'share-menu':
-            return permissionChecker.page.canShare(page)
-          case 'rename':
-            return permissionChecker.page.canEdit(page)
-          case 'organize-menu':
-            return currentUserRole && permissionChecker.page.canMove(currentUserRole, page)
-          case 'trash':
-            return isAtRoot ? permissionChecker.page.canDelete(page): (parentPage && permissionChecker.page.canDelete(page, parentPage))
-          default:
-            return true
-        }
-      }
+  const menuFilter = useCallback(
+    (menuItems: MenuSection[]) => {
+      return (
+        menuItems
+          // Modify UI
+          .map((item) => {
+            switch (item.key) {
+              case 'organize-menu':
+                return {
+                  ...item,
+                  title: getOrgMenuSectionLabel(page),
+                } as MenuSection
+              default:
+                return item
+            }
+          })
+          // Filter out section
+          .filter((item) => {
+            switch (item.key) {
+              case 'download':
+                return permissionChecker.page.canDownload(page)
+              case 'share-menu':
+                return permissionChecker.page.canShare(page)
+              case 'rename':
+                return permissionChecker.page.canEdit(page)
+              case 'organize-menu':
+                return currentUserRole && permissionChecker.page.canMove(currentUserRole, page)
+              case 'trash':
+                return isAtRoot
+                  ? permissionChecker.page.canDelete(page)
+                  : parentPage && permissionChecker.page.canDelete(page, parentPage)
+              default:
+                return true
+            }
+          })
       )
-  }, [currentUserRole, isAtRoot, page, parentPage, permissionChecker.page])
+    },
+    [currentUserRole, isAtRoot, page, parentPage, permissionChecker.page],
+  )
 
   return (
     <WrapperRegistry

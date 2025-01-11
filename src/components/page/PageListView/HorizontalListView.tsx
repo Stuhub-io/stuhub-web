@@ -4,6 +4,7 @@ import { memo, useMemo } from 'react'
 import {
   Avatar,
   Button,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -19,6 +20,8 @@ import { RiMore2Fill } from 'react-icons/ri'
 import { PageMenu } from '../PageMenu'
 import { PageIconPreview } from './PageIconPreview'
 import dayjs from 'dayjs'
+import { formatReadableFileSize } from '@/utils/file'
+import { PageQuickActionMenu } from '../PageMenu/QuickActionMenuList'
 
 type ColDef = {
   key: string
@@ -38,6 +41,7 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
     selectedItemPkIDs,
     onSelectedPkIDsChanged,
     emptyState,
+    parentPage,
   } = props
 
   const { user } = useAuthContext()
@@ -62,7 +66,7 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
           <div className="flex items-center gap-3">
             <PageIconPreview page={page} />
             <Typography level="p5" noWrap className="max-w-[400px]">
-              {page.name}
+              {page.name || 'Untitled'}
             </Typography>
           </div>
         ),
@@ -71,7 +75,7 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
       {
         key: 'author',
         headerTitle: 'Owner',
-        width: '300px',
+        width: '30%',
         renderCell: ({ page }) => {
           const isMe = page.author?.pkid === user?.pkid
           return (
@@ -80,8 +84,9 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
                 src={page.author?.avatar}
                 fallback={user?.first_name?.charAt(0) || user?.last_name?.charAt(0)}
                 size="sm"
+                className="shrink-0"
               />
-              <Typography level="p5" color="textTertiary">
+              <Typography level="p5" color="textTertiary" noWrap>
                 {isMe
                   ? 'Me'
                   : getUserFullName({
@@ -96,26 +101,51 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
       },
       {
         key: 'updated_at',
-        headerTitle: 'Last Modified',
-        width: '30%',
+        headerTitle: 'Last modified',
+        width: '20%',
         renderCell: ({ page }) => (
           <div>
-            <Typography level="p5" color="textTertiary">
+            <Typography level="p5" color="textTertiary" noWrap>
               {dayjs(page.updated_at).format('MMM D, YYYY')}
             </Typography>
           </div>
         ),
       },
       {
+        key: 'size',
+        headerTitle: 'File size',
+        width: '20%',
+        renderCell: ({ page }) => {
+          const show = Boolean(page.asset?.size)
+          if (!show) return null
+          return (
+            <div className="flex">
+              <Typography level="p5" color="textTertiary" noWrap>
+                {formatReadableFileSize(page.asset?.size ?? 0)}
+              </Typography>
+            </div>
+          )
+        },
+      },
+      {
+        key: 'quick_actions',
+        headerTitle: '',
+        width: '130px',
+        renderCell: ({ page }) => (
+          <PageQuickActionMenu page={page} onSuccess={onItemMutateSuccess} />
+        ),
+      },
+      {
         key: 'action',
         headerTitle: '',
+        width: '100px',
         renderCell({ page }) {
           return (
             <div
               className="flex items-center justify-end gap-2"
               onDoubleClick={(e) => e.stopPropagation()}
             >
-              <PageMenu page={page} onSuccess={onItemMutateSuccess}>
+              <PageMenu page={page} onSuccess={onItemMutateSuccess} parentPage={parentPage}>
                 <Button isIconOnly radius="full" variant="light">
                   <RiMore2Fill size={16} />
                 </Button>
@@ -125,10 +155,29 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
         },
       },
     ] as ColDef[]
-  }, [onItemMutateSuccess, user])
+  }, [onItemMutateSuccess, parentPage, user?.first_name, user?.last_name, user?.pkid])
 
   if (!loading && items?.length === 0) {
     return emptyState
+  }
+
+  if (loading) {
+    return (
+      <Table>
+        <TableHeader>
+          {colsDef.map((colDef) => (
+            <TableColumn key={colDef.key}>{colDef.headerTitle}</TableColumn>
+          ))}
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell colSpan={colsDef.length}>
+              <Skeleton className="h-[30px] w-full" />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    )
   }
 
   return (
@@ -152,8 +201,11 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
                 <TableCell key={colDef.key} width={colDef.width}>
                   {colDef.renderCell({ page: item, value, colDef }) ||
                     colDef.valueGetter?.({ page: item }) ||
-                    value ||
-                    '-'}
+                    value || (
+                      <Typography level="p5" color="textTertiary">
+                        -
+                      </Typography>
+                    )}
                 </TableCell>
               )
             })}
@@ -165,12 +217,3 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
 })
 
 HorizontalListView.displayName = 'HorizontalListView'
-
-// <PageCardView
-//   key={item.id}
-//   page={item}
-//   isSelected={selectedItemPkIDs?.includes(item.pkid)}
-//   onClick={handleItemClick}
-//   onMutateSuccess={onItemMutateSuccess}
-//   onDoubleClick={onItemDoubleClick}
-// />

@@ -1,3 +1,7 @@
+'use client'
+
+import { useAuthContext } from '@/components/auth/AuthGuard'
+import { ProfileBadge } from '@/components/common/ProfileBadge'
 import { ACCOUNT_SETTINGS, WORKPLACE_SETTINGS } from '@/constants/settings'
 import { cn } from '@/libs/utils'
 import { Setting } from '@/schema/setting'
@@ -9,8 +13,19 @@ interface SettingMenuProps {
 }
 
 export const SettingMenu = (props: SettingMenuProps) => {
+  const { user } = useAuthContext()
   return (
-    <div className="flex w-[250px] flex-col items-start gap-2 bg-content2 p-3 rounded-l-large">
+    <div className="flex w-[250px] flex-col items-start gap-2 rounded-l-large bg-content2 p-3">
+      <ProfileBadge
+        avatar={user?.avatar}
+        firstName={user?.first_name}
+        lastName={user?.last_name}
+        description={user?.email}
+        size="sm"
+        variant="light"
+        disableRipple
+        className="!pointer-events-none"
+      />
       <SettingCluster title="Account" settings={ACCOUNT_SETTINGS} {...props} />
       <SettingCluster title="Workplace" settings={WORKPLACE_SETTINGS} {...props} />
     </div>

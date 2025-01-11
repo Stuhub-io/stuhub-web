@@ -24,6 +24,7 @@ export const Permissions = {
       return page.permissions?.can_edit
     },
     canDelete: (page: Page, parentPage?: Page) => {
+      console.log(parentPage?.permissions)
       //FIXME check page belong to org
       if (!parentPage) {
         return page.permissions?.can_delete
