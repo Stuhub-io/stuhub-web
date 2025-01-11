@@ -27,6 +27,7 @@ export interface Page {
   general_role?: PageRole
   author?: User
   permissions?: PagePermissions
+  parent_page?: Page
 }
 
 export interface PagePermissions {

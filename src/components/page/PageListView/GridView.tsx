@@ -8,6 +8,7 @@ import { memo } from 'react'
 export const GridView = memo((props: BaseListViewProps) => {
   const {
     items,
+    parentPage,
     loading,
     onItemMutateSuccess,
     onItemDoubleClick,
@@ -39,14 +40,15 @@ export const GridView = memo((props: BaseListViewProps) => {
           !showSidebar,
       })}
     >
-      {loading &&
-        null
+      {
+        loading && null
         // Skeletons
       }
 
       {!loading &&
         items?.map((item) => (
           <PageCardView
+            parentPage={parentPage}
             key={item.id}
             page={item}
             isSelected={selectedItemPkIDs?.includes(item.pkid)}

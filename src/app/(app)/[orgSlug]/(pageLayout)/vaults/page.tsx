@@ -54,22 +54,29 @@ export default function RootFolderPage() {
       return {
         folders: undefined,
         filesAndDocs: undefined,
+        size: 0,
       }
     return childPages?.reduce(
       (acc, child) => {
-        if (child.view_type === PageViewTypeEnum.FOLDER) {
-          acc.folders.push(child)
-        } else {
+        if (viewType === 'list') {
           acc.filesAndDocs.push(child)
+        } else {
+          if (child.view_type === PageViewTypeEnum.FOLDER) {
+            acc.folders.push(child)
+          } else {
+            acc.filesAndDocs.push(child)
+          }
         }
+        acc.size += child.asset?.size ?? 0
         return acc
       },
       {
         folders: [] as Page[],
         filesAndDocs: [] as Page[],
+        size: 0,
       },
     )
-  }, [childPages])
+  }, [childPages, viewType])
 
   const handlePageClick = (folder: Page) => {
     router.push(

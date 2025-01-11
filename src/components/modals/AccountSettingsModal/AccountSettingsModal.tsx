@@ -23,7 +23,7 @@ export const AccountSettingsModal = ({ isOpen, onClose }: AccountSettingsModalPr
       hideCloseButton
       scrollBehavior="inside"
       classNames={{
-        body: 'min-h-[calc(100vh-200px)]',
+        body: 'min-h-[calc(100vh-300px)]',
       }}
     >
       <ModalContent>

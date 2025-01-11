@@ -60,10 +60,14 @@ export const PageFolderViewer: PageViewer = (props) => {
       }
     return childPages?.reduce(
       (acc, child) => {
-        if (child.view_type === PageViewTypeEnum.FOLDER) {
-          acc.folders.push(child)
-        } else {
+        if (viewType === 'list') {
           acc.filesAndDocs.push(child)
+        } else {
+          if (child.view_type === PageViewTypeEnum.FOLDER) {
+            acc.folders.push(child)
+          } else {
+            acc.filesAndDocs.push(child)
+          }
         }
         acc.size += child.asset?.size ?? 0
         return acc
@@ -74,7 +78,7 @@ export const PageFolderViewer: PageViewer = (props) => {
         size: 0,
       },
     )
-  }, [childPages])
+  }, [childPages, viewType])
 
   const handlePageClick = (folder: Page) => {
     console.log('folder', organization?.slug, folder)
@@ -109,6 +113,8 @@ export const PageFolderViewer: PageViewer = (props) => {
   const { getInputProps, getRootProps, isDragActive } = useDropzone({
     onDrop: handleDropFile,
   })
+
+  console.log({page})
 
   return (
     <>
@@ -156,6 +162,7 @@ export const PageFolderViewer: PageViewer = (props) => {
               <PageListView
                 viewType={viewType}
                 items={folders}
+                parentPage={page?.parent_page}
                 onItemMutateSuccess={refetch}
                 selectedItemPkIDs={selectedPagePkIDs}
                 onSelectedPkIDsChanged={setSelectedPagePkIDs}
@@ -176,6 +183,7 @@ export const PageFolderViewer: PageViewer = (props) => {
               Files and Documents {size ? `(${formatReadableFileSize(size)})` : ''}
             </Typography>
             <PageListView
+              parentPage={page?.parent_page}
               viewType={viewType}
               emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal(page)} />}
               selectedItemPkIDs={selectedPagePkIDs}
