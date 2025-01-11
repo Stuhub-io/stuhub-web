@@ -10,9 +10,10 @@ import { useAssetUploadContext } from '@/components/providers/asset_upload'
 import { useToast } from '@/hooks/useToast'
 import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
+import { memo } from 'react'
 
-export const FolderCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected } =
+export const FolderCard = memo((props: BaseCardViewProps) => {
+  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, parentPage } =
     props
   const { handleUpload } = useAssetUploadContext()
   const { toast } = useToast()
@@ -83,7 +84,7 @@ export const FolderCard = (props: BaseCardViewProps) => {
             </Typography>
           </div>
           <div className="shrink-0" onDoubleClick={e => e.stopPropagation()}>
-            <PageMenu page={page} onSuccess={onMutateSuccess}>
+            <PageMenu page={page} onSuccess={onMutateSuccess} parentPage={parentPage} isAtRoot={!parentPage}>
               <Button isIconOnly size="sm" variant="light" radius="full">
                 <RiMore2Line size={16} />
               </Button>
@@ -93,4 +94,7 @@ export const FolderCard = (props: BaseCardViewProps) => {
       </CardBody>
     </Card>
   )
-}
+})
+
+
+FolderCard.displayName = 'FolderCard'

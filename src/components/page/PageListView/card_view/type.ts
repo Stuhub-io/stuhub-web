@@ -8,5 +8,6 @@ export type BaseCardViewProps<T extends Record<string, any> = Record<string, any
     className?: string
     isSelected?: boolean
     // onAddToFavoritesClick?: (page: Page) => void
+    parentPage?: Page
 }
 

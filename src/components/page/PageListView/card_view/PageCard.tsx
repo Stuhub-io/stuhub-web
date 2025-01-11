@@ -1,5 +1,5 @@
 import { PageViewType, PageViewTypeEnum } from "@/schema/page"
-import { FC } from "react"
+import { FC, useMemo } from "react"
 import { BaseCardViewProps } from "./type"
 import { FolderCard } from "./PageFolderCard"
 import { PageAssetCard } from "./PageAssetCard"
@@ -25,7 +25,7 @@ const views: {
 ]
 
 export const PageCardView = (props: BaseCardViewProps) => {
-    const Component = views.find((view) => view.viewType === props.page?.view_type)?.Component
+    const Component = useMemo(() => views.find((view) => view.viewType === props.page?.view_type)?.Component, [props.page?.view_type])
     if (!Component) {
         return null
     }

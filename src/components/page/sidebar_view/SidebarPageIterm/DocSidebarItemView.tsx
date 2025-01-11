@@ -13,6 +13,7 @@ export const DocSidebarItemView = (props: BaseSidebarViewerProps) => {
   const {
     page,
     level = 0,
+    parentPage
   } = props
   const router = useRouter()
   
@@ -58,7 +59,7 @@ export const DocSidebarItemView = (props: BaseSidebarViewerProps) => {
       endContent={
         <div onClick={(e) => e.stopPropagation()}>
           {/* Prevents the click event from bubbling up to the parent */}
-          <PageMenu page={page}>
+          <PageMenu page={page} parentPage={parentPage} isAtRoot={!parentPage}>
             <SidebarIconButton showOnGroupHoverOnly>
               <RiMoreLine />
             </SidebarIconButton>

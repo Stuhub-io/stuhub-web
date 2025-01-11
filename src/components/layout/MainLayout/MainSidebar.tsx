@@ -8,14 +8,17 @@ import { SidebarOrgSelect } from './SidebarOrgSelect'
 export const MainSideBar = () => {
   return (
     <SideBar
-      headerSection={<SidebarFooter />}
+      headerSection={
+          <SidebarOrgSelect />
+
+      }
       bodySection={
         <>
-          <SidebarOrgSelect />
           <SidebarUploadingSection />
           <SidebarPageSectionView />
         </>
       }
+      footerSection={<SidebarFooter />}
       toolSection={<SidebarToolItems />}
     />
   )

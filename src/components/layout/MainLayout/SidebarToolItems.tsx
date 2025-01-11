@@ -1,5 +1,6 @@
 import { Listbox, ListboxItem } from '@nextui-org/react'
 import { AiFillHome, AiFillMail, AiFillMoon, AiFillSetting, AiFillSun } from 'react-icons/ai'
+import { IoTime } from 'react-icons/io5'
 import { useMemo } from 'react'
 import { ROUTES } from '@/constants/routes'
 import { useOrganization } from '@/components/providers/organization'
@@ -14,7 +15,6 @@ interface IToolItem {
   rightEl?: JSX.Element
 }
 
-
 export const SidebarToolItems = () => {
   const { activeTheme, setTheme } = useTheme()
   const { organization } = useOrganization()
@@ -24,6 +24,11 @@ export const SidebarToolItems = () => {
         title: 'Home',
         iconLeft: <AiFillHome />,
         href: ROUTES.ORGANIZATION({ orgSlug: organization?.slug ?? '' }),
+      },
+      {
+        title: 'Recent',
+        iconLeft: <IoTime />,
+        href: ROUTES.RECENT_PAGE({ orgSlug: organization?.slug ?? '' }),
       },
       {
         title: 'Shared With Me',

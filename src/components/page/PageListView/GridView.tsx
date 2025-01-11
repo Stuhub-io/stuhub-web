@@ -3,8 +3,9 @@ import { PageCardView } from './card_view/PageCard'
 import { BaseListViewProps } from './type'
 import { cn } from '@/libs/utils'
 import { Page } from '@/schema/page'
+import { memo } from 'react'
 
-export const GridView = (props: BaseListViewProps) => {
+export const GridView = memo((props: BaseListViewProps) => {
   const {
     items,
     loading,
@@ -56,4 +57,6 @@ export const GridView = (props: BaseListViewProps) => {
         ))}
     </div>
   )
-}
+})
+
+GridView.displayName = 'GridView'

@@ -12,10 +12,10 @@ import {
 } from '@/utils/file'
 import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
+import { memo } from 'react'
 
-export const PageAssetCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected } =
-    props
+export const PageAssetCard = memo((props: BaseCardViewProps) => {
+  const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected, parentPage } = props
 
   const archiveStatus = useMutationState({
     filters: {
@@ -59,7 +59,10 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
         <div className="relative w-full overflow-hidden pb-[45%]">
           <div className="absolute inset-0 h-full w-full">{getAssetPreviewContent(page.asset)}</div>
         </div>
-        <div className="flex w-full items-center gap-2 pl-2 pt-2" onDoubleClick={(e) => e.stopPropagation()}>
+        <div
+          className="flex w-full items-center gap-2 pl-2 pt-2"
+          onDoubleClick={(e) => e.stopPropagation()}
+        >
           <div className="flex flex-1 flex-col overflow-hidden">
             <Typography level="p5" noWrap className="w-full">
               {page.name || 'Untitled'}
@@ -76,14 +79,13 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageMenu page={page} onSuccess={onMutateSuccess}>
-            <Button
-              isIconOnly
-              size="sm"
-              variant="light"
-              radius="full"
-              className="shrink-0"
-            >
+          <PageMenu
+            page={page}
+            onSuccess={onMutateSuccess}
+            parentPage={parentPage}
+            isAtRoot={!parentPage}
+          >
+            <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0">
               <RiMore2Line size={16} />
             </Button>
           </PageMenu>
@@ -91,9 +93,12 @@ export const PageAssetCard = (props: BaseCardViewProps) => {
       </CardBody>
     </Card>
   )
-}
+})
 
-export const getAssetPreviewContent = (asset: Asset) => {
+export const getAssetPreviewContent = (asset: Asset, style?: {
+  size?: number
+  className?: string
+}) => {
   const Icon = getIconByExtension(asset.extension)
   if (isImageExtensionSupported(asset.extension)) {
     return (
@@ -109,8 +114,10 @@ export const getAssetPreviewContent = (asset: Asset) => {
   }
 
   return (
-    <div className="flex h-full w-full items-center justify-center rounded-small bg-background">
-      <Icon size={38} width={38} height={38} />
+    <div className={cn("flex h-full w-full items-center justify-center rounded-small bg-background", style?.className)}>
+      <Icon size={style?.size ?? 38} width={style?.size ?? 38} height={style?.size ?? 38} />
     </div>
   )
 }
+
+PageAssetCard.displayName = 'PageAssetCard'

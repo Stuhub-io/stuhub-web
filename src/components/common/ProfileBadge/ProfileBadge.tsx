@@ -79,7 +79,7 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
           classNames={{
             base: 'uppercase',
           }}
-          fallback={`${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`}
+          fallback={firstName?.[0] || lastName?.[0] || description?.[0]}
           className="shrink-0"
           size={size === 'lg' ? 'md' : 'sm'}
         />

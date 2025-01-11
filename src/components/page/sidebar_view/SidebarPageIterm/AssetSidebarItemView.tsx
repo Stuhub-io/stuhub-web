@@ -10,7 +10,7 @@ import { PageMenu } from '../../PageMenu'
 import { getIconByExtension } from '@/utils/file'
 
 export const AssetSidebarItemView = (props: BaseSidebarViewerProps) => {
-  const { page, level = 0 } = props
+  const { page, level = 0, parentPage } = props
   const router = useRouter()
 
   const { organization } = useOrganization()
@@ -59,7 +59,7 @@ export const AssetSidebarItemView = (props: BaseSidebarViewerProps) => {
       endContent={
         <div onClick={(e) => e.stopPropagation()}>
           {/* Prevents the click event from bubbling up to the parent */}
-          <PageMenu page={page}>
+          <PageMenu page={page} parentPage={parentPage} isAtRoot={!parentPage}>
             <SidebarIconButton showOnGroupHoverOnly>
               <RiMoreLine />
             </SidebarIconButton>

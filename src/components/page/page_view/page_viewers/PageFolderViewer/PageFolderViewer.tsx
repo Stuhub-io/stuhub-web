@@ -17,6 +17,7 @@ import { FolderViewToolbar } from './Toolbar'
 import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { formatReadableFileSize } from '@/utils/file'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
+import { useViewType } from '@/hooks/useViewType'
 
 export const PageFolderViewer: PageViewer = (props) => {
   const { page, onAddCoverImage, hasCoverImage } = props
@@ -25,6 +26,8 @@ export const PageFolderViewer: PageViewer = (props) => {
   const router = useRouter()
 
   const [typeFilter, setTypeFilter] = useState<Selection>('all')
+
+  const { viewType, setViewType } = useViewType()
 
   const { onOpenUploadModal, handleUpload } = useAssetUploadContext()
 
@@ -125,6 +128,8 @@ export const PageFolderViewer: PageViewer = (props) => {
           />
         </div>
         <FolderViewToolbar
+          viewType={viewType}
+          onViewTypeChange={setViewType}
           typeFilter={typeFilter}
           onCreateDocumentClick={() => {
             onCreateDocument(() => {
@@ -149,6 +154,7 @@ export const PageFolderViewer: PageViewer = (props) => {
                 Folders
               </Typography>
               <PageListView
+                viewType={viewType}
                 items={folders}
                 onItemMutateSuccess={refetch}
                 selectedItemPkIDs={selectedPagePkIDs}
@@ -170,6 +176,7 @@ export const PageFolderViewer: PageViewer = (props) => {
               Files and Documents {size ? `(${formatReadableFileSize(size)})` : ''}
             </Typography>
             <PageListView
+              viewType={viewType}
               emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal(page)} />}
               selectedItemPkIDs={selectedPagePkIDs}
               items={filesAndDocs}

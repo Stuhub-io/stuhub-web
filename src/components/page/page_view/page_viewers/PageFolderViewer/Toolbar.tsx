@@ -3,6 +3,7 @@ import {
   PageFileTypeSelector,
   PageViewTypeOptions,
 } from '@/components/page/common/PageViewTypeDropdown'
+import { ViewType } from '@/hooks/useViewType'
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Selection } from '@nextui-org/react'
 import { ButtonGroup, Button } from '@nextui-org/react'
 import {
@@ -18,20 +19,26 @@ import {
 } from 'react-icons/ri'
 
 interface Props {
+  isViewOnly?: boolean
   typeFilter: Selection
   onTypeFilterChange: (type: Selection) => void
   onCreateFolderClick: () => void
   onUploadClick: () => void
   onCreateDocumentClick?: () => void
+  viewType?: ViewType
+  onViewTypeChange?: (viewType: ViewType) => void
 }
 
 export const FolderViewToolbar = (props: Props) => {
   const {
+    isViewOnly,
     typeFilter,
     onTypeFilterChange,
     onCreateFolderClick,
     onUploadClick,
     onCreateDocumentClick,
+    viewType,
+   onViewTypeChange 
   } = props
   return (
     <div className="mt-4 flex flex-col-reverse justify-between gap-y-4 md:flex-row">
@@ -78,46 +85,54 @@ export const FolderViewToolbar = (props: Props) => {
           Modified
         </Button>
       </div>
+
       <div className="flex items-center gap-3">
-        <Dropdown>
-          <DropdownTrigger>
-            <Button
-              size="sm"
-              startContent={<RiAddLine size={14} />}
-              endContent={<RiArrowDownSLine size={16} />}
-            >
-              Create
+        {!isViewOnly && (
+          <>
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  size="sm"
+                  startContent={<RiAddLine size={14} />}
+                  endContent={<RiArrowDownSLine size={16} />}
+                >
+                  Create
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                onAction={(key) => {
+                  if (key === 'folder') {
+                    onCreateFolderClick()
+                  } else if (key === 'document') {
+                    onCreateDocumentClick?.()
+                  }
+                }}
+              >
+                <DropdownItem
+                  key="folder"
+                  startContent={<RiFolder3Line size={16} className="text-success" />}
+                >
+                  New Folder
+                </DropdownItem>
+                <DropdownItem
+                  key="document"
+                  startContent={<VscodeDocumentIcon width={16} height={16} />}
+                >
+                  New Document
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+            <Button size="sm" startContent={<RiUpload2Fill size={14} />} onClick={onUploadClick}>
+              Upload
             </Button>
-          </DropdownTrigger>
-          <DropdownMenu onAction={(key) => {
-            if (key === 'folder') {
-              onCreateFolderClick()
-            } else if (key === 'document') {
-              onCreateDocumentClick?.()
-            }
-          }}>
-            <DropdownItem
-              key="folder"
-              startContent={<RiFolder3Line size={16} className="text-success" />}
-            >
-              New Folder
-            </DropdownItem>
-            <DropdownItem
-              key="document"
-              startContent={<VscodeDocumentIcon width={16} height={16} />}
-            >
-              New Document
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-        <Button size="sm" startContent={<RiUpload2Fill size={14} />} onClick={onUploadClick}>
-          Upload
-        </Button>
+          </>
+        )}
+
         <ButtonGroup>
-          <Button isIconOnly size="sm">
+          <Button isIconOnly size="sm" onClick={() => onViewTypeChange?.('grid')} color={viewType === 'grid' ? 'primary' : 'default'}>
             <RiTableLine size={16} />
           </Button>
-          <Button isIconOnly size="sm" color="primary">
+          <Button isIconOnly size="sm" onClick={() => onViewTypeChange?.('list')} color={viewType === 'list' ? 'primary' : 'default'}>
             <RiListCheck size={16} />
           </Button>
         </ButtonGroup>

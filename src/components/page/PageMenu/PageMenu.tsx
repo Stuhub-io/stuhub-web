@@ -19,18 +19,22 @@ import { ROUTES } from '@/constants/routes'
 import { useOrganization } from '@/components/providers/organization'
 import useCopy from 'use-copy'
 import { MenuSection } from './PageMenuPopover/const'
+import { usePermissions } from '@/components/providers/permissions'
 
 export interface BasePageMenuProps extends PropsWithChildren {
   page: Page
+  parentPage?: Page
   onSuccess?: () => void
   anchorEl?: HTMLElement
   onClose?: () => void
   placement?: PopoverProps['placement']
+  isAtRoot?: boolean
 }
 
 export const PageMenu = (props: BasePageMenuProps) => {
-  const { children, page, onSuccess, placement = 'bottom' } = props
-  const { organization } = useOrganization()
+  const { children, page, onSuccess, placement = 'bottom', parentPage, isAtRoot } = props
+  const { organization, currentUserRole } = useOrganization()
+  const { permissionChecker } = usePermissions()
 
   const queryClient = useQueryClient()
 
@@ -120,21 +124,21 @@ export const PageMenu = (props: BasePageMenuProps) => {
       .filter((item) => {
         switch (item.key) {
           case 'download':
-            return page.view_type !== PageViewTypeEnum.FOLDER && page.permissions?.can_download
+            return permissionChecker.page.canDownload(page)
           case 'share-menu':
-            return page.permissions?.can_share
+            return permissionChecker.page.canShare(page)
           case 'rename':
-            return page.permissions?.can_edit
+            return permissionChecker.page.canEdit(page)
           case 'organize-menu':
-            return page.permissions?.can_move
+            return currentUserRole && permissionChecker.page.canMove(currentUserRole, page)
           case 'trash':
-            return page.permissions?.can_delete
+            return isAtRoot ? permissionChecker.page.canDelete(page): (parentPage && permissionChecker.page.canDelete(page, parentPage))
           default:
-            return page.permissions?.can_view
+            return true
         }
       }
       )
-  }, [page])
+  }, [currentUserRole, isAtRoot, page, parentPage, permissionChecker.page])
 
   return (
     <WrapperRegistry

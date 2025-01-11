@@ -9,9 +9,10 @@ import { PageMenu } from '../../PageMenu'
 import { VscodeDocumentIcon } from '@/components/icons/VsCodeDocumentIcon'
 import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
+import { memo } from 'react'
 
-export const PageDocumentCard = (props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected } =
+export const PageDocumentCard = memo((props: BaseCardViewProps) => {
+  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, parentPage } =
     props
 
   const archiveStatus = useMutationState({
@@ -76,8 +77,8 @@ export const PageDocumentCard = (props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageMenu page={page} onSuccess={onMutateSuccess}>
-            <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0">
+          <PageMenu page={page} onSuccess={onMutateSuccess} parentPage={parentPage} isAtRoot={!parentPage}>
+            <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0" >
               <RiMore2Line size={16} />
             </Button>
           </PageMenu>
@@ -85,4 +86,6 @@ export const PageDocumentCard = (props: BaseCardViewProps) => {
       </CardBody>
     </Card>
   )
-}
+})
+
+PageDocumentCard.displayName = 'PageDocumentCard'

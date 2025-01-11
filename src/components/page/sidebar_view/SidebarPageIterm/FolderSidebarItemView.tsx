@@ -15,7 +15,7 @@ import { PageMenu } from '../../PageMenu'
 import { useOrganization } from '@/components/providers/organization'
 
 export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
-  const { page, level = 0, SidebarPageItemViewer } = props
+  const { page, level = 0, SidebarPageItemViewer, parentPage } = props
   const { getChildrenPageByPkID } = useSidebar()
   const { organization } = useOrganization()
 
@@ -92,7 +92,7 @@ export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
           <>
             <div onClick={(e) => e.stopPropagation()}>
               {/* Prevents the click event from bubbling up to the parent */}
-              <PageMenu page={page} onSuccess={onSuccessUpdated}>
+              <PageMenu page={page} onSuccess={onSuccessUpdated} parentPage={parentPage} isAtRoot={!parentPage}>
                 <SidebarIconButton showOnGroupHoverOnly>
                   <RiMoreLine />
                 </SidebarIconButton>
@@ -119,6 +119,7 @@ export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
         {childPages?.map((childPage) => {
           return (
             <SidebarPageItemViewer
+              parentPage={page}
               key={childPage.id}
               page={childPage}
               level={level + 1}

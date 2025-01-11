@@ -18,6 +18,7 @@ import { useNewPage } from '@/components/providers/newpage'
 import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { FolderViewToolbar } from '@/components/page/page_view/page_viewers/PageFolderViewer/Toolbar'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
+import { useViewType } from '@/hooks/useViewType'
 
 export default function RootFolderPage() {
   const { organization } = useOrganization()
@@ -25,6 +26,7 @@ export default function RootFolderPage() {
   const router = useRouter()
 
   const [typeFilter, setTypeFilter] = useState<Selection>('all')
+  const { viewType, setViewType } = useViewType()
 
   const { onOpenUploadModal } = useAssetUploadContext()
 
@@ -35,8 +37,6 @@ export default function RootFolderPage() {
     is_archived: false,
     org_pkid: organization?.pkid ?? -1,
   })
-
-  console.log('childPages', childPages)
 
   const { onCreate: onCreateFolder } = useNewPage({
     type: PageViewTypeEnum.FOLDER,
@@ -127,6 +127,8 @@ export default function RootFolderPage() {
           </div>
         </div>
         <FolderViewToolbar
+          viewType={viewType}
+          onViewTypeChange={setViewType}
           typeFilter={typeFilter}
           onCreateFolderClick={() => {
             onCreateFolder(() => {
@@ -146,6 +148,7 @@ export default function RootFolderPage() {
                 Folders
               </Typography>
               <PageListView
+                viewType={viewType}
                 items={folders}
                 onItemMutateSuccess={refetch}
                 onItemDoubleClick={handlePageClick}
@@ -167,6 +170,7 @@ export default function RootFolderPage() {
               Files and Documents
             </Typography>
             <PageListView
+              viewType={viewType}
               items={filesAndDocs}
               onItemMutateSuccess={refetch}
               onItemDoubleClick={handlePageClick}

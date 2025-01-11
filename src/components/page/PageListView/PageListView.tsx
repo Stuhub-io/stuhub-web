@@ -1,6 +1,7 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { BaseListViewProps } from './type'
 import { GridView } from './GridView'
+import { HorizontalListView } from './HorizontalListView'
 
 const views: {
   Component: FC<BaseListViewProps>
@@ -10,14 +11,14 @@ const views: {
     Component: GridView,
     type: 'grid',
   },
-  // {
-  //   Component: ListView,
-  //   type: 'list',
-  // }
+  {
+    Component: HorizontalListView,
+    type: 'list',
+  }
 ]
 
-export const PageListView = (props: BaseListViewProps) => {
-  const ListComponent = views.find((view) => view.type === 'grid')?.Component
+export const PageListView = ({ viewType = 'grid' , ...props}: BaseListViewProps) => {
+  const ListComponent = useMemo(() => views.find((view) => view.type === viewType)?.Component, [viewType])
 
   if (!ListComponent) {
     return null
