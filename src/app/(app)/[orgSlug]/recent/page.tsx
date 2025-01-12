@@ -26,7 +26,12 @@ export default function Page() {
   const { viewType, setViewType } = useViewType()
   const router = useRouter()
 
-  const filesAndDocs = logs?.map((log) => ({ ...log.page, ancestors: log.parent_pages, updated_at: log.last_accessed }))
+  const filesAndDocs = logs?.map((log) => ({
+    ...log.page,
+    ancestors: log.parent_pages,
+    is_shared: log.is_shared,
+    updated_at: log.last_accessed,
+  }))
 
   const navigateToPage = (folderId: string, organizationSlug: string) => {
     router.push(
@@ -37,40 +42,55 @@ export default function Page() {
     )
   }
 
-  const renderPageDirectory = ({ is_shared, ancestors = [], updated_at }: Page) => {
-    //TODO: query orgs slug
+  const renderPageDirectory = ({ is_shared, ancestors = [], organization, updated_at }: Page) => {
+    //FIX: refactor this
     const commonBtnProps = {
       size: 'sm',
       variant: 'light',
       className: 'z-50',
     } as Partial<ButtonProps>
 
+    const orgSlug = organization?.slug ?? ''
+
+    if (is_shared && ancestors?.length == 1) {
+      const page = ancestors[0]!
+      return (
+        <Button {...commonBtnProps} onClick={() => navigateToPage(page.id, page.organization?.slug ?? '')}>
+          <AiFillMail />
+          {page.name}
+        </Button>
+      )
+    }
+
     if (ancestors?.length) {
       const lowestAncestor = ancestors.at(-1)!
-      const isOnlyOneAncestor = ancestors.length === 1
       return (
-        <PopperContentTrigger isHoverTrigger={!isOnlyOneAncestor} placement="bottom" offset={-37}>
-          <Button {...commonBtnProps} onClick={() => navigateToPage(lowestAncestor.id, 'nice')}>
+        <PopperContentTrigger isHoverTrigger placement="bottom" offset={-37}>
+          <Button {...commonBtnProps} onClick={() => navigateToPage(lowestAncestor.id, orgSlug)}>
             {is_shared ? <AiFillMail /> : <RiFolder3Fill />}
             {lowestAncestor.name}
           </Button>
 
-          {!isOnlyOneAncestor ? (
-            <div className="flex items-center px-2 py-1.5">
-              {ancestors.map((page, idx) => (
-                <Fragment key={updated_at}>
-                  <Button {...commonBtnProps} onClick={() => navigateToPage(page.id, 'nice')}>
-                    {page.name}
-                  </Button>
-                  {idx != ancestors.length - 1 && (
-                    <IoChevronForwardSharp className="mx-1.5">{'>'}</IoChevronForwardSharp>
-                  )}
-                </Fragment>
-              ))}
-            </div>
-          ) : (
-            <></>
-          )}
+          <div className="flex items-center px-2 py-1.5">
+            {!is_shared && (
+              <Fragment key={'my_vault'}>
+                <Button {...commonBtnProps} onClick={() => router.push(ROUTES.ROOT_VAULTS({ orgSlug }))}>
+                  <RiHardDrive2Fill />
+                  My Vault
+                </Button>
+                <IoChevronForwardSharp className="mx-1.5" />
+              </Fragment>
+            )}
+            {ancestors.map(({ id, name, organization }, idx) => (
+              <Fragment key={updated_at + name}>
+                <Button {...commonBtnProps} onClick={() => navigateToPage(id, organization?.slug ?? '')}>
+                  {is_shared ? <AiFillMail /> : <RiFolder3Fill />}
+                  {name}
+                </Button>
+                {idx != ancestors.length - 1 && <IoChevronForwardSharp className="mx-1.5" />}
+              </Fragment>
+            ))}
+          </div>
         </PopperContentTrigger>
       )
     }
@@ -78,7 +98,7 @@ export default function Page() {
     //TODO: change to Shared With Me route
     if (is_shared) {
       return (
-        <Button {...commonBtnProps} onClick={() => router.push(ROUTES.ROOT_VAULTS({ orgSlug: 'nice' }))}>
+        <Button {...commonBtnProps} onClick={() => router.push(ROUTES.ROOT_VAULTS({ orgSlug }))}>
           <AiFillMail />
           Shared With Me
         </Button>
@@ -86,7 +106,7 @@ export default function Page() {
     }
 
     return (
-      <Button {...commonBtnProps} onClick={() => router.push(ROUTES.ROOT_VAULTS({ orgSlug: 'nice' }))}>
+      <Button {...commonBtnProps} onClick={() => router.push(ROUTES.ROOT_VAULTS({ orgSlug }))}>
         <RiHardDrive2Fill />
         My Vault
       </Button>

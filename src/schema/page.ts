@@ -1,4 +1,5 @@
 import { Pagination } from './base'
+import { Organization } from './organization'
 import { User } from './user'
 
 export type PageViewType = 1 | 2 | 3
@@ -27,6 +28,7 @@ export interface Page {
   asset?: Asset
   general_role?: PageRole
   author?: User
+  organization?: Organization
   permissions?: PagePermissions
   parent_page?: Page
   ancestors?: Page[]
