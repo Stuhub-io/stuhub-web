@@ -1,5 +1,5 @@
-import { BaseListViewProps } from './type'
-import { Page } from '@/schema/page'
+import { BaseListViewProps, HorizontalListViewColumn } from './type'
+import { Page, PageViewTypeEnum } from '@/schema/page'
 import { memo, useMemo } from 'react'
 import {
   Avatar,
@@ -8,7 +8,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableCellProps,
   TableColumn,
   TableHeader,
   TableRow,
@@ -20,17 +19,8 @@ import { RiMore2Fill } from 'react-icons/ri'
 import { PageMenu } from '../PageMenu'
 import { PageIconPreview } from './PageIconPreview'
 import dayjs from 'dayjs'
-import { formatReadableFileSize } from '@/utils/file'
+import { calculateDocumentSize, formatReadableFileSize } from '@/utils/file'
 import { PageQuickActionMenu } from '../PageMenu/QuickActionMenuList'
-
-type ColDef = {
-  key: string
-  headerTitle: string
-  renderCell: (props: { page: Page; value?: any; colDef: ColDef }) => React.ReactNode
-  valueGetter?: (prop: { page: Page }) => any
-  width?: string
-  cellProps?: TableCellProps
-}
 
 export const HorizontalListView = memo((props: BaseListViewProps) => {
   const {
@@ -42,6 +32,7 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
     onSelectedPkIDsChanged,
     emptyState,
     parentPage,
+    customColumns,
   } = props
 
   const { user } = useAuthContext()
@@ -114,26 +105,26 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
       {
         key: 'size',
         headerTitle: 'File size',
-        width: '20%',
+        width: '10%',
         renderCell: ({ page }) => {
-          const show = Boolean(page.asset?.size)
-          if (!show) return null
+          if (page.view_type === PageViewTypeEnum.FOLDER) return null
           return (
             <div className="flex">
               <Typography level="p5" color="textTertiary" noWrap>
-                {formatReadableFileSize(page.asset?.size ?? 0)}
+                {formatReadableFileSize(
+                  page.asset?.size || calculateDocumentSize(page?.document?.json_content ?? '') || 0,
+                )}
               </Typography>
             </div>
           )
         },
       },
+      ...(customColumns ?? []),
       {
         key: 'quick_actions',
         headerTitle: '',
         width: '130px',
-        renderCell: ({ page }) => (
-          <PageQuickActionMenu page={page} onSuccess={onItemMutateSuccess} />
-        ),
+        renderCell: ({ page }) => <PageQuickActionMenu page={page} onSuccess={onItemMutateSuccess} />,
       },
       {
         key: 'action',
@@ -141,10 +132,7 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
         width: '100px',
         renderCell({ page }) {
           return (
-            <div
-              className="flex items-center justify-end gap-2"
-              onDoubleClick={(e) => e.stopPropagation()}
-            >
+            <div className="flex items-center justify-end gap-2" onDoubleClick={(e) => e.stopPropagation()}>
               <PageMenu page={page} onSuccess={onItemMutateSuccess} parentPage={parentPage}>
                 <Button isIconOnly radius="full" variant="light">
                   <RiMore2Fill size={16} />
@@ -154,8 +142,8 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
           )
         },
       },
-    ] as ColDef[]
-  }, [onItemMutateSuccess, parentPage, user?.first_name, user?.last_name, user?.pkid])
+    ] as HorizontalListViewColumn[]
+  }, [onItemMutateSuccess, parentPage, user?.first_name, user?.last_name, user?.pkid, customColumns])
 
   if (!loading && items?.length === 0) {
     return emptyState

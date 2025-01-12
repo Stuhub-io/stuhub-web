@@ -21,16 +21,20 @@ export const SidebarPageSectionView = () => {
 
   const outerPages = useMemo(() => {
     // filter out pages that have no parent or parent is in the list
-    return orgPages?.list?.filter((page) => (!page.parent_page_pkid || !orgPages.map[page.parent_page_pkid ?? -1])&& !page.archived_at )
+    return orgPages?.list?.filter(
+      (page) => (!page.parent_page_pkid || !orgPages.map[page.parent_page_pkid ?? -1]) && !page.archived_at,
+    )
   }, [orgPages])
 
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <SidebarItem
         onClick={() => {
-          router.push(ROUTES.ROOT_VAULTS({
-            orgSlug: organization?.slug ?? '',
-          }))
+          router.push(
+            ROUTES.ROOT_VAULTS({
+              orgSlug: organization?.slug ?? '',
+            }),
+          )
         }}
         startContent={
           <>
@@ -57,7 +61,7 @@ export const SidebarPageSectionView = () => {
           </PopperContentTrigger>
         }
       >
-        {isGuest ? "Shared with me" : "Vault"}
+        {isGuest ? 'Shared with me' : 'My Vault'}
       </SidebarItem>
       <CollapsibleContent>
         {outerPages?.map((page) => {

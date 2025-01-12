@@ -21,6 +21,7 @@ export interface Page {
   cover_image: string
   node_id: string
   name: string
+  is_shared?: boolean
   child_pages?: Page[]
   document?: Document
   asset?: Asset
@@ -28,6 +29,7 @@ export interface Page {
   author?: User
   permissions?: PagePermissions
   parent_page?: Page
+  ancestors?: Page[]
 }
 
 export interface PagePermissions {

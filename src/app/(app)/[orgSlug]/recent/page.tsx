@@ -1,12 +1,20 @@
 'use client'
 
+import { PopperContentTrigger } from '@/components/common/PopoverTrigger'
 import Typography from '@/components/common/Typography'
 import { PageListView } from '@/components/page/PageListView/PageListView'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
 import { FolderViewToolbar } from '@/components/page/page_view/page_viewers/PageFolderViewer/Toolbar'
+import { ROUTES } from '@/constants/routes'
+import { useViewType } from '@/hooks/useViewType'
 import { useFetchPageAccessLogs } from '@/mutation/querier/page-access-log/useFetchPageAccessLogs'
-import { Selection } from '@nextui-org/react'
-import { useState } from 'react'
+import { Page } from '@/schema/page'
+import { Button, ButtonProps, Selection } from '@nextui-org/react'
+import { useRouter } from 'next/navigation'
+import { Fragment, useState } from 'react'
+import { AiFillMail } from 'react-icons/ai'
+import { RiFolder3Fill, RiHardDrive2Fill } from 'react-icons/ri'
+import { IoChevronForwardSharp } from 'react-icons/io5'
 
 export default function Page() {
   const { data: { data: logs } = {}, refetch } = useFetchPageAccessLogs({
@@ -14,10 +22,76 @@ export default function Page() {
   })
 
   const [selectedPagePkIDs, setSelectedPagePkIDs] = useState<number[]>([])
-
   const [typeFilter, setTypeFilter] = useState<Selection>('all')
+  const { viewType, setViewType } = useViewType()
+  const router = useRouter()
 
-  const filesAndDocs = logs?.map((log) => log.page)
+  const filesAndDocs = logs?.map((log) => ({ ...log.page, ancestors: log.parent_pages, updated_at: log.last_accessed }))
+
+  const navigateToPage = (folderId: string, organizationSlug: string) => {
+    router.push(
+      ROUTES.VAULT_PAGE({
+        orgSlug: organizationSlug,
+        pageID: folderId,
+      }),
+    )
+  }
+
+  const renderPageDirectory = ({ is_shared, ancestors = [], updated_at }: Page) => {
+    //TODO: query orgs slug
+    const commonBtnProps = {
+      size: 'sm',
+      variant: 'light',
+      className: 'z-50',
+    } as Partial<ButtonProps>
+
+    if (ancestors?.length) {
+      const lowestAncestor = ancestors.at(-1)!
+      const isOnlyOneAncestor = ancestors.length === 1
+      return (
+        <PopperContentTrigger isHoverTrigger={!isOnlyOneAncestor} placement="bottom" offset={-37}>
+          <Button {...commonBtnProps} onClick={() => navigateToPage(lowestAncestor.id, 'nice')}>
+            {is_shared ? <AiFillMail /> : <RiFolder3Fill />}
+            {lowestAncestor.name}
+          </Button>
+
+          {!isOnlyOneAncestor ? (
+            <div className="flex items-center px-2 py-1.5">
+              {ancestors.map((page, idx) => (
+                <Fragment key={updated_at}>
+                  <Button {...commonBtnProps} onClick={() => navigateToPage(page.id, 'nice')}>
+                    {page.name}
+                  </Button>
+                  {idx != ancestors.length - 1 && (
+                    <IoChevronForwardSharp className="mx-1.5">{'>'}</IoChevronForwardSharp>
+                  )}
+                </Fragment>
+              ))}
+            </div>
+          ) : (
+            <></>
+          )}
+        </PopperContentTrigger>
+      )
+    }
+
+    //TODO: change to Shared With Me route
+    if (is_shared) {
+      return (
+        <Button {...commonBtnProps} onClick={() => router.push(ROUTES.ROOT_VAULTS({ orgSlug: 'nice' }))}>
+          <AiFillMail />
+          Shared With Me
+        </Button>
+      )
+    }
+
+    return (
+      <Button {...commonBtnProps} onClick={() => router.push(ROUTES.ROOT_VAULTS({ orgSlug: 'nice' }))}>
+        <RiHardDrive2Fill />
+        My Vault
+      </Button>
+    )
+  }
 
   return (
     <>
@@ -27,7 +101,9 @@ export default function Page() {
 
           <FolderViewToolbar
             isViewOnly
+            viewType={viewType}
             typeFilter={typeFilter}
+            onViewTypeChange={setViewType}
             onCreateFolderClick={() => {}}
             onTypeFilterChange={setTypeFilter}
             onUploadClick={() => {}}
@@ -35,12 +111,21 @@ export default function Page() {
         </div>
 
         <PageListView
+          viewType={viewType}
           items={filesAndDocs}
           onItemMutateSuccess={refetch}
-          onItemDoubleClick={() => {}}
+          onItemDoubleClick={(page) => navigateToPage(page.id, 'nice')}
           selectedItemPkIDs={selectedPagePkIDs}
           onSelectedPkIDsChanged={setSelectedPagePkIDs}
           emptyState={<EmptyListPlaceholder onClick={() => {}} />}
+          customColumns={[
+            {
+              key: 'directory',
+              headerTitle: 'Directory',
+              width: '30%',
+              renderCell: ({ page }) => renderPageDirectory(page),
+            },
+          ]}
         />
       </div>
     </>
