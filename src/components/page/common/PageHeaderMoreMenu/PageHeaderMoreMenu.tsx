@@ -41,7 +41,7 @@ export const PageHeaderMoreMenu = () => {
         </Button>
         {isPending && <Skeleton className=" h-6 w-6 rounded-md" />}
         {!isPending && page && (
-          <PageMenu page={page} parentPage={page.parent_page} isAtRoot={page.parent_page === null}>
+          <PageMenu page={page} parentPage={page.parent_page}>
             <Button isIconOnly size="sm" variant="flat">
               <RiMore2Fill size={20} />
             </Button>

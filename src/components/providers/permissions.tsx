@@ -23,15 +23,9 @@ export const Permissions = {
       if (user?.id === page.author?.id) return true
       return page.permissions?.can_edit
     },
-    canDelete: (page: Page, parentPage?: Page) => {
-      console.log(parentPage?.permissions)
+    canDelete: (page: Page) => {
       //FIXME check page belong to org
-      if (!parentPage) {
-        return page.permissions?.can_delete
-      }
-      return (
-        parentPage.permissions?.can_edit && page.permissions?.can_delete
-      )
+      return page.permissions?.can_delete
     },
     canMove: (curUserRole: OrgRole, page: Page, desPage?: Page) => {
       if (!desPage) {
@@ -44,7 +38,7 @@ export const Permissions = {
     },
     canDownload: (page: Page) => {
       return page.permissions?.can_download
-    }
+    },
   },
 } as const
 
