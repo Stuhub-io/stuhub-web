@@ -48,6 +48,8 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
 
   console.log('items', selectedItemPkIDs)
 
+  console.log("list:  ", {parentPage})
+
   const handleItemClick = (page: Page) => {
     onSelectedPkIDsChanged?.((prev) => {
       if (prev.includes(page.pkid)) {

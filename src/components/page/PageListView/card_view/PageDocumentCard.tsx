@@ -77,7 +77,7 @@ export const PageDocumentCard = memo((props: BaseCardViewProps) => {
               </Typography>
             </div>
           </div>
-          <PageMenu page={page} onSuccess={onMutateSuccess} parentPage={parentPage} isAtRoot={!parentPage}>
+          <PageMenu page={page} onSuccess={onMutateSuccess} parentPage={parentPage}>
             <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0" >
               <RiMore2Line size={16} />
             </Button>

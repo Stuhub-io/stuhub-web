@@ -162,7 +162,7 @@ export const PageFolderViewer: PageViewer = (props) => {
               <PageListView
                 viewType={viewType}
                 items={folders}
-                parentPage={page?.parent_page}
+                parentPage={page}
                 onItemMutateSuccess={refetch}
                 selectedItemPkIDs={selectedPagePkIDs}
                 onSelectedPkIDsChanged={setSelectedPagePkIDs}
@@ -183,7 +183,7 @@ export const PageFolderViewer: PageViewer = (props) => {
               Files and Documents {size ? `(${formatReadableFileSize(size)})` : ''}
             </Typography>
             <PageListView
-              parentPage={page?.parent_page}
+              parentPage={page}
               viewType={viewType}
               emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal(page)} />}
               selectedItemPkIDs={selectedPagePkIDs}

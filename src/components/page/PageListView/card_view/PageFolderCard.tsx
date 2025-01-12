@@ -84,7 +84,7 @@ export const FolderCard = memo((props: BaseCardViewProps) => {
             </Typography>
           </div>
           <div className="shrink-0" onDoubleClick={e => e.stopPropagation()}>
-            <PageMenu page={page} onSuccess={onMutateSuccess} parentPage={parentPage} isAtRoot={!parentPage}>
+            <PageMenu page={page} onSuccess={onMutateSuccess} parentPage={parentPage}>
               <Button isIconOnly size="sm" variant="light" radius="full">
                 <RiMore2Line size={16} />
               </Button>

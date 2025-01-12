@@ -59,7 +59,7 @@ export const AssetSidebarItemView = (props: BaseSidebarViewerProps) => {
       endContent={
         <div onClick={(e) => e.stopPropagation()}>
           {/* Prevents the click event from bubbling up to the parent */}
-          <PageMenu page={page} parentPage={parentPage} isAtRoot={!parentPage}>
+          <PageMenu page={page} parentPage={parentPage}>
             <SidebarIconButton showOnGroupHoverOnly>
               <RiMoreLine />
             </SidebarIconButton>

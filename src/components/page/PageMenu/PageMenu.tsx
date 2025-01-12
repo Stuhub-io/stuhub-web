@@ -23,15 +23,14 @@ import { usePermissions } from '@/components/providers/permissions'
 
 export interface BasePageMenuProps extends PropsWithChildren {
   page: Page
-  parentPage?: Page
+  parentPage?: Page // For future permission checker
   onSuccess?: () => void
   onClose?: () => void
   placement?: PopoverProps['placement']
-  isAtRoot?: boolean
 }
 
 export const PageMenu = (props: BasePageMenuProps) => {
-  const { children, page, onSuccess, placement = 'bottom', parentPage, isAtRoot } = props
+  const { children, page, onSuccess, placement = 'bottom' } = props
   const { organization, currentUserRole } = useOrganization()
   const { permissionChecker } = usePermissions()
 
@@ -133,16 +132,14 @@ export const PageMenu = (props: BasePageMenuProps) => {
               case 'organize-menu':
                 return currentUserRole && permissionChecker.page.canMove(currentUserRole, page)
               case 'trash':
-                return isAtRoot
-                  ? permissionChecker.page.canDelete(page)
-                  : parentPage && permissionChecker.page.canDelete(page, parentPage)
+                return permissionChecker.page.canDelete(page)
               default:
                 return true
             }
           })
       )
     },
-    [currentUserRole, isAtRoot, page, parentPage, permissionChecker.page],
+    [currentUserRole, page, permissionChecker.page],
   )
 
   return (

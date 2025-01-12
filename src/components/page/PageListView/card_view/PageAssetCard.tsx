@@ -83,7 +83,6 @@ export const PageAssetCard = memo((props: BaseCardViewProps) => {
             page={page}
             onSuccess={onMutateSuccess}
             parentPage={parentPage}
-            isAtRoot={!parentPage}
           >
             <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0">
               <RiMore2Line size={16} />
