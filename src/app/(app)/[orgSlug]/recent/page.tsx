@@ -67,6 +67,7 @@ export default function Page() {
         <Tooltip
           placement="bottom-end"
           delay={0}
+          closeDelay={0}
           offset={-42}
           content={
             <div className="flex items-center py-1.5">
@@ -118,25 +119,25 @@ export default function Page() {
   }
 
   return (
-    <>
-      <div className="md:px-4">
-        <div className="my-8 grid grid-cols-1 gap-2">
-          <Typography level="h4">Recent</Typography>
+    <div className="flex max-h-[100%] flex-col md:px-4">
+      <div className="my-8 grid grid-cols-1 gap-2">
+        <Typography level="h4">Recent</Typography>
 
-          <FolderViewToolbar
-            isViewOnly
-            viewType={viewType}
-            typeFilter={typeFilter}
-            onViewTypeChange={setViewType}
-            onCreateFolderClick={() => {}}
-            onTypeFilterChange={setTypeFilter}
-            onUploadClick={() => {}}
-          />
-        </div>
+        <FolderViewToolbar
+          isViewOnly
+          viewType={viewType}
+          typeFilter={typeFilter}
+          onViewTypeChange={setViewType}
+          onCreateFolderClick={() => {}}
+          onTypeFilterChange={setTypeFilter}
+          onUploadClick={() => {}}
+        />
+      </div>
 
+      <div className="flex-1 overflow-y-auto">
         <PageListView
           viewType={viewType}
-          items={filesAndDocs}
+          items={[...(filesAndDocs ?? []), ...(filesAndDocs ?? [])]}
           onItemMutateSuccess={refetch}
           onItemDoubleClick={(page) => navigateToPage(page.id, 'nice')}
           selectedItemPkIDs={selectedPagePkIDs}
@@ -152,6 +153,6 @@ export default function Page() {
           ]}
         />
       </div>
-    </>
+    </div>
   )
 }
