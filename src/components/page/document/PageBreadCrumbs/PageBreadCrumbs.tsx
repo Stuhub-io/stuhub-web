@@ -34,7 +34,7 @@ export const PageBreadCrumbs = () => {
     pageID,
   })
 
-  const dontHavePermission = ((error as any)?.body.code >= 400)
+  const dontHavePermission = ((error as any)?.body?.code >= 400)
 
   const { isGuest, isLoadingOrganization } = useOrganization()
 
