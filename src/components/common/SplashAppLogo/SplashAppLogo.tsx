@@ -1,12 +1,13 @@
 import { FcRuler, FcSettings } from 'react-icons/fc'
 import Typography from '../Typography'
 
-export const SplashAppLogo = () => {
+export const SplashAppLogo = ({noAnimate, size = "md"}: { noAnimate?: boolean, size?: 'md' | 'sm' }) => {
+  const level = size === 'md' ? 'h1' : 'h5'
   return (
-    <Typography level="h1" className="flex">
+    <Typography level={level} className="flex">
       Stuhub.
       <FcRuler />
-      <FcSettings className="animate-spin" />
+      <FcSettings className={noAnimate ? '' : 'animate-spin'} />
     </Typography>
   )
 }

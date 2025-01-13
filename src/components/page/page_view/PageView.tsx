@@ -7,23 +7,24 @@ import { PageDocumentViewer } from './page_viewers/PageDocumentViewer'
 import { PageViewer } from './type'
 import { PageFolderViewer } from './page_viewers/PageFolderViewer'
 import { PageAssetViewer } from './page_viewers/PageAssetViewer'
+import { PermissionRequired } from '../permission/PermissionRequired'
 
 export const pageViewer: {
   viewer: PageViewer
   viewType: PageViewType
 }[] = [
-    {
-        viewType: PageViewTypeEnum.DOCUMENT,
-        viewer: PageDocumentViewer,
-    },
-    {
-      viewType: PageViewTypeEnum.FOLDER,
-      viewer: PageFolderViewer
-    },
-    {
-      viewType: PageViewTypeEnum.ASSET,
-      viewer: PageAssetViewer
-    }
+  {
+    viewType: PageViewTypeEnum.DOCUMENT,
+    viewer: PageDocumentViewer,
+  },
+  {
+    viewType: PageViewTypeEnum.FOLDER,
+    viewer: PageFolderViewer,
+  },
+  {
+    viewType: PageViewTypeEnum.ASSET,
+    viewer: PageAssetViewer,
+  },
 ]
 
 interface PageViewProps {
@@ -37,6 +38,7 @@ export const PageView = (props: PageViewProps) => {
     refetch,
     isLoading,
     isRefetching,
+    error
   } = useFetchPage({
     allowFetch: true,
     pageID,
@@ -47,11 +49,23 @@ export const PageView = (props: PageViewProps) => {
     setCoverImageUrl(getRandomImageUrl(1400, 400))
   }
 
+  const dontHavePermission = ((error as any)?.body.code >= 400)
+
+  console.log('pageDetail', { pageDetail, error })
+
   const Component = pageViewer.find((viewer) => viewer.viewType === pageDetail?.view_type)?.viewer
 
   useEffect(() => {
     if (pageDetail) setCoverImageUrl(pageDetail?.cover_image ?? '')
   }, [pageDetail, setCoverImageUrl])
+
+  if (dontHavePermission) {
+    return(
+      <PermissionRequired />
+    )
+  }
+
+
   if (!Component) return null
 
   return (
