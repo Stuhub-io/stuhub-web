@@ -1,6 +1,5 @@
 'use client'
 
-import { PopperContentTrigger } from '@/components/common/PopoverTrigger'
 import Typography from '@/components/common/Typography'
 import { PageListView } from '@/components/page/PageListView/PageListView'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
@@ -9,7 +8,7 @@ import { ROUTES } from '@/constants/routes'
 import { useViewType } from '@/hooks/useViewType'
 import { useFetchPageAccessLogs } from '@/mutation/querier/page-access-log/useFetchPageAccessLogs'
 import { Page } from '@/schema/page'
-import { Button, ButtonProps, Selection } from '@nextui-org/react'
+import { Button, ButtonProps, Selection, Tooltip } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 import { Fragment, useState } from 'react'
 import { AiFillMail } from 'react-icons/ai'
@@ -65,33 +64,38 @@ export default function Page() {
     if (ancestors?.length) {
       const lowestAncestor = ancestors.at(-1)!
       return (
-        <PopperContentTrigger isHoverTrigger placement="bottom" offset={-37}>
+        <Tooltip
+          placement="bottom-end"
+          delay={0}
+          offset={-42}
+          content={
+            <div className="flex items-center py-1.5">
+              {!is_shared && (
+                <Fragment key={'my_vault'}>
+                  <Button {...commonBtnProps} onClick={() => router.push(ROUTES.ROOT_VAULTS({ orgSlug }))}>
+                    <RiHardDrive2Fill />
+                    My Vault
+                  </Button>
+                  <IoChevronForwardSharp className="mx-1.5" />
+                </Fragment>
+              )}
+              {ancestors.map(({ id, name, organization }, idx) => (
+                <Fragment key={updated_at + name}>
+                  <Button {...commonBtnProps} onClick={() => navigateToPage(id, organization?.slug ?? '')}>
+                    {is_shared ? <AiFillMail /> : <RiFolder3Fill />}
+                    {name}
+                  </Button>
+                  {idx != ancestors.length - 1 && <IoChevronForwardSharp className="mx-1.5" />}
+                </Fragment>
+              ))}
+            </div>
+          }
+        >
           <Button {...commonBtnProps} onClick={() => navigateToPage(lowestAncestor.id, orgSlug)}>
             {is_shared ? <AiFillMail /> : <RiFolder3Fill />}
             {lowestAncestor.name}
           </Button>
-
-          <div className="flex items-center px-2 py-1.5">
-            {!is_shared && (
-              <Fragment key={'my_vault'}>
-                <Button {...commonBtnProps} onClick={() => router.push(ROUTES.ROOT_VAULTS({ orgSlug }))}>
-                  <RiHardDrive2Fill />
-                  My Vault
-                </Button>
-                <IoChevronForwardSharp className="mx-1.5" />
-              </Fragment>
-            )}
-            {ancestors.map(({ id, name, organization }, idx) => (
-              <Fragment key={updated_at + name}>
-                <Button {...commonBtnProps} onClick={() => navigateToPage(id, organization?.slug ?? '')}>
-                  {is_shared ? <AiFillMail /> : <RiFolder3Fill />}
-                  {name}
-                </Button>
-                {idx != ancestors.length - 1 && <IoChevronForwardSharp className="mx-1.5" />}
-              </Fragment>
-            ))}
-          </div>
-        </PopperContentTrigger>
+        </Tooltip>
       )
     }
 

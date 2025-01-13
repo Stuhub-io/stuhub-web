@@ -6,13 +6,11 @@ import { PopoverWithAnchor } from '../PopoverWithAnchor/PopoverWithAnchor'
 export const PopperContentTrigger = ({
   children,
   hasPadding,
-  isHoverTrigger,
   placement = 'bottom',
   ...rest
 }: {
   children: React.ReactNode
   hasPadding?: boolean
-  isHoverTrigger?: boolean
 } & PopoverProps) => {
   if (Children.count(children) !== 2) throw Error('PopoverTrigger must have exactly 2 children')
   const trigger = Children.toArray(children)[0] as ReactElement
@@ -27,22 +25,13 @@ export const PopperContentTrigger = ({
   const poperContent = cloneElement(poper, {
     ...poper.props,
     onClose: callAllHandlers(poper.props.onClose, onClose),
-    ...(isHoverTrigger ? { onMouseLeave: callAllHandlers(poper.props.onClose, onClose) } : {}),
   })
 
   const popoverTrigger = cloneElement(trigger, {
     ...trigger.props,
-    ...(isHoverTrigger
-      ? {
-          onMouseEnter: (e: any) => {
-            setAnchorEl(e.currentTarget)
-          },
-        }
-      : {
-          onClick: callAllHandlers(trigger.props.onClick, (e: any) => {
-            setAnchorEl(e.currentTarget)
-          }),
-        }),
+    onClick: callAllHandlers(trigger.props.onClick, (e: any) => {
+      setAnchorEl(e.currentTarget)
+    }),
   })
 
   return (
