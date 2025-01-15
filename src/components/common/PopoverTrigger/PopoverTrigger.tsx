@@ -36,20 +36,20 @@ export const PopperContentTrigger = ({
 
   return (
     <>
-    {popoverTrigger}
-    <PopoverWithAnchor
-      anchorEl={anchorEl}
-      onClose={onClose}
-      placement={placement}
-      classNames={{
-        content: cn({
-          'p-0': !hasPadding,
-        }),
-      }}
-      {...rest}
-    >
-      {poperContent}
-    </PopoverWithAnchor>
+      {popoverTrigger}
+      <PopoverWithAnchor
+        anchorEl={anchorEl}
+        onClose={onClose}
+        placement={placement}
+        classNames={{
+          content: cn({
+            'p-0': !hasPadding,
+          }),
+        }}
+        {...rest}
+      >
+        {poperContent}
+      </PopoverWithAnchor>
     </>
   )
 }
