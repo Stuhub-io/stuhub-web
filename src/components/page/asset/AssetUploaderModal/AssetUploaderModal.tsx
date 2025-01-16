@@ -8,7 +8,7 @@ import {
   ModalContent,
   ModalHeader,
 } from '@nextui-org/react'
-import { useDropzone } from '@uploadthing/react'
+import { useDropzone } from 'react-dropzone'
 import { RiFileFill, RiFolder3Fill } from 'react-icons/ri'
 import { AssetUploadingItem } from './AssetUploadingItem'
 import { cn } from '@/libs/utils'

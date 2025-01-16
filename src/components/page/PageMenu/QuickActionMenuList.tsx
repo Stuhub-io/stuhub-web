@@ -39,7 +39,7 @@ export const PageQuickActionMenu = (props: BasePageMenuProps) => {
   }
 
   const handleShare = () => {
-    onOpenShareModal?.(page)
+    onOpenShareModal(page)
   }
 
   const permissions = useMemo(

@@ -196,7 +196,6 @@ export const AutocompleteMultiple = <T extends ACValue = ACValue>(
               }
               if (search) {
                 e.preventDefault() // prevent form submit
-                console.log('search', search)
                 handleNewCustomItem?.(search)
                 return
               }

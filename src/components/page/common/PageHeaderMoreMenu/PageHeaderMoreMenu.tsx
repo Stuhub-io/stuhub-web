@@ -4,12 +4,17 @@ import { Button, Skeleton } from '@nextui-org/react'
 import { RiMore2Fill, RiShareFill, RiStarLine } from 'react-icons/ri'
 import { PageMenu } from '../../PageMenu'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import { OrganizationPageParams } from '@/constants/routes'
 import { useSharePageContext } from '@/components/providers/share'
+import { useEffect, useState } from 'react'
 
 export const PageHeaderMoreMenu = () => {
   const { pageID } = useParams<OrganizationPageParams>()
+  
+  const searchParams = useSearchParams()
+
+  const [ initOpenShare, setInitOpenShare ] = useState(searchParams.get('openShare') !== undefined)
 
   const { onOpenShareModal } = useSharePageContext()
 
@@ -17,6 +22,14 @@ export const PageHeaderMoreMenu = () => {
     allowFetch: Boolean(pageID),
     pageID,
   })
+
+  useEffect(() => {
+    if (page && initOpenShare) {
+      onOpenShareModal(page)
+      setInitOpenShare(false)
+    }
+  }, [initOpenShare, onOpenShareModal, page])
+
 
   if (!pageID) {
     return null

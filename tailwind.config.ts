@@ -1,10 +1,9 @@
 import type { Config } from 'tailwindcss'
 import { ThemeColors, nextui } from '@nextui-org/react'
 import { colors } from '@nextui-org/react'
-import { withUt } from 'uploadthing/tw'
 
 /** @type {import('tailwindcss').Config} */
-const config: Config = withUt({
+const config: Config = {
   content: [
     './node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -66,5 +65,5 @@ const config: Config = withUt({
       },
     }),
   ],
-})
+}
 export default config

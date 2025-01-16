@@ -29,10 +29,12 @@ export const PageBreadCrumbs = () => {
   const { organization } = useOrganization()
   const pagePaths = useSidebarBreadcrumb()
 
-  const { data: { data: pageDetail } = {} } = useFetchPage({
+  const { data: { data: pageDetail } = {}, error } = useFetchPage({
     allowFetch: Boolean(pageID),
     pageID,
   })
+
+  const dontHavePermission = ((error as any)?.body?.code >= 400)
 
   const { isGuest, isLoadingOrganization } = useOrganization()
 
@@ -58,6 +60,10 @@ export const PageBreadCrumbs = () => {
   useEffect(() => {
     setOpenRename(false)
   }, [pageID])
+
+  if (dontHavePermission) {
+    return null
+  }
 
   return (
     <>
