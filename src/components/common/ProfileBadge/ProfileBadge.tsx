@@ -3,6 +3,7 @@ import Typography from '@/components/common/Typography'
 import { ComponentRef, forwardRef, ReactNode, useMemo } from 'react'
 import { cva } from 'class-variance-authority'
 import { cn } from '@/libs/utils'
+import { getPrimaryTypoLevelBySize, getSecondaryTypoLevelBySize } from '@/utils/typography'
 
 interface ProfileBadgeProps extends ButtonProps {
   avatar?: string
@@ -50,17 +51,9 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
     } = props
     console.log('ProfileBadge', description, )
     
-    const titleLevel = useMemo(() => {
-      if (size === 'sm') return 'p6'
-      if (size === 'md') return 'p5'
-      if (size === 'lg') return 'p4'
-    }, [size])
+    const titleLevel = useMemo(() => getPrimaryTypoLevelBySize(size), [size])
 
-    const descriptionLevel = useMemo(() => {
-      if (size === 'sm') return 'p7'
-      if (size === 'md') return 'p6'
-      if (size === 'lg') return 'p5'
-    }, [size])
+    const descriptionLevel = useMemo(() => getSecondaryTypoLevelBySize(size), [size])
 
     const fullName = [firstName, lastName].filter(Boolean).join(' ')
 

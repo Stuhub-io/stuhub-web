@@ -36,6 +36,9 @@ export const QUERY_KEYS = {
     JSON.stringify(params.emails),
   ],
   GET_PAGE_ACCESS_LOGS: ['GET_PAGE_ACCESS_LOGS'],
+  
+  // Role Requests
+  LIST_PAGE_ROLE_REQUESTS: ({pagePkID}: {pagePkID: number}) => ['LIST_PAGE_ROLE_REQUESTS', pagePkID],
 }
 
 export const MUTATION_KEYS = {
@@ -82,6 +85,18 @@ export const MUTATION_KEYS = {
   ],
   REMOVE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => [
     'REMOVE_USER_PAGE_ROLE',
+    pagePkID,
+  ],
+  REQUEST_USER_PAGE_ROLE: ({ pageID }: { pageID: string }) => [
+    'REQUEST_USER_PAGE_ROLE',
+    pageID,
+  ],
+  ACCEPT_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => [
+    'ACCEPT_USER_PAGE_ROLE',
+    pagePkID,
+  ],
+  REJECT_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => [
+    'REJECT_USER_PAGE_ROLE',
     pagePkID,
   ],
 }

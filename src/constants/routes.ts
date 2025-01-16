@@ -12,6 +12,7 @@ export interface OrganizationParams extends Record<string, any> {
 
 export interface OrganizationPageParams extends OrganizationParams {
   pageID: string
+  openShare?: boolean
 }
 
 export const ROUTES = {
@@ -25,7 +26,7 @@ export const ROUTES = {
   INVITE_PAGE: ({ inviteID }: { inviteID: string }) => `/invite/${inviteID}`,
   AUTH_EMAIL: '/auth-email',
   ORGANIZATION: ({ orgSlug }: OrganizationParams) => `/${orgSlug}`,
-  VAULT_PAGE: ({ orgSlug, pageID }: OrganizationPageParams) => `/${orgSlug}/${pageID}`,
+  VAULT_PAGE: ({ orgSlug, pageID, openShare }: OrganizationPageParams) => `/${orgSlug}/${pageID}${  openShare ? '?openShare=true' : ''}`,
   ROOT_VAULTS: ({ orgSlug }: OrganizationParams) => `/${orgSlug}/vaults`,
   RECENT_PAGE: ({ orgSlug }: OrganizationParams) => `/${orgSlug}/recent`,
 }

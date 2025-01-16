@@ -101,7 +101,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
   }
 
   const handleShare = () => {
-    onOpenShareModal?.(page)
+    onOpenShareModal(page)
   }
 
   const menuFilter = useCallback(
