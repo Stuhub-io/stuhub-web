@@ -7,7 +7,7 @@ import { FolderViewToolbar } from '@/components/page/page_view/page_viewers/Page
 import { ROUTES } from '@/constants/routes'
 import { useViewType } from '@/hooks/useViewType'
 import { useFetchPageAccessLogs } from '@/mutation/querier/page-access-log/useFetchPageAccessLogs'
-import { Page } from '@/schema/page'
+import { type Page } from '@/schema/page'
 import { Button, ButtonProps, Selection, Tooltip } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
 import { Fragment, useState } from 'react'
