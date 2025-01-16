@@ -137,7 +137,7 @@ export default function Page() {
       <div className="flex-1 overflow-y-auto">
         <PageListView
           viewType={viewType}
-          items={[...(filesAndDocs ?? []), ...(filesAndDocs ?? [])]}
+          items={filesAndDocs}
           onItemMutateSuccess={refetch}
           onItemDoubleClick={(page) => navigateToPage(page.id, 'nice')}
           selectedItemPkIDs={selectedPagePkIDs}
