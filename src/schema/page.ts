@@ -135,3 +135,20 @@ export interface PagePermissionRole {
   updated_at: string
   inherit_from_page?: Page
 }
+
+type PageRoleRequestStatus = 1 | 2 | 3
+
+export const PageRoleRequestStatusEnum = {
+  PENDING: 1 as PageRoleRequestStatus,
+  ACCEPTED: 2 as PageRoleRequestStatus,
+  REJECTED: 3 as PageRoleRequestStatus,
+} as const
+
+export interface PageRoleRequest {
+  pkid: number
+  page_pkid: number
+  user_pkid: number
+  email: string
+  status: PageRoleRequestStatus
+  user ?: User
+}
