@@ -38,7 +38,7 @@ export const useSharePageModal = () => {
 export const SharePageModal = (props: SharePageModalProps) => {
   const { onClose, open, page } = props
   const [view, setView] = useState<'share' | 'requests'>('share')
-
+  console.log({ view })
   return (
     <>
       <Modal isOpen={open} onClose={onClose} size="xl">

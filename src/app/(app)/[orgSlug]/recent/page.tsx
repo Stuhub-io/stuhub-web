@@ -8,15 +8,15 @@ import { ROUTES } from '@/constants/routes'
 import { useViewType } from '@/hooks/useViewType'
 import { useFetchPageAccessLogs } from '@/mutation/querier/page-access-log/useFetchPageAccessLogs'
 import { type Page } from '@/schema/page'
-import { Button, ButtonProps, Selection, Tooltip } from '@nextui-org/react'
+import { Button, ButtonProps, CircularProgress, Selection, Tooltip } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { AiFillMail } from 'react-icons/ai'
 import { RiFolder3Fill, RiHardDrive2Fill } from 'react-icons/ri'
 import { IoChevronForwardSharp } from 'react-icons/io5'
 
 export default function Page() {
-  const { data: { data: logs } = {}, refetch } = useFetchPageAccessLogs({
+  const { logs, isLoading, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } = useFetchPageAccessLogs({
     allowFetch: true,
   })
 
@@ -25,12 +25,31 @@ export default function Page() {
   const { viewType, setViewType } = useViewType()
   const router = useRouter()
 
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+
   const filesAndDocs = logs?.map((log) => ({
     ...log.page,
     ancestors: log.parent_pages,
     is_shared: log.is_shared,
     updated_at: log.last_accessed,
   }))
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage()
+        }
+      },
+      { threshold: 1.0 },
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   const navigateToPage = (folderId: string, organizationSlug: string) => {
     router.push(
@@ -139,7 +158,7 @@ export default function Page() {
           viewType={viewType}
           items={filesAndDocs}
           onItemMutateSuccess={refetch}
-          onItemDoubleClick={(page) => navigateToPage(page.id, 'nice')}
+          onItemDoubleClick={(page) => navigateToPage(page.id, page.organization?.slug ?? '')}
           selectedItemPkIDs={selectedPagePkIDs}
           onSelectedPkIDsChanged={setSelectedPagePkIDs}
           emptyState={<EmptyListPlaceholder onClick={() => {}} />}
@@ -152,6 +171,8 @@ export default function Page() {
             },
           ]}
         />
+        {isLoading && <CircularProgress className="mx-auto my-1" />}
+        <div ref={loadMoreRef} />
       </div>
     </div>
   )
