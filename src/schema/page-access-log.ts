@@ -1,3 +1,4 @@
+import { CursorPagination } from './base'
 import { Page } from './page'
 
 export interface PageAccessLog {
@@ -8,3 +9,5 @@ export interface PageAccessLog {
   parent_pages: Page[]
   last_accessed: string
 }
+
+export type GetPageAccessLogsQuery = Partial<CursorPagination>
