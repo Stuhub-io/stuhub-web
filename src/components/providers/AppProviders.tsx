@@ -9,21 +9,24 @@ import { AssetUploaderContextProvider } from './asset_upload'
 import { InfoProvider } from './info'
 import { PermissionProvider } from './permissions'
 import { SharePageProvider } from './share'
+import { GlobalSearchProvider } from './search'
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
     <PermissionProvider>
       <InfoProvider>
         <OrganizationProvider>
-          <CollapsePersistProvider>
-            <CreatePageProvider>
-              <SharePageProvider>
-                <SidebarProvider>
-                  <AssetUploaderContextProvider>{children}</AssetUploaderContextProvider>
-                </SidebarProvider>
-              </SharePageProvider>
-            </CreatePageProvider>
-          </CollapsePersistProvider>
+          <GlobalSearchProvider>
+            <CollapsePersistProvider>
+              <CreatePageProvider>
+                <SharePageProvider>
+                  <SidebarProvider>
+                    <AssetUploaderContextProvider>{children}</AssetUploaderContextProvider>
+                  </SidebarProvider>
+                </SharePageProvider>
+              </CreatePageProvider>
+            </CollapsePersistProvider>
+          </GlobalSearchProvider>
         </OrganizationProvider>
       </InfoProvider>
     </PermissionProvider>

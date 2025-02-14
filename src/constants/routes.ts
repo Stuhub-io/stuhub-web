@@ -28,5 +28,4 @@ export const ROUTES = {
   ORGANIZATION: ({ orgSlug }: OrganizationParams) => `/${orgSlug}`,
   VAULT_PAGE: ({ orgSlug, pageID, openShare }: OrganizationPageParams) => `/${orgSlug}/${pageID}${  openShare ? '?openShare=true' : ''}`,
   ROOT_VAULTS: ({ orgSlug }: OrganizationParams) => `/${orgSlug}/vaults`,
-  RECENT_PAGE: ({ orgSlug }: OrganizationParams) => `/${orgSlug}/recent`,
 }
