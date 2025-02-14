@@ -14,7 +14,7 @@ export const PageHeaderMoreMenu = () => {
   
   const searchParams = useSearchParams()
 
-  const [ initOpenShare, setInitOpenShare ] = useState(searchParams.get('openShare') !== undefined)
+  const [ initOpenShare, setInitOpenShare ] = useState(Boolean(searchParams.get('openShare')))
 
   const { onOpenShareModal } = useSharePageContext()
 
