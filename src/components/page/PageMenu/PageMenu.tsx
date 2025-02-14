@@ -129,7 +129,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
                 return permissionChecker.page.canShare(page)
               case 'rename':
                 return permissionChecker.page.canEdit(page)
-              case 'organize-menu':
+              case 'Move':
                 return currentUserRole && permissionChecker.page.canMove(currentUserRole, page)
               case 'trash':
                 return permissionChecker.page.canDelete(page)
