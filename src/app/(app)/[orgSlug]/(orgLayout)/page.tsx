@@ -16,7 +16,7 @@ import { RiArrowUpSLine, RiFolder3Fill, RiHardDrive2Fill } from 'react-icons/ri'
 import { IoChevronForwardSharp } from 'react-icons/io5'
 
 export default function Page() {
-  const { data: { data: logs } = {}, refetch } = useFetchPageAccessLogs({
+  const { logs, refetch } = useFetchPageAccessLogs({
     allowFetch: true,
   })
 
