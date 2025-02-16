@@ -20,10 +20,11 @@ interface PageMoreMenuPopoverContentProps {
   onCopy?: () => void
   onNewTab?: () => void
   filterMenu?: (menu: MenuSection[]) => MenuSection[]
+  onStarToggle?: () => void
 }
 
 export const PageMoreMenuPopoverContent = memo((props: PageMoreMenuPopoverContentProps) => {
-  const { onClose, onRename, onOpenMove, onArchive, onShare, onCopy, onNewTab, filterMenu } = props
+  const { onClose, onRename, onOpenMove, onArchive, onShare, onCopy, onNewTab, filterMenu, onStarToggle } = props
   const { toast } = useToast()
 
   const [menu, setMenu] = useState<MenuSection[]>(MainMenuSections)
@@ -103,11 +104,8 @@ export const PageMoreMenuPopoverContent = memo((props: PageMoreMenuPopoverConten
               handleClose?.()
               break
             case 'starred':
-              toast({
-                variant: 'default',
-                title: 'Starred is unavailable',
-                description: 'Feature coming soon',
-              })
+              onStarToggle?.()
+              handleClose?.() 
               break
           }
         }}
@@ -130,4 +128,4 @@ export const PageMoreMenuPopoverContent = memo((props: PageMoreMenuPopoverConten
   )
 })
 
-PageMoreMenuPopoverContent.displayName = "PageMoreMenuPopoverContent"
+PageMoreMenuPopoverContent.displayName = 'PageMoreMenuPopoverContent'

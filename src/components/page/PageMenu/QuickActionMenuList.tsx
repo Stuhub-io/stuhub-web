@@ -25,10 +25,12 @@ export const PageQuickActionMenu = (props: BasePageMenuProps) => {
 
   const { onOpenShareModal } = useSharePageContext()
 
-  const { refreshOrgPages } = useSidebar()
+  const { refreshOrgPages, refreshStarredOrgPages } = useSidebar()
 
   const onSuccessAction = async () => {
     refreshOrgPages()
+    refreshStarredOrgPages()
+
     queryClient.invalidateQueries({
       queryKey: QUERY_KEYS.GET_PAGE({
         pageID: page.id,

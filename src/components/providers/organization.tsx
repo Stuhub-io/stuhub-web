@@ -56,8 +56,6 @@ export const OrganizationProvider = ({ children }: PropsWithChildren) => {
     allowFetch: !!orgSlug,
   })
 
-  console.log('internalJoinedOrgs', orgDetail)
-
   const isLoading = (isPendingOrgDetail && orgSlug) || (isPending && status === 'authenticated')
 
   const selectedOrg = useMemo(() => {

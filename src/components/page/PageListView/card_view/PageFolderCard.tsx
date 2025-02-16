@@ -3,7 +3,7 @@ import { PageViewTypeEnum } from '@/schema/page'
 import { Button, Card, CardBody } from '@nextui-org/react'
 import { BaseCardViewProps } from './type'
 import { PageMenu } from '../../PageMenu'
-import { RiFolder3Fill, RiMore2Line } from 'react-icons/ri'
+import { RiFolder3Fill, RiMore2Line, RiStarFill } from 'react-icons/ri'
 import { useDropzone } from 'react-dropzone'
 import { cn } from '@/libs/utils'
 import { useAssetUploadContext } from '@/components/providers/asset_upload'
@@ -83,7 +83,10 @@ export const FolderCard = memo((props: BaseCardViewProps) => {
               {page.name || 'Untitled'}
             </Typography>
           </div>
-          <div className="shrink-0" onDoubleClick={e => e.stopPropagation()}>
+          <div className="shrink-0 flex items-center gap-1" onDoubleClick={e => e.stopPropagation()}>
+            {Boolean(page.page_star) && (
+              <RiStarFill size={14} className="text-warning" />
+            )}
             <PageMenu page={page} onSuccess={onMutateSuccess} parentPage={parentPage}>
               <Button isIconOnly size="sm" variant="light" radius="full">
                 <RiMore2Line size={16} />
