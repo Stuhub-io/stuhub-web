@@ -49,7 +49,6 @@ export const ProfileBadge = forwardRef<ComponentRef<typeof Button>, ProfileBadge
       rightElClassName,
       ...restProps
     } = props
-    console.log('ProfileBadge', description, )
     
     const titleLevel = useMemo(() => getPrimaryTypoLevelBySize(size), [size])
 

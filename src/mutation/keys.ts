@@ -84,4 +84,8 @@ export const MUTATION_KEYS = {
   REQUEST_USER_PAGE_ROLE: ({ pageID }: { pageID: string }) => ['REQUEST_USER_PAGE_ROLE', pageID],
   ACCEPT_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['ACCEPT_USER_PAGE_ROLE', pagePkID],
   REJECT_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['REJECT_USER_PAGE_ROLE', pagePkID],
+  // 
+
+  STAR_PAGE: ({ pagePkID }: { pagePkID: number }) => ['STAR_PAGE', pagePkID],
+  UNSTAR_PAGE: ({ pagePkID }: { pagePkID: number }) => ['UNSTAR_PAGE', pagePkID],
 }

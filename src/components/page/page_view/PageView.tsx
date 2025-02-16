@@ -49,7 +49,8 @@ export const PageView = (props: PageViewProps) => {
     setCoverImageUrl(getRandomImageUrl(1400, 400))
   }
 
-  const dontHavePermission = ((error as any)?.body?.code >= 400)
+  const errCode = (error as any)?.body?.code
+  const dontHavePermission = errCode && errCode >= 400 && errCode < 500
 
   const Component = pageViewer.find((viewer) => viewer.viewType === pageDetail?.view_type)?.viewer
 
@@ -62,7 +63,6 @@ export const PageView = (props: PageViewProps) => {
       <PermissionRequired />
     )
   }
-
 
   if (!Component) return null
 

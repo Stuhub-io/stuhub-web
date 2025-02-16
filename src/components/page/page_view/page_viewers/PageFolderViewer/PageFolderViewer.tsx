@@ -81,7 +81,6 @@ export const PageFolderViewer: PageViewer = (props) => {
   }, [childPages, viewType])
 
   const handlePageClick = (folder: Page) => {
-    console.log('folder', organization?.slug, folder)
     router.push(
       ROUTES.VAULT_PAGE({
         orgSlug: organization?.slug ?? '',
@@ -113,8 +112,6 @@ export const PageFolderViewer: PageViewer = (props) => {
   const { getInputProps, getRootProps, isDragActive } = useDropzone({
     onDrop: handleDropFile,
   })
-
-  console.log({page})
 
   return (
     <>

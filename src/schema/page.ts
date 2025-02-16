@@ -32,6 +32,15 @@ export interface Page {
   permissions?: PagePermissions
   parent_page?: Page
   ancestors?: Page[]
+  page_star?: PageStar
+}
+
+export interface PageStar {
+  pkid: number
+  page_pkid: number
+  user_pkid: number
+  order: number
+  created_at: string
 }
 
 export interface PagePermissions {
@@ -84,6 +93,7 @@ export type GetPagesQuery = Partial<Pagination> & {
   parent_page_pkid?: number
   is_archived?: boolean
   all?: boolean
+  is_starred?: boolean
 }
 
 export interface UpdatePageRequest {

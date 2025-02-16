@@ -1,6 +1,6 @@
 import Typography from '@/components/common/Typography'
 import { Card, cn, CardBody, Button, Image, Divider } from '@nextui-org/react'
-import { RiMore2Line } from 'react-icons/ri'
+import { RiMore2Line, RiStarFill } from 'react-icons/ri'
 import { PageMenu } from '../../PageMenu'
 import { BaseCardViewProps } from './type'
 import { Asset, PageViewTypeEnum } from '@/schema/page'
@@ -52,11 +52,23 @@ export const PageAssetCard = memo((props: BaseCardViewProps) => {
       onClick={(e) => e.stopPropagation()}
     >
       <CardBody
-        className="flex select-none flex-col p-2"
+        className="flex select-none flex-col p-2 group"
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
       >
         <div className="relative w-full overflow-hidden pb-[45%]">
+          {page.page_star && (
+            <div
+              className={cn(
+                'absolute right-0 top-0 z-20 rounded-bl-full bg-default-100 pb-2 pl-2 group-hover:bg-default-200',
+                {
+                  'bg-primary-100 group-hover:bg-primary-100/90': isSelected,
+                },
+              )}
+            >
+              <RiStarFill size={14} className="text-warning" />
+            </div>
+          )}
           <div className="absolute inset-0 h-full w-full">{getAssetPreviewContent(page.asset)}</div>
         </div>
         <div

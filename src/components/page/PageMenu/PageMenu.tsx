@@ -20,6 +20,9 @@ import { useOrganization } from '@/components/providers/organization'
 import useCopy from 'use-copy'
 import { MenuSection } from './PageMenuPopover/const'
 import { usePermissions } from '@/components/providers/permissions'
+import { useStarPage } from '@/mutation/mutator/page/useStarPage'
+import { useUnstarPage } from '@/mutation/mutator/page/useUnstarPage'
+
 
 export interface BasePageMenuProps extends PropsWithChildren {
   page: Page
@@ -59,6 +62,15 @@ export const PageMenu = (props: BasePageMenuProps) => {
   const { mutateAsync: movePage } = useMovePage({
     id: page.id,
   })
+
+  const { mutateAsync: starPage } = useStarPage({
+    pagePkID: page.pkid,
+  })
+
+  const { mutateAsync: unstarPage } = useUnstarPage({
+    pagePkID: page.pkid,
+  })
+
 
   const onSuccessAction = async () => {
     refreshOrgPages()
@@ -104,6 +116,23 @@ export const PageMenu = (props: BasePageMenuProps) => {
     onOpenShareModal(page)
   }
 
+  const onToggleStarPage = async () => {
+    const mutator = page.page_star ?  unstarPage: starPage
+
+    try {
+      await mutator({
+        pagePkID: page.pkid,
+      })
+    }
+    catch (e) {
+      toast({
+        variant: 'danger',
+        title: page.page_star ?  'Failed to remove page from starred': 'Failed to star page',
+      })
+    }
+    onSuccessAction()
+  }
+
   const menuFilter = useCallback(
     (menuItems: MenuSection[]) => {
       return (
@@ -111,6 +140,12 @@ export const PageMenu = (props: BasePageMenuProps) => {
           // Modify UI
           .map((item) => {
             switch (item.key) {
+              case 'starred':
+                return {
+                  ...item,
+                  // icon: page.page_star ? ,
+                  title: page.page_star ? 'Remove from starred' : 'Add to starred',
+                }
               case 'organize-menu':
                 return {
                   ...item,
@@ -191,6 +226,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
               window.open(pageHref)
             }}
             onShare={handleShare}
+            onStarToggle={onToggleStarPage}
             onRename={onOpenRename}
             onOpenMove={onOpenMove}
             onArchive={handleArchive}
