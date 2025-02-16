@@ -132,20 +132,20 @@ class PageService extends Client {
     return fetcher<BaseResponse<PagePermissionRole>>(
       `${this.baseUrl}/v1/page-services/pages/id/${pageID}/role-requests`,
       {
-        method: "POST",
+        method: 'POST',
         headers: this.privateHeaders,
-      }
+      },
     )
   }
 
-  public acceptPermissionRoleRequest({ pagePkID, email, role }: { pagePkID: number; email: string, role: PageRole }) {
+  public acceptPermissionRoleRequest({ pagePkID, email, role }: { pagePkID: number; email: string; role: PageRole }) {
     return fetcher<BaseResponse<PagePermissionRole>>(
       `${this.baseUrl}/v1/page-services/pages/${pagePkID}/role-requests/accept`,
       {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ email, role }),
         headers: this.privateHeaders,
-      }
+      },
     )
   }
 
@@ -153,13 +153,32 @@ class PageService extends Client {
     return fetcher<BaseResponse<PagePermissionRole>>(
       `${this.baseUrl}/v1/page-services/pages/${pagePkID}/role-requests/reject`,
       {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ emails }),
         headers: this.privateHeaders,
-      }
+      },
     )
   }
 
+  public unstarPage({pagePkID}: {pagePkID: number}) {
+    return fetcher<BaseResponse>(`${this.baseUrl}/v1/page-services/pages/${pagePkID}/unstar`, {
+      method: 'POST',
+      headers: this.privateHeaders,
+      body: JSON.stringify({
+        page_pkid: pagePkID,
+      }),
+    })
+  }
+
+  public starPage({pagePkID}: {pagePkID: number}) {
+    return fetcher<BaseResponse>(`${this.baseUrl}/v1/page-services/pages/${pagePkID}/star`, {
+      method: 'POST',
+      headers: this.privateHeaders,
+      body: JSON.stringify({
+        page_pkid: pagePkID,
+      }),
+    })
+  }
 }
 
 export const pageService = new PageService()

@@ -22,6 +22,7 @@ export const SideBar = (props: SideBarProps) => {
         'h-full w-full',
         'border-r border-r-divider',
         'flex flex-col p-2',
+        'bg-default-50',
         className,
       )}
     >

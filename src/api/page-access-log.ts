@@ -1,13 +1,13 @@
 import { Client } from '@/libs/client'
 import fetcher from '@/libs/fetcher'
-import { BaseResponse } from '@/schema/base'
-import { PageAccessLog } from '@/schema/page-access-log'
-// import qs from 'querystring'
+import { BaseResponse, CursorPagination } from '@/schema/base'
+import { GetPageAccessLogsQuery, PageAccessLog } from '@/schema/page-access-log'
+import qs from 'querystring'
 
 class PageAccessLogService extends Client {
-  public getLogs() {
-    return fetcher<BaseResponse<PageAccessLog[]>>(
-      `${this.baseUrl}/v1/page-access-log-services/logs`,
+  public getLogs(query: GetPageAccessLogsQuery) {
+    return fetcher<BaseResponse<PageAccessLog[], CursorPagination>>(
+      `${this.baseUrl}/v1/page-access-log-services/logs?${qs.stringify(query)}`,
       {
         headers: this.privateHeaders,
       },

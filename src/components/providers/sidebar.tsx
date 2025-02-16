@@ -29,6 +29,9 @@ interface SidebarContextValue {
   getChildrenPageByPkID: (pagePkId: number) => Page[]
   showSidebar?: boolean
   setShowSidebar: (_: boolean) => void
+  isPendingStarredOrgPages: boolean
+  starredOrgPages?: Page[]
+  refreshStarredOrgPages: () => void
 }
 
 const [Provider, useSidebar] = createContext<SidebarContextValue>({
@@ -59,6 +62,18 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     org_pkid: organization?.pkid ?? -1,
     view_types: [PageViewTypeEnum.FOLDER],
     all: true,
+  })
+
+  const {
+    data: { data: starredOrgPages } = {},
+    refetch: refreshStarredOrgPages,
+    isPending: isPendingStarredOrgPages,
+  } = useFetchPages({
+    allowFetch: Boolean(organization?.pkid) && status === 'authenticated',
+    is_archived: false,
+    org_pkid: organization?.pkid ?? -1,
+    all: true,
+    is_starred: true,
   })
 
   const orgPages: IPageData | undefined = useMemo(() => {
@@ -104,12 +119,19 @@ export const SidebarProvider = ({ children }: PropsWithChildren) => {
     },
     [orgPages],
   )
+ 
+  const debounceRefreshStarredOrgPages = useThrottledCallback(refreshStarredOrgPages, 2000, {
+    trailing: true,
+  }) 
 
   return (
     <Provider
       value={{
         orgPages,
+        starredOrgPages,
         refreshOrgPages: debounceRefreshOrgPages,
+        refreshStarredOrgPages: debounceRefreshStarredOrgPages,
+        isPendingStarredOrgPages,
         showSidebar,
         setShowSidebar,
         isPendingOrgPages,

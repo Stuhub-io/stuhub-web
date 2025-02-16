@@ -1,5 +1,6 @@
 import { GetOrgBySlugParams, GetOrgInviteByIdParams } from '@/schema/organization'
 import { CreatePageRequest, GetPagesQuery } from '@/schema/page'
+import { GetPageAccessLogsQuery } from '@/schema/page-access-log'
 import { SearchUserBody } from '@/schema/user'
 
 const PAGE_KEYS = {
@@ -23,10 +24,7 @@ export const QUERY_KEYS = {
     JSON.stringify(query.view_types),
   ],
   GET_PAGE: ({ pageID }: { pageID: string }) => [PAGE_KEYS.GET, pageID],
-  GET_PAGE_PERMISSION_ROLES: ({ pagePkID }: { pagePkID: number }) => [
-    'GET_PAGE_PERMISSION_ROLES',
-    pagePkID,
-  ],
+  GET_PAGE_PERMISSION_ROLES: ({ pagePkID }: { pagePkID: number }) => ['GET_PAGE_PERMISSION_ROLES', pagePkID],
   SEARCH_USERS: (params: SearchUserBody) => [
     'SEARCH_USERS',
     params.page,
@@ -35,10 +33,15 @@ export const QUERY_KEYS = {
     params.org_pkid,
     JSON.stringify(params.emails),
   ],
-  GET_PAGE_ACCESS_LOGS: ['GET_PAGE_ACCESS_LOGS'],
-  
+  GET_PAGE_ACCESS_LOGS: (query: GetPageAccessLogsQuery) => [
+    query?.cursor,
+    query?.limit,
+    query?.next_cursor,
+    'GET_PAGE_ACCESS_LOGS',
+  ],
+
   // Role Requests
-  LIST_PAGE_ROLE_REQUESTS: ({pagePkID}: {pagePkID: number}) => ['LIST_PAGE_ROLE_REQUESTS', pagePkID],
+  LIST_PAGE_ROLE_REQUESTS: ({ pagePkID }: { pagePkID: number }) => ['LIST_PAGE_ROLE_REQUESTS', pagePkID],
 }
 
 export const MUTATION_KEYS = {
@@ -73,30 +76,16 @@ export const MUTATION_KEYS = {
     tempId,
   ],
   // page roles
-  UPDATE_PAGE_GENERAL_ACCESS: ({ pagePkID }: { pagePkID: number }) => [
-    'UPDATE_PAGE_GENERAL_ACCESS',
-    pagePkID,
-  ],
+  UPDATE_PAGE_GENERAL_ACCESS: ({ pagePkID }: { pagePkID: number }) => ['UPDATE_PAGE_GENERAL_ACCESS', pagePkID],
 
   ADD_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['ADD_USER_PAGE_ROLE', pagePkID],
-  UPDATE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => [
-    'UPDATE_USER_PAGE_ROLE',
-    pagePkID,
-  ],
-  REMOVE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => [
-    'REMOVE_USER_PAGE_ROLE',
-    pagePkID,
-  ],
-  REQUEST_USER_PAGE_ROLE: ({ pageID }: { pageID: string }) => [
-    'REQUEST_USER_PAGE_ROLE',
-    pageID,
-  ],
-  ACCEPT_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => [
-    'ACCEPT_USER_PAGE_ROLE',
-    pagePkID,
-  ],
-  REJECT_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => [
-    'REJECT_USER_PAGE_ROLE',
-    pagePkID,
-  ],
+  UPDATE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['UPDATE_USER_PAGE_ROLE', pagePkID],
+  REMOVE_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['REMOVE_USER_PAGE_ROLE', pagePkID],
+  REQUEST_USER_PAGE_ROLE: ({ pageID }: { pageID: string }) => ['REQUEST_USER_PAGE_ROLE', pageID],
+  ACCEPT_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['ACCEPT_USER_PAGE_ROLE', pagePkID],
+  REJECT_USER_PAGE_ROLE: ({ pagePkID }: { pagePkID: number }) => ['REJECT_USER_PAGE_ROLE', pagePkID],
+  // 
+
+  STAR_PAGE: ({ pagePkID }: { pagePkID: number }) => ['STAR_PAGE', pagePkID],
+  UNSTAR_PAGE: ({ pagePkID }: { pagePkID: number }) => ['UNSTAR_PAGE', pagePkID],
 }

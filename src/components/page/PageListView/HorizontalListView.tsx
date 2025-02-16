@@ -28,7 +28,6 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
     loading,
     onItemMutateSuccess,
     onItemDoubleClick,
-    selectedItemPkIDs,
     onSelectedPkIDsChanged,
     emptyState,
     parentPage,
@@ -36,10 +35,6 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
   } = props
 
   const { user } = useAuthContext()
-
-  console.log('items', selectedItemPkIDs)
-
-  console.log("list:  ", {parentPage})
 
   const handleItemClick = (page: Page) => {
     onSelectedPkIDsChanged?.((prev) => {
@@ -161,9 +156,11 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
         </TableHeader>
         <TableBody>
           <TableRow>
-            <TableCell colSpan={colsDef.length}>
-              <Skeleton className="h-[30px] w-full" />
-            </TableCell>
+            {colsDef.map((colDef) => (
+              <TableCell key={colDef.key} colSpan={colsDef.length}>
+                <Skeleton className="h-[30px] w-full" />
+              </TableCell>
+            ))}
           </TableRow>
         </TableBody>
       </Table>

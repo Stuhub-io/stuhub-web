@@ -29,7 +29,7 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
     const { toast } = useToast()
     const queryClient = useQueryClient()
 
-    const { refreshOrgPages } = useSidebar()
+    const { refreshOrgPages, refreshStarredOrgPages } = useSidebar()
 
     const { mutateAsync: updatePage, isPending } = useUpdatePage({
       id: page.id,
@@ -53,6 +53,7 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
         })
 
         refreshOrgPages()
+        refreshStarredOrgPages()
         
         queryClient.invalidateQueries({
           exact: true,

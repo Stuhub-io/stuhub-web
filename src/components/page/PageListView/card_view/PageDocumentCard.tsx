@@ -4,7 +4,7 @@ import { Button, Card, CardBody } from '@nextui-org/react'
 import { cn } from '@/libs/utils'
 import Typography from '@/components/common/Typography'
 import { formatTimeToNow } from '@/utils/time'
-import { RiMore2Line } from 'react-icons/ri'
+import { RiMore2Line, RiStarFill } from 'react-icons/ri'
 import { PageMenu } from '../../PageMenu'
 import { VscodeDocumentIcon } from '@/components/icons/VsCodeDocumentIcon'
 import { useMutationState } from '@tanstack/react-query'
@@ -12,8 +12,7 @@ import { MUTATION_KEYS } from '@/mutation/keys'
 import { memo } from 'react'
 
 export const PageDocumentCard = memo((props: BaseCardViewProps) => {
-  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, parentPage } =
-    props
+  const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, parentPage } = props
 
   const archiveStatus = useMutationState({
     filters: {
@@ -50,19 +49,27 @@ export const PageDocumentCard = memo((props: BaseCardViewProps) => {
       shadow="none"
       onClick={(e) => e.stopPropagation()}
     >
-      <CardBody
-        className="flex flex-col p-2 pb-3"
-        onClick={handleClick}
-        onDoubleClick={handleDoubleClick}
-      >
+      <CardBody className="group flex flex-col p-2 pb-3" onClick={handleClick} onDoubleClick={handleDoubleClick}>
         <div className="relative w-full overflow-hidden pb-[45%]">
+          {page.page_star && (
+            <div
+              className={cn(
+                'absolute right-0 top-0 z-10 rounded-bl-full bg-default-100 pb-2 pl-2 group-hover:bg-default-200',
+                {
+                  'bg-primary-100 group-hover:bg-primary-100/90': isSelected,
+                },
+              )}
+            >
+              <RiStarFill size={14} className="text-warning" />
+            </div>
+          )}
           <div className="absolute inset-0 h-full w-full">
             <div className="flex h-full w-full items-center justify-center rounded-small bg-background">
               <VscodeDocumentIcon width={38} height={38} />
             </div>
           </div>
         </div>
-        <div className="flex w-full items-center gap-2 pl-2 pt-2" onDoubleClick={e => e.stopPropagation()}>
+        <div className="flex w-full items-center gap-2 pl-2 pt-2" onDoubleClick={(e) => e.stopPropagation()}>
           <div className="flex flex-1 flex-col overflow-hidden">
             <Typography level="p5" noWrap className="w-full">
               {page.name || 'Untitled'}
@@ -78,7 +85,7 @@ export const PageDocumentCard = memo((props: BaseCardViewProps) => {
             </div>
           </div>
           <PageMenu page={page} onSuccess={onMutateSuccess} parentPage={parentPage}>
-            <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0" >
+            <Button isIconOnly size="sm" variant="light" radius="full" className="shrink-0">
               <RiMore2Line size={16} />
             </Button>
           </PageMenu>
