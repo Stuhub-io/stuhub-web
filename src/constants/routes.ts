@@ -27,5 +27,6 @@ export const ROUTES = {
   AUTH_EMAIL: '/auth-email',
   ORGANIZATION: ({ orgSlug }: OrganizationParams) => `/${orgSlug}`,
   VAULT_PAGE: ({ orgSlug, pageID, openShare }: OrganizationPageParams) => `/${orgSlug}/${pageID}${  openShare ? '?openShare=true' : ''}`,
+  STARRED_PAGE: ({ orgSlug }: OrganizationParams) => `/${orgSlug}/starred`,
   ROOT_VAULTS: ({ orgSlug }: OrganizationParams) => `/${orgSlug}/vaults`,
 }

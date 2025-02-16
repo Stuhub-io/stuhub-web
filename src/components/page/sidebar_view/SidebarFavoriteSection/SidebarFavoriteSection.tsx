@@ -1,22 +1,25 @@
-import { PopperContentTrigger } from '@/components/common/PopoverTrigger'
+'use client'
+
 import { SidebarItem, SidebarIconButton } from '@/components/common/Sidebar'
 import { ROUTES } from '@/constants/routes'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@radix-ui/react-collapsible'
-import router from 'next/router'
-import { RiArrowRightSLine, RiAddFill, RiStarFill } from 'react-icons/ri'
-import { PageCreateMenu } from '../../common/PageCreateMenu'
+import { RiArrowRightSLine, RiStarFill } from 'react-icons/ri'
 import { useState } from 'react'
 import { useOrganization } from '@/components/providers/organization'
 import { useSidebar } from '@/components/providers/sidebar'
 import { SidebarPageItemView } from '../SidebarPageIterm'
 import { CreatingSidebarPageItem } from '../PageCreatingItemView'
 import { ActiveCreatingPageItem } from '../ActiveCreatingPageItemView'
-
+import { usePathname, useRouter } from 'next/navigation'
 
 export const SidebarFavoriteSection = () => {
   const [isExpanded, setIsExpanded] = useState(true)
   const { organization, isGuest } = useOrganization()
   const { starredOrgPages } = useSidebar()
+  const router = useRouter()
+
+  const pathName = usePathname()
+  const isSelected = pathName === ROUTES.STARRED_PAGE({ orgSlug: organization?.slug ?? '' })
 
   if (isGuest) {
     return null
@@ -25,9 +28,10 @@ export const SidebarFavoriteSection = () => {
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <SidebarItem
+        isSelected={isSelected}
         onClick={() => {
           router.push(
-            ROUTES.ROOT_VAULTS({
+            ROUTES.STARRED_PAGE({
               orgSlug: organization?.slug ?? '',
             }),
           )
@@ -44,20 +48,8 @@ export const SidebarFavoriteSection = () => {
             </CollapsibleTrigger>
           </>
         }
-        endContent={
-          <PopperContentTrigger>
-            <SidebarIconButton showOnGroupHoverOnly>
-              <RiAddFill />
-            </SidebarIconButton>
-            <PageCreateMenu
-              onClose={() => {
-                setIsExpanded(true)
-              }}
-            />
-          </PopperContentTrigger>
-        }
       >
-        Favorite
+        Starred
       </SidebarItem>
       <CollapsibleContent>
         {starredOrgPages?.map((page) => {
