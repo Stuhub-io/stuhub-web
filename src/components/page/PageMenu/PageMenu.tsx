@@ -22,6 +22,7 @@ import { MenuSection } from './PageMenuPopover/const'
 import { usePermissions } from '@/components/providers/permissions'
 import { useStarPage } from '@/mutation/mutator/page/useStarPage'
 import { useUnstarPage } from '@/mutation/mutator/page/useUnstarPage'
+import { downloadFromUrl } from '@/utils/file'
 
 
 export interface BasePageMenuProps extends PropsWithChildren {
@@ -54,7 +55,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
 
   const { onOpenShareModal } = useSharePageContext()
 
-  const { refreshOrgPages } = useSidebar()
+  const { refreshOrgPages, refreshStarredOrgPages } = useSidebar()
   const { toast } = useToast()
 
   const { mutateAsync: archivePage } = useArchivePage({ id: page.id })
@@ -71,9 +72,25 @@ export const PageMenu = (props: BasePageMenuProps) => {
     pagePkID: page.pkid,
   })
 
+  const handleDownload = () => {
+    if ([
+      PageViewTypeEnum.ASSET
+    ].includes(page.view_type)) {
+      // downloadAsset(page)
+      downloadFromUrl(page.asset?.url ?? "", page.name)
+    }
+    else {
+      toast({
+        variant: 'danger',
+        title: 'Download is not supported for this file type',
+      })
+    }
+  }
+
 
   const onSuccessAction = async () => {
     refreshOrgPages()
+    refreshStarredOrgPages()
     queryClient.invalidateQueries({
       queryKey: QUERY_KEYS.GET_PAGE({
         pageID: page.id,
@@ -123,6 +140,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
       await mutator({
         pagePkID: page.pkid,
       })
+      onSuccessAction()
     }
     catch (e) {
       toast({
@@ -130,7 +148,6 @@ export const PageMenu = (props: BasePageMenuProps) => {
         title: page.page_star ?  'Failed to remove page from starred': 'Failed to star page',
       })
     }
-    onSuccessAction()
   }
 
   const menuFilter = useCallback(
@@ -228,6 +245,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
             onShare={handleShare}
             onStarToggle={onToggleStarPage}
             onRename={onOpenRename}
+            onDownload={handleDownload}
             onOpenMove={onOpenMove}
             onArchive={handleArchive}
             filterMenu={menuFilter}

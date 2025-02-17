@@ -18,6 +18,7 @@ import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { formatReadableFileSize } from '@/utils/file'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
 import { useViewType } from '@/hooks/useViewType'
+import { PageListSkeleton } from '@/components/page/common/skeleton/PageListSkeleton'
 
 export const PageFolderViewer: PageViewer = (props) => {
   const { page, onAddCoverImage, hasCoverImage } = props
@@ -33,7 +34,11 @@ export const PageFolderViewer: PageViewer = (props) => {
 
   const [selectedPagePkIDs, setSelectedPagePkIDs] = useState<number[]>([])
 
-  const { data: { data: childPages } = {}, refetch } = useFetchPages({
+  const {
+    data: { data: childPages } = {},
+    refetch,
+    isLoading,
+  } = useFetchPages({
     allowFetch: Boolean(page),
     is_archived: false,
     org_pkid: page?.organization_pkid ?? -1,
@@ -149,48 +154,52 @@ export const PageFolderViewer: PageViewer = (props) => {
             onOpenUploadModal(page)
           }}
         />
-
-        <div className="mt-8 space-y-8">
-          {!!folders?.length && (
-            <div className="space-y-4">
-              <Typography level="p5" color="textTertiary">
-                Folders
-              </Typography>
-              <PageListView
-                viewType={viewType}
-                items={folders}
-                parentPage={page}
-                onItemMutateSuccess={refetch}
-                selectedItemPkIDs={selectedPagePkIDs}
-                onSelectedPkIDsChanged={setSelectedPagePkIDs}
-                onItemDoubleClick={handlePageClick}
-              />
+        {isLoading ? (
+          <PageListSkeleton />
+        ) : (
+          <>
+            <div className="mt-8 space-y-8">
+              {!!folders?.length && (
+                <div className="space-y-4">
+                  <Typography level="p5" color="textTertiary">
+                    Folders
+                  </Typography>
+                  <PageListView
+                    viewType={viewType}
+                    items={folders}
+                    parentPage={page}
+                    onItemMutateSuccess={refetch}
+                    selectedItemPkIDs={selectedPagePkIDs}
+                    onSelectedPkIDsChanged={setSelectedPagePkIDs}
+                    onItemDoubleClick={handlePageClick}
+                  />
+                </div>
+              )}
+              <div
+                className={cn('mt-4 space-y-4', {
+                  'rounded-md outline-dashed outline-2 outline-offset-[8px] outline-primary': isDragActive,
+                })}
+                {...getRootProps()}
+                onClick={() => {}} // prevent click
+              >
+                <input {...getInputProps()} className="invisible" />
+                <Typography level="p5" color="textTertiary">
+                  Files and Documents {size ? `(${formatReadableFileSize(size)})` : ''}
+                </Typography>
+                <PageListView
+                  parentPage={page}
+                  viewType={viewType}
+                  emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal(page)} />}
+                  selectedItemPkIDs={selectedPagePkIDs}
+                  items={filesAndDocs}
+                  onItemMutateSuccess={refetch}
+                  onSelectedPkIDsChanged={setSelectedPagePkIDs}
+                  onItemDoubleClick={handlePageClick}
+                />
+              </div>
             </div>
-          )}
-          <div
-            className={cn('mt-4 space-y-4', {
-              'rounded-md outline-dashed outline-2 outline-offset-[8px] outline-primary':
-                isDragActive,
-            })}
-            {...getRootProps()}
-            onClick={() => {}} // prevent click
-          >
-            <input {...getInputProps()} className="invisible" />
-            <Typography level="p5" color="textTertiary">
-              Files and Documents {size ? `(${formatReadableFileSize(size)})` : ''}
-            </Typography>
-            <PageListView
-              parentPage={page}
-              viewType={viewType}
-              emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal(page)} />}
-              selectedItemPkIDs={selectedPagePkIDs}
-              items={filesAndDocs}
-              onItemMutateSuccess={refetch}
-              onSelectedPkIDsChanged={setSelectedPagePkIDs}
-              onItemDoubleClick={handlePageClick}
-            />
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </>
   )

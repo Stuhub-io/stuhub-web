@@ -100,7 +100,7 @@ export default function StarredPage() {
               />
             </div>
           )}
-          <div>
+          <div className='space-y-4'>
             <Typography level="p5" color="textTertiary">
               Files and Documents
             </Typography>
