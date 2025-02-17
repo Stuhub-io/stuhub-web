@@ -15,7 +15,7 @@ import {
 import { useAuthContext } from '@/components/auth/AuthGuard'
 import Typography from '@/components/common/Typography'
 import { getUserFullName } from '@/utils/user'
-import { RiMore2Fill } from 'react-icons/ri'
+import { RiMore2Fill, RiStarFill } from 'react-icons/ri'
 import { PageMenu } from '../PageMenu'
 import { PageIconPreview } from './PageIconPreview'
 import dayjs from 'dayjs'
@@ -51,11 +51,16 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
         key: 'name',
         headerTitle: 'Name',
         renderCell: ({ page }) => (
-          <div className="flex items-center gap-3">
+          <div className="flex max-w-[350px] items-center gap-3">
             <PageIconPreview page={page} />
             <Typography level="p5" noWrap className="max-w-[400px]">
               {page.name || 'Untitled'}
             </Typography>
+            {Boolean(page.page_star) && (
+              <div className="shrink-0">
+                <RiStarFill className="text-warning" size={14} />
+              </div>
+            )}
           </div>
         ),
         width: '30%',

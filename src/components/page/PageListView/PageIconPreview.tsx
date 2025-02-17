@@ -6,7 +6,7 @@ import { ReactNode } from 'react'
 
 export const PageIconPreview = ({ page }: { page: Page }) => {
   const wrapper = (child?: ReactNode) => (
-    <div className="relative flex h-10 w-10 items-center justify-center rounded-md bg-default-100">
+    <div className="relative flex h-10 w-10 items-center justify-center rounded-md bg-default-100 shrink-0">
       {child}
     </div>
   )

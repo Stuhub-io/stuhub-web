@@ -1,14 +1,19 @@
 import { Button, useDisclosure } from '@nextui-org/react'
 import { RenamePageInput } from '@/components/page/common/RenamePageInput'
 import { PopperCard } from '@/components/common/PopperCard'
-import { Page } from '@/schema/page'
+import { Page, PageViewTypeEnum } from '@/schema/page'
 import { useSidebar } from '@/components/providers/sidebar'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
-import { PropsWithChildren, useMemo } from 'react'
+import { PropsWithChildren, useMemo, useState } from 'react'
 import { useSharePageContext } from '@/components/providers/share'
 import { usePermissions } from '@/components/providers/permissions'
 import { RiDownloadLine, RiEditLine, RiStarFill, RiUserShared2Fill } from 'react-icons/ri'
+import { cn } from '@/libs/utils'
+import { useStarPage } from '@/mutation/mutator/page/useStarPage'
+import { useUnstarPage } from '@/mutation/mutator/page/useUnstarPage'
+import { downloadFromUrl } from '@/utils/file'
+import { useToast } from '@/hooks/useToast'
 
 export interface BasePageMenuProps extends PropsWithChildren {
   page: Page
@@ -18,6 +23,7 @@ export interface BasePageMenuProps extends PropsWithChildren {
 export const PageQuickActionMenu = (props: BasePageMenuProps) => {
   const { page, onSuccess } = props
   const { permissionChecker } = usePermissions()
+  const { toast } = useToast()
 
   const queryClient = useQueryClient()
 
@@ -26,6 +32,14 @@ export const PageQuickActionMenu = (props: BasePageMenuProps) => {
   const { onOpenShareModal } = useSharePageContext()
 
   const { refreshOrgPages, refreshStarredOrgPages } = useSidebar()
+
+  const [togglingStar, setTogglingStar] = useState(false)
+  const { mutateAsync: starPage } = useStarPage({
+    pagePkID: page.pkid,
+  })
+  const { mutateAsync: unstarPage } = useUnstarPage({
+    pagePkID: page.pkid,
+  })
 
   const onSuccessAction = async () => {
     refreshOrgPages()
@@ -40,6 +54,32 @@ export const PageQuickActionMenu = (props: BasePageMenuProps) => {
     await onSuccess?.()
   }
 
+  const handleDownload = () => {
+    if ([PageViewTypeEnum.ASSET].includes(page.view_type)) {
+      // downloadAsset(page)
+      downloadFromUrl(page.asset?.url ?? '', page.name)
+    } else {
+      toast({
+        variant: 'danger',
+        title: 'Download is not supported for this file type',
+      })
+    }
+  }
+
+  const onToggleStar = async () => {
+    const mutate = page.page_star ? unstarPage : starPage
+    setTogglingStar(true)
+    try {
+      await mutate({
+        pagePkID: page.pkid,
+      })
+      onSuccessAction()
+    } catch (e) {
+      console.error(e)
+    }
+    setTogglingStar(false)
+  }
+
   const handleShare = () => {
     onOpenShareModal(page)
   }
@@ -49,7 +89,6 @@ export const PageQuickActionMenu = (props: BasePageMenuProps) => {
       download: permissionChecker.page.canDownload(page),
       share: permissionChecker.page.canShare(page),
       rename: permissionChecker.page.canEdit(page),
-      // star: permissionChecker.page.canStar(page),
     }),
     [page, permissionChecker.page],
   )
@@ -61,12 +100,7 @@ export const PageQuickActionMenu = (props: BasePageMenuProps) => {
       placement="bottom"
       isOpen={isOpenRename}
       renderContent={(setRef) => (
-        <RenamePageInput
-          ref={setRef}
-          page={page}
-          onClose={onCloseRename}
-          onSuccess={onSuccessAction}
-        />
+        <RenamePageInput ref={setRef} page={page} onClose={onCloseRename} onSuccess={onSuccessAction} />
       )}
       onClose={onCloseRename}
     >
@@ -74,25 +108,63 @@ export const PageQuickActionMenu = (props: BasePageMenuProps) => {
         onClick={(e) => {
           e.stopPropagation()
         }}
-        className="flex items-center gap-2 w-[136px]"
+        className="flex w-[136px] items-center gap-2"
       >
         {permissions.share && (
-          <Button className="group-hover:opacity-65 opacity-0 transition duration-200" variant="light" radius="full" color="default" size="sm" isIconOnly onClick={handleShare}>
+          <Button
+            className="opacity-0 transition duration-200 group-hover:opacity-65"
+            variant="light"
+            radius="full"
+            color="default"
+            size="sm"
+            isIconOnly
+            onClick={handleShare}
+          >
             <RiUserShared2Fill size={16} />
           </Button>
         )}
         {permissions.rename && (
-          <Button className="group-hover:opacity-65 opacity-0 transition duration-200" variant="light" radius="full" color="default" size="sm" isIconOnly onClick={onOpenRename}>
+          <Button
+            className="opacity-0 transition duration-200 group-hover:opacity-65"
+            variant="light"
+            radius="full"
+            color="default"
+            size="sm"
+            isIconOnly
+            onClick={onOpenRename}
+          >
             <RiEditLine size={16} />
           </Button>
         )}
         {permissions.download && (
-          <Button className="group-hover:opacity-65 opacity-0 transition duration-200" variant="light" radius="full" color="default" size="sm" isIconOnly>
+          <Button
+            className="opacity-0 transition duration-200 group-hover:opacity-65"
+            variant="light"
+            radius="full"
+            color="default"
+            size="sm"
+            isIconOnly
+            onClick={handleDownload}
+          >
             <RiDownloadLine size={16} />
           </Button>
         )}
-        <Button className="group-hover:opacity-65 opacity-0 transition duration-200" variant="light" radius="full" color="default" size="sm" isIconOnly>
-          <RiStarFill size={16} />
+        <Button
+          className="opacity-0 transition duration-200 group-hover:opacity-65"
+          variant="light"
+          radius="full"
+          color="default"
+          size="sm"
+          isIconOnly
+          onClick={onToggleStar}
+          disabled={togglingStar}
+        >
+          <RiStarFill
+            size={16}
+            className={cn({
+              'text-warning': page.page_star,
+            })}
+          />
         </Button>
       </div>
     </PopperCard>
