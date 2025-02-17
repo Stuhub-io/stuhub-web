@@ -29,7 +29,6 @@ export const PageCreateMenu = (props: PageCreateMenuProps) => {
 
   const onSuccesAction = async () => {
     queryClient.invalidateQueries({
-      exact: true,
       queryKey: QUERY_KEYS.GET_PAGE({
         pageID: parentPage?.id ?? '',
       }),

@@ -21,6 +21,10 @@ export const SidebarFavoriteSection = () => {
   const pathName = usePathname()
   const isSelected = pathName === ROUTES.STARRED_PAGE({ orgSlug: organization?.slug ?? '' })
 
+  if (!starredOrgPages?.length) {
+    return null
+  }
+
   if (isGuest) {
     return null
   }

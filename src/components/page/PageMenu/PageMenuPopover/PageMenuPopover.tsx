@@ -19,12 +19,14 @@ interface PageMoreMenuPopoverContentProps {
   onShare?: () => void
   onCopy?: () => void
   onNewTab?: () => void
+  onDownload?: () => void
   filterMenu?: (menu: MenuSection[]) => MenuSection[]
   onStarToggle?: () => void
 }
 
 export const PageMoreMenuPopoverContent = memo((props: PageMoreMenuPopoverContentProps) => {
-  const { onClose, onRename, onOpenMove, onArchive, onShare, onCopy, onNewTab, filterMenu, onStarToggle } = props
+  const { onClose, onRename, onOpenMove, onArchive, onShare, onCopy, onNewTab, filterMenu, onStarToggle, onDownload } =
+    props
   const { toast } = useToast()
 
   const [menu, setMenu] = useState<MenuSection[]>(MainMenuSections)
@@ -64,11 +66,8 @@ export const PageMoreMenuPopoverContent = memo((props: PageMoreMenuPopoverConten
               setMenu(OrganizeSectionItems)
               break
             case 'download':
-              toast({
-                variant: 'default',
-                title: 'Download is unavailable',
-                description: 'Feature coming soon',
-              })
+              onDownload?.()
+              handleClose?.()
               break
             case 'folder-info':
               toast({
@@ -105,7 +104,7 @@ export const PageMoreMenuPopoverContent = memo((props: PageMoreMenuPopoverConten
               break
             case 'starred':
               onStarToggle?.()
-              handleClose?.() 
+              handleClose?.()
               break
           }
         }}

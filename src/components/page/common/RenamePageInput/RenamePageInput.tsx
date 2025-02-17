@@ -56,7 +56,6 @@ export const RenamePageInput = forwardRef<ComponentRef<'form'>, RenamePageInputP
         refreshStarredOrgPages()
         
         queryClient.invalidateQueries({
-          exact: true,
           queryKey: QUERY_KEYS.GET_PAGE({
             pageID: page.id,
           }),
