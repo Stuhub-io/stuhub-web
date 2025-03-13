@@ -199,7 +199,11 @@ export const SharePageModalMain = (props: SharePageModalProps) => {
             <Progress size="sm" isIndeterminate />
           ))}
 
-        <ModalHeader className="font-normal">Share &quot;{page?.name || 'Untitled'}&quot;</ModalHeader>
+        <ModalHeader>
+          <Typography className='text-inherit text-[length:inherit] flex-1 truncate'>
+            Share &quot;{page?.name || 'Untitled'}&quot;
+          </Typography>
+          </ModalHeader>
         <ModalBody className="pt-0">
           <div>
             {page && <SharePageAccessRequestsAlert page={page} onReview={onViewRequests} />}

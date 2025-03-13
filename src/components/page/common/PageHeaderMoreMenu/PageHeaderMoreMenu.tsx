@@ -24,7 +24,7 @@ export const PageHeaderMoreMenu = () => {
 
   const [initOpenShare, setInitOpenShare] = useState(Boolean(searchParams.get('openShare')))
 
-  const { data: { data: page } = {}, isPending, refetch } = useFetchPage({
+  const { data: { data: page } = {}, isPending, refetch, isPermissionDenied } = useFetchPage({
     allowFetch: Boolean(pageID),
     pageID,
   })
@@ -69,6 +69,10 @@ export const PageHeaderMoreMenu = () => {
   }, [initOpenShare, onOpenShareModal, page])
 
   if (!pageID) {
+    return null
+  }
+
+  if (isPermissionDenied) {
     return null
   }
 

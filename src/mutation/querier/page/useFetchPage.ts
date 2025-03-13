@@ -33,5 +33,9 @@ export const useFetchPage = (
   useEffect(() => {
       setIsError(Boolean(error))
   }, [error])
-  return { error, ...rest }
+
+  const errCode = (error as any)?.body?.code
+  const isPermissionDenied = errCode && errCode >= 400 && errCode < 500
+
+  return { error, isPermissionDenied, ...rest }
 }

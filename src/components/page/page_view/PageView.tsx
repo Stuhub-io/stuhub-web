@@ -38,7 +38,7 @@ export const PageView = (props: PageViewProps) => {
     refetch,
     isLoading,
     isRefetching,
-    error
+    isPermissionDenied,
   } = useFetchPage({
     allowFetch: true,
     pageID,
@@ -49,16 +49,13 @@ export const PageView = (props: PageViewProps) => {
     setCoverImageUrl(getRandomImageUrl(1400, 400))
   }
 
-  const errCode = (error as any)?.body?.code
-  const dontHavePermission = errCode && errCode >= 400 && errCode < 500
-
   const Component = pageViewer.find((viewer) => viewer.viewType === pageDetail?.view_type)?.viewer
 
   useEffect(() => {
     if (pageDetail) setCoverImageUrl(pageDetail?.cover_image ?? '')
   }, [pageDetail, setCoverImageUrl])
 
-  if (dontHavePermission) {
+  if (isPermissionDenied) {
     return(
       <PermissionRequired />
     )
