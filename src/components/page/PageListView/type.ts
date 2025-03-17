@@ -4,6 +4,7 @@ import { TableCellProps } from '@nextui-org/react'
 import { Dispatch, ReactNode, SetStateAction } from 'react'
 
 export interface BaseListViewProps {
+  keyField?: string
   viewType?: ViewType
   selectedItemPkIDs?: number[]
   items?: Page[]

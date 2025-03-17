@@ -32,6 +32,7 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
     emptyState,
     parentPage,
     customColumns,
+    keyField = "id"
   } = props
 
   const { user } = useAuthContext()
@@ -182,7 +183,8 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
       <TableBody>
         {(items ?? [])?.map((item) => (
           <TableRow
-            key={item.id}
+            //@ts-expect-error -- KeyField must be a valid key
+            key={item[keyField] as string}
             onClick={() => handleItemClick(item)}
             onDoubleClick={() => onItemDoubleClick?.(item)}
             className="group"

@@ -30,6 +30,7 @@ export default function Page() {
     ancestors: log.parent_pages,
     is_shared: log.is_shared,
     updated_at: log.last_accessed,
+    key: log.pkid
   }))
 
   const navigateToPage = (folderId: string, organizationSlug: string) => {
@@ -140,7 +141,8 @@ export default function Page() {
         </div>
         <PageListView
           viewType={viewType}
-          items={[...(filesAndDocs ?? []), ...(filesAndDocs ?? [])]}
+          keyField="key"
+          items={filesAndDocs ?? []}
           onItemMutateSuccess={refetch}
           onItemDoubleClick={(page) => navigateToPage(page.id, 'nice')}
           selectedItemPkIDs={selectedPagePkIDs}

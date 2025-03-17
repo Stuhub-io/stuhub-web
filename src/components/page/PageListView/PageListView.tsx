@@ -17,7 +17,7 @@ const views: {
   }
 ]
 
-export const PageListView = ({ viewType = 'grid' , ...props}: BaseListViewProps) => {
+export const PageListView = ({ viewType = 'grid', ...props}: BaseListViewProps) => {
   const ListComponent = useMemo(() => views.find((view) => view.type === viewType)?.Component, [viewType])
 
   if (!ListComponent) {

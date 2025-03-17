@@ -9,6 +9,7 @@ interface GlobalSearchProviderProps {
 
 const [Provider, useGlobalSearchContext] = createContext<GlobalSearchProviderProps>({
   name: 'GlobalSearchProvider',
+  strict: false,
 })
 
 export { useGlobalSearchContext }

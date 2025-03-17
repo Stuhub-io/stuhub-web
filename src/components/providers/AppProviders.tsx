@@ -14,10 +14,10 @@ import { GlobalSearchProvider } from './search'
 export function AppProviders({ children }: PropsWithChildren) {
   return (
     <PermissionProvider>
-      <InfoProvider>
-        <OrganizationProvider>
-          <GlobalSearchProvider>
-            <CollapsePersistProvider>
+      <CollapsePersistProvider>
+        <InfoProvider>
+          <OrganizationProvider>
+            <GlobalSearchProvider>
               <CreatePageProvider>
                 <SharePageProvider>
                   <SidebarProvider>
@@ -25,10 +25,10 @@ export function AppProviders({ children }: PropsWithChildren) {
                   </SidebarProvider>
                 </SharePageProvider>
               </CreatePageProvider>
-            </CollapsePersistProvider>
-          </GlobalSearchProvider>
-        </OrganizationProvider>
-      </InfoProvider>
+            </GlobalSearchProvider>
+          </OrganizationProvider>
+        </InfoProvider>
+      </CollapsePersistProvider>
     </PermissionProvider>
   )
 }

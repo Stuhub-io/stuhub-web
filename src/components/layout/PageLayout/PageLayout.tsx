@@ -26,9 +26,11 @@ export const PageLayout = (props: PageLayoutProps) => {
           <div className="flex flex-shrink-0 items-center justify-end pl-8">{rightEl}</div>
         </header>
         {headAlert}
-        <main className="mx-auto w-full overflow-y-auto overflow-x-hidden px-4 flex-1">
+        <main className="mx-auto w-full overflow-y-auto overflow-x-hidden px-4 flex-1 flex-col flex">
           <PageCoverImage />
+          <div className='w-full px-10 flex-1'>
           {children}
+          </div>
         </main>
       </div>
     </PageLayoutContextProvider>
