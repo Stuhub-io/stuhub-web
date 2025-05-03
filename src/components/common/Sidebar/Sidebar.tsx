@@ -37,8 +37,12 @@ export const SideBar = (props: SideBarProps) => {
         {bodySection}
       </div>
       <div className="flex-1" />
-      <Divider />
-      {footerSection}
+      {footerSection && (
+        <>
+        <Divider />
+        {footerSection}
+        </>
+      )}
     </div>
   )
 }

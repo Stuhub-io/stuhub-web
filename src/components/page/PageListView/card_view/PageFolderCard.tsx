@@ -10,7 +10,7 @@ import { useAssetUploadContext } from '@/components/providers/asset_upload'
 import { useToast } from '@/hooks/useToast'
 import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
-import { memo } from 'react'
+import { memo, MouseEventHandler } from 'react'
 
 export const FolderCard = memo((props: BaseCardViewProps) => {
   const { page, onMutateSuccess, onClick, className, onDoubleClick, isSelected, parentPage } =
@@ -31,8 +31,8 @@ export const FolderCard = memo((props: BaseCardViewProps) => {
     onDoubleClick?.(page)
   }
 
-  const handleClick = () => {
-    onClick?.(page)
+  const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    onClick?.(page, e)
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

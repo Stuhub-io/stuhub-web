@@ -120,7 +120,9 @@ export const PageFolderViewer: PageViewer = (props) => {
 
   return (
     <>
-      <div className="pb-[80px] md:px-4">
+      <div
+        className={cn('pb-[80px] md:px-4')}
+      >
         <div>
           <PageTitle
             pageID={page?.id ?? ''}
@@ -130,7 +132,7 @@ export const PageFolderViewer: PageViewer = (props) => {
               multiple: false,
               className: '-mx-3',
               classNames: {
-                input: 'text-2xl font-semibold',
+                input: 'text-[32px] font-semibold',
               },
             }}
           />

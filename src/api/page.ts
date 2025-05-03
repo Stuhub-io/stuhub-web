@@ -179,6 +179,20 @@ class PageService extends Client {
       }),
     })
   }
+
+  public getPageActivities({pagePkID}: {pagePkID: number}) {
+    return fetcher<BaseResponse>(`${this.baseUrl}/v1/page-services/pages/${pagePkID}/activities`, {
+      headers: this.privateHeaders,
+    })
+  }
+
+  public createPageActivity({pagePkID}: {pagePkID: number}) {
+    return fetcher<BaseResponse>(`${this.baseUrl}/v1/page-services/pages/${pagePkID}/activities`, {
+      method: 'POST',
+      headers: this.privateHeaders,
+    })
+  }
+
 }
 
 export const pageService = new PageService()

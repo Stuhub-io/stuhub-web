@@ -27,7 +27,8 @@ export const Permissions = {
       //FIXME check page belong to org
       return page.permissions?.can_delete
     },
-    canMove: (curUserRole: OrgRole, page: Page, desPage?: Page) => {
+    canMove: (page: Page, desPage?: Page, curUserRole?: OrgRole) => {
+      if (!curUserRole) return false
       if (!desPage) {
         return curUserRole === 'owner'
       } // move to root
@@ -39,6 +40,9 @@ export const Permissions = {
     canDownload: (page: Page) => {
       return page.permissions?.can_download
     },
+    canStar: (page: Page, user?: User, ) => {
+      return user && page.permissions?.can_view
+    }
   },
 } as const
 

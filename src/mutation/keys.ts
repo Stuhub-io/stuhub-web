@@ -42,6 +42,9 @@ export const QUERY_KEYS = {
 
   // Role Requests
   LIST_PAGE_ROLE_REQUESTS: ({ pagePkID }: { pagePkID: number }) => ['LIST_PAGE_ROLE_REQUESTS', pagePkID],
+
+  // Activities
+  GET_PAGE_ACTIVITIES: ({ pagePkID }: { pagePkID: number }) => ['GET_PAGE_ACTIVITIES', pagePkID],
 }
 
 export const MUTATION_KEYS = {
@@ -88,4 +91,7 @@ export const MUTATION_KEYS = {
 
   STAR_PAGE: ({ pagePkID }: { pagePkID: number }) => ['STAR_PAGE', pagePkID],
   UNSTAR_PAGE: ({ pagePkID }: { pagePkID: number }) => ['UNSTAR_PAGE', pagePkID],
+
+  // Activities
+  CREATE_PAGE_ACTIVITY: ({ pagePkID }: { pagePkID: number }) => ['CREATE_PAGE_ACTIVITY', pagePkID],
 }

@@ -4,6 +4,7 @@ import { BaseListViewProps } from './type'
 import { cn } from '@/libs/utils'
 import { Page } from '@/schema/page'
 import { memo } from 'react'
+import { MouseEvent } from 'react'
 
 export const GridView = memo((props: BaseListViewProps) => {
   const {
@@ -18,13 +19,20 @@ export const GridView = memo((props: BaseListViewProps) => {
   } = props
   const { showSidebar } = useSidebar()
 
-  const handleItemClick = (page: Page) => {
-    onSelectedPkIDsChanged?.((prev) => {
-      if (prev.includes(page.pkid)) {
-        return prev.filter((pkid) => pkid !== page.pkid)
-      }
-      return [...prev, page.pkid]
-    })
+  const handleItemClick = (page: Page, e: MouseEvent<HTMLDivElement, any>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.shiftKey) {
+      onSelectedPkIDsChanged?.((prev) => {
+        if (prev.includes(page.pkid)) {
+          return prev.filter((pkid) => pkid !== page.pkid)
+        }
+        return [...prev, page.pkid]
+      }) 
+    }
+    else {
+      onSelectedPkIDsChanged?.([page.pkid])
+    }
   }
 
   if (!loading && items?.length === 0) {

@@ -12,7 +12,7 @@ import {
 } from '@/utils/file'
 import { useMutationState } from '@tanstack/react-query'
 import { MUTATION_KEYS } from '@/mutation/keys'
-import { memo } from 'react'
+import { memo, MouseEventHandler } from 'react'
 
 export const PageAssetCard = memo((props: BaseCardViewProps) => {
   const { page, onMutateSuccess, onClick, onDoubleClick, className, isSelected, parentPage } = props
@@ -26,8 +26,8 @@ export const PageAssetCard = memo((props: BaseCardViewProps) => {
 
   const isArchiving = archiveStatus.includes('pending')
 
-  const handleClick = () => {
-    onClick?.(page)
+  const handleClick: MouseEventHandler<HTMLDivElement> = (e) => {
+    onClick?.(page, e)
   }
   const handleDoubleClick = () => {
     onDoubleClick?.(page)

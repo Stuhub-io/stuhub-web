@@ -23,6 +23,7 @@ import { usePermissions } from '@/components/providers/permissions'
 import { useStarPage } from '@/mutation/mutator/page/useStarPage'
 import { useUnstarPage } from '@/mutation/mutator/page/useUnstarPage'
 import { downloadFromUrl } from '@/utils/file'
+import { useAuthContext } from '@/components/auth/AuthGuard'
 
 
 export interface BasePageMenuProps extends PropsWithChildren {
@@ -34,6 +35,7 @@ export interface BasePageMenuProps extends PropsWithChildren {
 }
 
 export const PageMenu = (props: BasePageMenuProps) => {
+  const { user } = useAuthContext()
   const { children, page, onSuccess, placement = 'bottom' } = props
   const { organization, currentUserRole } = useOrganization()
   const { permissionChecker } = usePermissions()
@@ -182,16 +184,18 @@ export const PageMenu = (props: BasePageMenuProps) => {
               case 'rename':
                 return permissionChecker.page.canEdit(page)
               case 'Move':
-                return currentUserRole && permissionChecker.page.canMove(currentUserRole, page)
+                return permissionChecker.page.canMove(page, undefined, currentUserRole)
               case 'trash':
                 return permissionChecker.page.canDelete(page)
+              case 'starred':
+                return permissionChecker.page.canStar(page, user)
               default:
                 return true
             }
           })
       )
     },
-    [currentUserRole, page, permissionChecker.page],
+    [currentUserRole, page, permissionChecker.page, user],
   )
 
   return (
