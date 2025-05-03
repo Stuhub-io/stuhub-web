@@ -3,6 +3,7 @@
 import { PageCoverImage } from '@/components/page/document/PageCoverImage'
 import { PropsWithChildren, ReactNode } from 'react'
 import { PageLayoutContextProvider } from './context'
+import { PageInfoDrawer } from '@/components/page/info/PageInfoDrawer'
 
 interface PageLayoutProps extends PropsWithChildren {
   breadCrumb?: ReactNode
@@ -26,10 +27,13 @@ export const PageLayout = (props: PageLayoutProps) => {
           <div className="flex flex-shrink-0 items-center justify-end pl-8">{rightEl}</div>
         </header>
         {headAlert}
-        <main className="mx-auto w-full overflow-y-auto overflow-x-hidden px-4 flex-1">
-          <PageCoverImage />
-          {children}
-        </main>
+        <div className='w-full flex-1 flex overflow-hidden'>
+          <main className="mx-auto w-full overflow-x-hidden px-4 flex-1">
+            <PageCoverImage />
+            {children}
+          </main>
+          <PageInfoDrawer />
+        </div>
       </div>
     </PageLayoutContextProvider>
   )

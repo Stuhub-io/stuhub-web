@@ -13,7 +13,7 @@ export const PageDocumentViewer: PageViewer = (props) => {
 
   return (
     <div className="flex w-full">
-      <div className="mx-auto w-full max-w-[900px]">
+      <div className="mx-auto w-full max-w-[800px]">
         <div className="flex flex-col py-8">
           <div className="flex flex-col">
             {page && (
@@ -25,7 +25,7 @@ export const PageDocumentViewer: PageViewer = (props) => {
               />
             )}
           </div>
-          <div className="-mx-8 mt-4 pb-10 p-8 bg-default-100 rounded-large min-h-[1000px]">
+          <div className="mt-4 pb-10 p-8 bg-default-100 rounded-large min-h-[1000px]">
             {page ? (
               <>
                 <PageContent

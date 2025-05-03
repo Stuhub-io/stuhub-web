@@ -75,7 +75,7 @@ export const PageDocumentCard = memo((props: BaseCardViewProps) => {
               {page.name || 'Untitled'}
             </Typography>
             <div className="flex items-stretch gap-2">
-              <Typography level="p6" color="textTertiary">
+              <Typography level="p6" color="textTertiary" noWrap className="truncate">
                 {page.updated_at === page.created_at ? (
                   <>Created at {formatTimeToNow(page.created_at)}</>
                 ) : (

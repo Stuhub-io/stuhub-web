@@ -9,7 +9,6 @@ import {
   ShareMenuKeys,
   ShareMenuSectionItems,
 } from './const'
-import { useToast } from '@/hooks/useToast'
 
 interface PageMoreMenuPopoverContentProps {
   onClose?: () => void
@@ -19,15 +18,26 @@ interface PageMoreMenuPopoverContentProps {
   onShare?: () => void
   onCopy?: () => void
   onNewTab?: () => void
+  onInfo?: () => void
   onDownload?: () => void
   filterMenu?: (menu: MenuSection[]) => MenuSection[]
   onStarToggle?: () => void
 }
 
 export const PageMoreMenuPopoverContent = memo((props: PageMoreMenuPopoverContentProps) => {
-  const { onClose, onRename, onOpenMove, onArchive, onShare, onCopy, onNewTab, filterMenu, onStarToggle, onDownload } =
-    props
-  const { toast } = useToast()
+  const {
+    onClose,
+    onRename,
+    onOpenMove,
+    onArchive,
+    onShare,
+    onCopy,
+    onNewTab,
+    filterMenu,
+    onStarToggle,
+    onDownload,
+    onInfo,
+  } = props
 
   const [menu, setMenu] = useState<MenuSection[]>(MainMenuSections)
 
@@ -70,11 +80,8 @@ export const PageMoreMenuPopoverContent = memo((props: PageMoreMenuPopoverConten
               handleClose?.()
               break
             case 'folder-info':
-              toast({
-                variant: 'default',
-                title: 'Folder info is unavailable',
-                description: 'Feature coming soon',
-              })
+              onInfo?.()
+              handleClose?.()
               break
             default:
               break

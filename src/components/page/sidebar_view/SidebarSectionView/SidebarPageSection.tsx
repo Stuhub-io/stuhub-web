@@ -15,7 +15,7 @@ import { useOrganization } from '@/components/providers/organization'
 export const SidebarPageSectionView = () => {
   const { orgPages } = useSidebar()
   const [isExpanded, setIsExpanded] = useState(true)
-  const { organization, isGuest } = useOrganization()
+  const { organization, isGuest, isLoadingOrganization } = useOrganization()
 
   const router = useRouter()
 
@@ -28,41 +28,43 @@ export const SidebarPageSectionView = () => {
 
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-      <SidebarItem
-        onClick={() => {
-          router.push(
-            ROUTES.ROOT_VAULTS({
-              orgSlug: organization?.slug ?? '',
-            }),
-          )
-        }}
-        startContent={
-          <>
-            <SidebarIconButton hideOnGroupHover>
-              <RiHardDrive2Fill size={16} />
-            </SidebarIconButton>
-            <CollapsibleTrigger asChild>
-              <SidebarIconButton showOnGroupHoverOnly className=" data-[state=open]:rotate-90 ">
-                <RiArrowRightSLine size={16} />
+      {!isLoadingOrganization && (
+        <SidebarItem
+          onClick={() => {
+            router.push(
+              ROUTES.ROOT_VAULTS({
+                orgSlug: organization?.slug ?? '',
+              }),
+            )
+          }}
+          startContent={
+            <>
+              <SidebarIconButton hideOnGroupHover>
+                <RiHardDrive2Fill size={16} />
               </SidebarIconButton>
-            </CollapsibleTrigger>
-          </>
-        }
-        endContent={
-          <PopperContentTrigger>
-            <SidebarIconButton showOnGroupHoverOnly>
-              <RiAddFill />
-            </SidebarIconButton>
-            <PageCreateMenu
-              onClose={() => {
-                setIsExpanded(true)
-              }}
-            />
-          </PopperContentTrigger>
-        }
-      >
-        {isGuest ? 'Shared with me' : 'My Vault'}
-      </SidebarItem>
+              <CollapsibleTrigger asChild>
+                <SidebarIconButton showOnGroupHoverOnly className=" data-[state=open]:rotate-90 ">
+                  <RiArrowRightSLine size={16} />
+                </SidebarIconButton>
+              </CollapsibleTrigger>
+            </>
+          }
+          endContent={
+            <PopperContentTrigger>
+              <SidebarIconButton showOnGroupHoverOnly>
+                <RiAddFill />
+              </SidebarIconButton>
+              <PageCreateMenu
+                onClose={() => {
+                  setIsExpanded(true)
+                }}
+              />
+            </PopperContentTrigger>
+          }
+        >
+          {isGuest ? 'Shared with me' : 'My Vault'}
+        </SidebarItem>
+      )}
       <CollapsibleContent>
         {outerPages?.map((page) => {
           return (

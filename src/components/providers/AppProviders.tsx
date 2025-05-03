@@ -10,6 +10,7 @@ import { InfoProvider } from './info'
 import { PermissionProvider } from './permissions'
 import { SharePageProvider } from './share'
 import { GlobalSearchProvider } from './search'
+import { PageInfoDrawerProvider } from './page_info_drawer'
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
@@ -21,7 +22,11 @@ export function AppProviders({ children }: PropsWithChildren) {
               <CreatePageProvider>
                 <SharePageProvider>
                   <SidebarProvider>
-                    <AssetUploaderContextProvider>{children}</AssetUploaderContextProvider>
+                    <AssetUploaderContextProvider>
+                      <PageInfoDrawerProvider>
+                        {children}
+                      </PageInfoDrawerProvider>
+                    </AssetUploaderContextProvider>
                   </SidebarProvider>
                 </SharePageProvider>
               </CreatePageProvider>

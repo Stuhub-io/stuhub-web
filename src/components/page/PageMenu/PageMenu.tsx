@@ -24,6 +24,8 @@ import { useStarPage } from '@/mutation/mutator/page/useStarPage'
 import { useUnstarPage } from '@/mutation/mutator/page/useUnstarPage'
 import { downloadFromUrl } from '@/utils/file'
 import { useAuthContext } from '@/components/auth/AuthGuard'
+import { getMenuLabelPageViewType } from '@/utils/page'
+import { usePageInfoDrawer } from '@/components/providers/page_info_drawer'
 
 
 export interface BasePageMenuProps extends PropsWithChildren {
@@ -56,6 +58,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
   const { isOpen: isOpenMove, onClose: onCloseMove, onOpen: onOpenMove } = useDisclosure()
 
   const { onOpenShareModal } = useSharePageContext()
+  const { onOpenPageInfo } = usePageInfoDrawer()
 
   const { refreshOrgPages, refreshStarredOrgPages } = useSidebar()
   const { toast } = useToast()
@@ -170,6 +173,11 @@ export const PageMenu = (props: BasePageMenuProps) => {
                   ...item,
                   title: getOrgMenuSectionLabel(page),
                 } as MenuSection
+              case 'folder-info':
+                return {
+                  ...item,
+                  title: `${getMenuLabelPageViewType(page.view_type)} info`
+                }
               default:
                 return item
             }
@@ -197,6 +205,10 @@ export const PageMenu = (props: BasePageMenuProps) => {
     },
     [currentUserRole, page, permissionChecker.page, user],
   )
+
+  const handlePageInfo = () => {
+    onOpenPageInfo(page)
+  }
 
   return (
     <WrapperRegistry
@@ -242,6 +254,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
         <PopperContentTrigger placement={placement}>
           {children}
           <PageMoreMenuPopoverContent
+          onInfo={handlePageInfo}
             onCopy={copy}
             onNewTab={() => {
               window.open(pageHref)

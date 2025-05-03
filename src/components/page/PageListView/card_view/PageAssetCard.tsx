@@ -118,7 +118,7 @@ export const getAssetPreviewContent = (asset: Asset, style?: {
         src={asset.url}
         removeWrapper
         alt={asset.extension}
-        className="h-full w-full object-cover"
+        className={cn("h-full w-full object-cover")}
         radius="sm"
       />
     )

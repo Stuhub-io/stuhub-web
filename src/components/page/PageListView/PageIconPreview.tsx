@@ -4,22 +4,29 @@ import { RiFolder3Fill } from 'react-icons/ri'
 import { getAssetPreviewContent } from './card_view/PageAssetCard'
 import { ReactNode } from 'react'
 
-export const PageIconPreview = ({ page }: { page: Page }) => {
+export const PageIconPreview = ({ page, size = 40 }: { page: Page; size?: number }) => {
   const wrapper = (child?: ReactNode) => (
-    <div className="relative flex h-10 w-10 items-center justify-center rounded-md bg-default-100 shrink-0">
+    <div
+      className={`relative flex h-[${size}px] w-[${size}px] shrink-0 items-center justify-center rounded-md bg-default-100`}
+      style={{
+        width: size,
+        height: size,
+      }}
+    >
       {child}
     </div>
   )
+  const iconSize = size / 2
   switch (page.view_type) {
     case PageViewTypeEnum.FOLDER:
-      return wrapper(<RiFolder3Fill className="fill-success" size={20} />)
+      return wrapper(<RiFolder3Fill className="fill-success" size={iconSize} />)
     case PageViewTypeEnum.DOCUMENT:
-      return wrapper(<VscodeDocumentIcon className="fill-primary" width={20} height={20} />)
+      return wrapper(<VscodeDocumentIcon className="fill-primary" width={iconSize} height={iconSize} />)
     case PageViewTypeEnum.ASSET:
       if (!page.asset) {
         return null
       }
-      return wrapper(getAssetPreviewContent(page.asset, { size: 20, className: 'bg-transparent' }))
+      return wrapper(getAssetPreviewContent(page.asset, { size: iconSize, className: 'bg-transparent' }))
     default:
       return null
   }

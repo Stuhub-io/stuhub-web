@@ -123,7 +123,7 @@ export default function RootFolderPage() {
 
   return (
     <>
-      <div className="pb-[80px] md:px-4">
+      <div className="pb-[80px] md:px-4 min-h-[800px]">
         <div className="mt-8 flex items-center gap-4 py-2">
           <Avatar src={organization?.avatar} size="lg" radius="md" />
           <div className="flex flex-col">
