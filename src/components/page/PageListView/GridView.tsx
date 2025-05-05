@@ -2,9 +2,9 @@ import { useSidebar } from '@/components/providers/sidebar'
 import { PageCardView } from './card_view/PageCard'
 import { BaseListViewProps } from './type'
 import { cn } from '@/libs/utils'
-import { Page } from '@/schema/page'
+// import { Page } from '@/schema/page'
 import { memo } from 'react'
-import { MouseEvent } from 'react'
+// import { MouseEvent } from 'react'
 
 export const GridView = memo((props: BaseListViewProps) => {
   const {
@@ -13,27 +13,27 @@ export const GridView = memo((props: BaseListViewProps) => {
     loading,
     onItemMutateSuccess,
     onItemDoubleClick,
-    selectedItemPkIDs,
-    onSelectedPkIDsChanged,
+    // pagePkIDsSelection,
+    // setPagePkIDsSelection,
     emptyState,
   } = props
   const { showSidebar } = useSidebar()
 
-  const handleItemClick = (page: Page, e: MouseEvent<HTMLDivElement, any>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.shiftKey) {
-      onSelectedPkIDsChanged?.((prev) => {
-        if (prev.includes(page.pkid)) {
-          return prev.filter((pkid) => pkid !== page.pkid)
-        }
-        return [...prev, page.pkid]
-      }) 
-    }
-    else {
-      onSelectedPkIDsChanged?.([page.pkid])
-    }
-  }
+  // const handleItemClick = (page: Page, e: MouseEvent<HTMLDivElement, any>) => {
+  //   e.preventDefault()
+  //   e.stopPropagation()
+  //   if (e.shiftKey) {
+  //     onSelectedPkIDsChanged?.((prev) => {
+  //       if (prev.includes(page.pkid)) {
+  //         return prev.filter((pkid) => pkid !== page.pkid)
+  //       }
+  //       return [...prev, page.pkid]
+  //     }) 
+  //   }
+  //   else {
+  //     onSelectedPkIDsChanged?.([page.pkid])
+  //   }
+  // }
 
   if (!loading && items?.length === 0) {
     return emptyState
@@ -59,8 +59,8 @@ export const GridView = memo((props: BaseListViewProps) => {
             parentPage={parentPage}
             key={item.id}
             page={item}
-            isSelected={selectedItemPkIDs?.includes(item.pkid)}
-            onClick={handleItemClick}
+            // isSelected={selectedItemPkIDs?.includes(item.pkid)}
+            // onClick={handleItemClick}
             onMutateSuccess={onItemMutateSuccess}
             onDoubleClick={onItemDoubleClick}
           />
