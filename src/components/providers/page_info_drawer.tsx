@@ -1,13 +1,11 @@
 import createContext from '@/libs/context'
-import { Page } from '@/schema/page'
 import { useDisclosure } from '@nextui-org/react'
-import { PropsWithChildren, useState } from 'react'
+import { PropsWithChildren } from 'react'
 
 interface PageInfoProviderValue {
   isOpenPageInfo: boolean
-  onOpenPageInfo: (page: Page) => void
+  onOpenPageInfo: () => void
   onClosePageInfo: () => void
-  page?: Page
 }
 
 const [Provider, usePageInfoDrawer] = createContext<PageInfoProviderValue>({
@@ -16,27 +14,13 @@ const [Provider, usePageInfoDrawer] = createContext<PageInfoProviderValue>({
 export { usePageInfoDrawer }
 
 export const PageInfoDrawerProvider = ({ children }: PropsWithChildren) => {
-  const { onOpen, isOpen: isOpenPageInfo, onClose } = useDisclosure()
-
-  const [selectedPage, setSelectedPage] = useState<Page>()
-  const onOpenPageInfo = (page: Page) => {
-    onOpen()
-    setSelectedPage(page)
-  }
-  const onClosePageInfo = () => {
-    onClose()
-    setTimeout(() => {
-      setSelectedPage(undefined)
-    }, 300)
-  }
-
+  const { onOpen, isOpen, onClose } = useDisclosure()
   return (
     <Provider
       value={{
-        onClosePageInfo,
-        onOpenPageInfo,
-        isOpenPageInfo,
-        page: selectedPage
+        onClosePageInfo: onClose,
+        onOpenPageInfo: onOpen,
+        isOpenPageInfo: isOpen,
       }}
     >
       {children}

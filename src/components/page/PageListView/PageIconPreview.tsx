@@ -3,13 +3,24 @@ import { Page, PageViewTypeEnum } from '@/schema/page'
 import { RiFolder3Fill } from 'react-icons/ri'
 import { getAssetPreviewContent } from './card_view/PageAssetCard'
 import { ReactNode } from 'react'
+import { cn } from '@/libs/utils'
 
-export const PageIconPreview = ({ page, size = 40 }: { page: Page; size?: number }) => {
+export const PageIconPreview = ({
+  page,
+  size = 40,
+  isFullWidth = false,
+}: {
+  page: Page
+  size?: number
+  isFullWidth?: boolean
+}) => {
   const wrapper = (child?: ReactNode) => (
     <div
-      className={`relative flex h-[${size}px] w-[${size}px] shrink-0 items-center justify-center rounded-md bg-default-100`}
+      className={cn(
+        `relative flex shrink-0 items-center justify-center rounded-md bg-default-100`,
+      )}
       style={{
-        width: size,
+        width: isFullWidth ? "100%": size,
         height: size,
       }}
     >

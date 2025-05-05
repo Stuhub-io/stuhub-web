@@ -6,6 +6,7 @@ import { SearchUserBody } from '@/schema/user'
 const PAGE_KEYS = {
   GET: 'GET_PAGE',
   LIST: 'GET_PAGES',
+  GET_BY_PKID: 'GET_PAGE_BY_PKID'
 }
 
 export const QUERY_KEYS = {
@@ -24,6 +25,7 @@ export const QUERY_KEYS = {
     JSON.stringify(query.view_types),
   ],
   GET_PAGE: ({ pageID }: { pageID: string }) => [PAGE_KEYS.GET, pageID],
+  GET_PAGE_PKID: ({ pagePkID }: { pagePkID: number }) => [PAGE_KEYS.GET, PAGE_KEYS.GET_BY_PKID, pagePkID],
   GET_PAGE_PERMISSION_ROLES: ({ pagePkID }: { pagePkID: number }) => ['GET_PAGE_PERMISSION_ROLES', pagePkID],
   SEARCH_USERS: (params: SearchUserBody) => [
     'SEARCH_USERS',

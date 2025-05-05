@@ -207,7 +207,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
   )
 
   const handlePageInfo = () => {
-    onOpenPageInfo(page)
+    onOpenPageInfo()
   }
 
   return (

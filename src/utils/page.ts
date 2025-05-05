@@ -24,3 +24,6 @@ export const getMenuLabelPageViewType = (viewType: PageViewType) => {
             return "Folder"
     }
 }
+
+// NOTE: Add this className for allow dimiss page selection
+export const DIMISS_PAGE_SELECTION_CLS = "dimiss-page-selection"

@@ -24,7 +24,7 @@ export default function StarredPage() {
 
   const { onOpenUploadModal } = useAssetUploadContext()
 
-  const [selectedPagePkIDs, setSelectedPagePkIDs] = useState<number[]>([])
+  const [pagePkIDsSelection,  setPagePkIDsSelection] = useState<Selection>(new Set([]))
 
   // folders
   const { folders, filesAndDocs } = useMemo(() => {
@@ -95,23 +95,25 @@ export default function StarredPage() {
                 items={folders}
                 onItemMutateSuccess={refreshStarredOrgPages}
                 onItemDoubleClick={handlePageClick}
-                selectedItemPkIDs={selectedPagePkIDs}
-                onSelectedPkIDsChanged={setSelectedPagePkIDs}
+                pagePkIDsSelection={pagePkIDsSelection}
+                setPagePkIDsSelection={setPagePkIDsSelection}
               />
             </div>
           )}
           <div className='space-y-4'>
-            <Typography level="p5" color="textTertiary">
-              Files and Documents
-            </Typography>
+            {viewType !== 'list' && (
+              <Typography level="p5" color="textTertiary">
+                Files and Documents
+              </Typography>
+            )}
             <PageListView
               viewType={viewType}
               items={filesAndDocs}
               onItemMutateSuccess={refreshStarredOrgPages}
               onItemDoubleClick={handlePageClick}
-              selectedItemPkIDs={selectedPagePkIDs}
-              onSelectedPkIDsChanged={setSelectedPagePkIDs}
               emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal()} />}
+                pagePkIDsSelection={pagePkIDsSelection}
+                setPagePkIDsSelection={setPagePkIDsSelection}
             />
           </div>
         </div>

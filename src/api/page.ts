@@ -31,6 +31,12 @@ class PageService extends Client {
     })
   }
 
+  public getPageByPkID(pkid: number) {
+    return fetcher<BaseResponse<Page>>(`${this.baseUrl}/v1/page-services/pages/${pkid}`, {
+      headers: this.privateHeaders,
+    })
+  }
+
   public getPage(id: string) {
     return fetcher<BaseResponse<Page>>(`${this.baseUrl}/v1/page-services/pages/id/${id}`, {
       headers: this.privateHeaders,

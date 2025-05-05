@@ -6,7 +6,7 @@ import { PageListView } from '@/components/page/PageListView/PageListView'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/constants/routes'
 import { useOrganization } from '@/components/providers/organization'
-import { useCallback, useId, useMemo, useState } from 'react'
+import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { cn } from '@/libs/utils'
 import { uploadService } from '@/api/uploader'
@@ -19,6 +19,7 @@ import { useFetchPages } from '@/mutation/querier/page/useFetchPages'
 import { FolderViewToolbar } from '@/components/page/page_view/page_viewers/PageFolderViewer/Toolbar'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
 import { useViewType } from '@/hooks/useViewType'
+import { usePageSelect } from '@/components/providers/page_select'
 
 export default function RootFolderPage() {
   const { organization } = useOrganization()
@@ -30,7 +31,8 @@ export default function RootFolderPage() {
 
   const { onOpenUploadModal } = useAssetUploadContext()
 
-  const [selectedPagePkIDs, setSelectedPagePkIDs] = useState<number[]>([])
+  const { setSelectedPagePkIDs } = usePageSelect()
+  const [pagePkIDsSelection, setPagePkIDsSelection] = useState<Selection>(new Set([]))
 
   const { data: { data: childPages } = {}, refetch } = useFetchPages({
     allowFetch: true,
@@ -121,9 +123,22 @@ export default function RootFolderPage() {
     onDrop: handleDropFile,
   })
 
+  const childPagePkIDs = useMemo(() => childPages?.map(p => p.pkid) ?? [], [childPages])
+
+  useEffect(() => {
+    setSelectedPagePkIDs([])
+  }, [setSelectedPagePkIDs])
+
+  useEffect(() => {
+    setSelectedPagePkIDs(
+      pagePkIDsSelection === 'all' ? childPagePkIDs : [...pagePkIDsSelection].map((pkidStr) => Number(pkidStr)),
+    )
+  }, [childPagePkIDs, pagePkIDsSelection, setSelectedPagePkIDs])
+
+
   return (
     <>
-      <div className="pb-[80px] md:px-4 min-h-[800px]">
+      <div className="min-h-[800px] pb-[80px] md:px-4">
         <div className="mt-8 flex items-center gap-4 py-2">
           <Avatar src={organization?.avatar} size="lg" radius="md" />
           <div className="flex flex-col">
@@ -159,31 +174,32 @@ export default function RootFolderPage() {
                 items={folders}
                 onItemMutateSuccess={refetch}
                 onItemDoubleClick={handlePageClick}
-                selectedItemPkIDs={selectedPagePkIDs}
-                onSelectedPkIDsChanged={setSelectedPagePkIDs}
+                pagePkIDsSelection={pagePkIDsSelection}
+                setPagePkIDsSelection={setPagePkIDsSelection}
               />
             </div>
           )}
           <div
             className={cn('mt-4 space-y-4', {
-              'rounded-md outline-dashed outline-2 outline-offset-[8px] outline-primary':
-                isDragActive,
+              'rounded-md outline-dashed outline-2 outline-offset-[8px] outline-primary': isDragActive,
             })}
             {...getRootProps()}
             onClick={() => {}} // prevent click
           >
             <input {...getInputProps()} className="invisible" />
-            <Typography level="p5" color="textTertiary">
-              Files and Documents
-            </Typography>
+            {viewType !== 'list' && (
+              <Typography level="p5" color="textTertiary">
+                Files and Documents
+              </Typography>
+            )}
             <PageListView
               viewType={viewType}
               items={filesAndDocs}
               onItemMutateSuccess={refetch}
               onItemDoubleClick={handlePageClick}
-              selectedItemPkIDs={selectedPagePkIDs}
-              onSelectedPkIDsChanged={setSelectedPagePkIDs}
               emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal()} />}
+              pagePkIDsSelection={pagePkIDsSelection}
+              setPagePkIDsSelection={setPagePkIDsSelection}
             />
           </div>
         </div>

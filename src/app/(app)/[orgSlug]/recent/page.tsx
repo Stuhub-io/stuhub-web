@@ -14,13 +14,16 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 import { AiFillMail } from 'react-icons/ai'
 import { RiFolder3Fill, RiHardDrive2Fill } from 'react-icons/ri'
 import { IoChevronForwardSharp } from 'react-icons/io5'
+import { usePageSelect } from '@/components/providers/page_select'
 
 export default function Page() {
   const { logs, isLoading, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } = useFetchPageAccessLogs({
     allowFetch: true,
   })
 
-  const [selectedPagePkIDs, setSelectedPagePkIDs] = useState<number[]>([])
+  const { setSelectedPagePkIDs } = usePageSelect()
+  const [pagePkIDsSelection, setPagePkIDsSelection] = useState<Selection>(new Set([]))
+
   const [typeFilter, setTypeFilter] = useState<Selection>('all')
   const { viewType, setViewType } = useViewType()
   const router = useRouter()
@@ -137,6 +140,17 @@ export default function Page() {
     )
   }
 
+  useEffect(() => {
+    setSelectedPagePkIDs([])
+  }, [setSelectedPagePkIDs])
+
+  useEffect(() => {
+    setSelectedPagePkIDs(
+      pagePkIDsSelection === 'all' ? logs.map(l => l.page.pkid) : [...pagePkIDsSelection].map((pkidStr) => Number(pkidStr)),
+    )
+  }, [logs, pagePkIDsSelection, setSelectedPagePkIDs])
+
+
   return (
     <div className="flex max-h-[100%] flex-col md:px-4">
       <div className="my-8 grid grid-cols-1 gap-2">
@@ -159,8 +173,8 @@ export default function Page() {
           items={filesAndDocs}
           onItemMutateSuccess={refetch}
           onItemDoubleClick={(page) => navigateToPage(page.id, page.organization?.slug ?? '')}
-          selectedItemPkIDs={selectedPagePkIDs}
-          onSelectedPkIDsChanged={setSelectedPagePkIDs}
+                pagePkIDsSelection={pagePkIDsSelection}
+                setPagePkIDsSelection={setPagePkIDsSelection}
           emptyState={<EmptyListPlaceholder onClick={() => {}} />}
           customColumns={[
             {

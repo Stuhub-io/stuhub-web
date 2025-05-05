@@ -1,6 +1,6 @@
 import { BaseListViewProps, HorizontalListViewColumn } from './type'
-import { Page, PageViewTypeEnum } from '@/schema/page'
-import { memo, useMemo } from 'react'
+import { PageViewTypeEnum } from '@/schema/page'
+import { memo, useEffect, useMemo } from 'react'
 import {
   Avatar,
   Button,
@@ -21,6 +21,8 @@ import { PageIconPreview } from './PageIconPreview'
 import dayjs from 'dayjs'
 import { calculateDocumentSize, formatReadableFileSize } from '@/utils/file'
 import { PageQuickActionMenu } from '../PageMenu/QuickActionMenuList'
+import { DIMISS_PAGE_SELECTION_CLS } from '@/utils/page'
+import { cn } from '@/libs/utils'
 
 export const HorizontalListView = memo((props: BaseListViewProps) => {
   const {
@@ -28,22 +30,45 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
     loading,
     onItemMutateSuccess,
     onItemDoubleClick,
-    onSelectedPkIDsChanged,
+    // onSelectedPkIDsChanged,
     emptyState,
     parentPage,
     customColumns,
+    // selectedItemPkIDs,
+
+    pagePkIDsSelection,
+    setPagePkIDsSelection,
   } = props
 
   const { user } = useAuthContext()
 
-  const handleItemClick = (page: Page) => {
-    onSelectedPkIDsChanged?.((prev) => {
-      if (prev.includes(page.pkid)) {
-        return prev.filter((pkid) => pkid !== page.pkid)
+  // const handleItemClick = (page: Page) => {
+  //   onSelectedPkIDsChanged?.((prev) => {
+  //     if (prev.includes(page.pkid)) {
+  //       return prev.filter((pkid) => pkid !== page.pkid)
+  //     }
+  //     return [...prev, page.pkid]
+  //   })
+  // }
+
+  useEffect(() => {
+    const handleClick = (e: any) => {
+      // find nearest row with classname page-item-row
+      const row = e.target.closest('.page-item-row')
+      const bg = e.target.closest(`.${DIMISS_PAGE_SELECTION_CLS}`)
+      if (bg && !row) {
+        setPagePkIDsSelection?.(new Set([]))
       }
-      return [...prev, page.pkid]
-    })
-  }
+    }
+
+    document.addEventListener('click', handleClick)
+
+    return () => {
+      document.removeEventListener('click', handleClick)
+    }
+  }, [setPagePkIDsSelection])
+
+  console.log('pagePkIDsSelection', pagePkIDsSelection)
 
   const colsDef = useMemo(() => {
     return [
@@ -173,7 +198,14 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
   }
 
   return (
-    <Table selectionMode="multiple" selectionBehavior="replace">
+    <Table
+      selectionMode="multiple"
+      selectionBehavior="replace"
+      selectedKeys={pagePkIDsSelection}
+      onSelectionChange={setPagePkIDsSelection}
+      className={cn(DIMISS_PAGE_SELECTION_CLS)}
+      color="primary"
+    >
       <TableHeader>
         {colsDef.map((colDef) => (
           <TableColumn key={colDef.key}>{colDef.headerTitle}</TableColumn>
@@ -182,10 +214,10 @@ export const HorizontalListView = memo((props: BaseListViewProps) => {
       <TableBody>
         {(items ?? [])?.map((item) => (
           <TableRow
-            key={item.id}
-            onClick={() => handleItemClick(item)}
+            key={item.pkid}
+            // onClick={() => handleItemClick(item)}
             onDoubleClick={() => onItemDoubleClick?.(item)}
-            className="group"
+            className="group page-item-row data-[focus-visible=true]:!outline-none"
           >
             {colsDef.map((colDef) => {
               const value = (item as any)?.[colDef.key]

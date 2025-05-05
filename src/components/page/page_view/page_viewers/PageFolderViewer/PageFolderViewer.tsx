@@ -5,7 +5,7 @@ import { PageListView } from '@/components/page/PageListView/PageListView'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/constants/routes'
 import { useOrganization } from '@/components/providers/organization'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { cn } from '@/libs/utils'
 import { useSidebar } from '@/components/providers/sidebar'
@@ -19,6 +19,7 @@ import { formatReadableFileSize } from '@/utils/file'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
 import { useViewType } from '@/hooks/useViewType'
 import { PageListSkeleton } from '@/components/page/common/skeleton/PageListSkeleton'
+import { usePageSelect } from '@/components/providers/page_select'
 
 export const PageFolderViewer: PageViewer = (props) => {
   const { page, onAddCoverImage, hasCoverImage } = props
@@ -26,13 +27,13 @@ export const PageFolderViewer: PageViewer = (props) => {
   const { refreshOrgPages } = useSidebar()
   const router = useRouter()
 
+  const { setSelectedPagePkIDs } = usePageSelect()
+  const [pagePkIDsSelection, setPagePkIDsSelection] = useState<Selection>(new Set([]))
   const [typeFilter, setTypeFilter] = useState<Selection>('all')
 
   const { viewType, setViewType } = useViewType()
 
   const { onOpenUploadModal, handleUpload } = useAssetUploadContext()
-
-  const [selectedPagePkIDs, setSelectedPagePkIDs] = useState<number[]>([])
 
   const {
     data: { data: childPages } = {},
@@ -44,6 +45,18 @@ export const PageFolderViewer: PageViewer = (props) => {
     org_pkid: page?.organization_pkid ?? -1,
     parent_page_pkid: page?.pkid,
   })
+
+  const childPagePkIds = useMemo(() => (childPages ?? []).map((p) => p.pkid), [childPages])
+
+  useEffect(() => {
+    setSelectedPagePkIDs([])
+  }, [setSelectedPagePkIDs])
+
+  useEffect(() => {
+    setSelectedPagePkIDs(
+      pagePkIDsSelection === 'all' ? childPagePkIds : [...pagePkIDsSelection].map((pkidStr) => Number(pkidStr)),
+    )
+  }, [childPagePkIds, pagePkIDsSelection, setSelectedPagePkIDs])
 
   const { onCreate: onCreateFolder } = useNewPage({
     parentPagePkID: page?.pkid,
@@ -120,9 +133,7 @@ export const PageFolderViewer: PageViewer = (props) => {
 
   return (
     <>
-      <div
-        className={cn('pb-[80px] md:px-4')}
-      >
+      <div className={cn('pb-[80px] md:px-4')}>
         <div>
           <PageTitle
             pageID={page?.id ?? ''}
@@ -171,9 +182,9 @@ export const PageFolderViewer: PageViewer = (props) => {
                     items={folders}
                     parentPage={page}
                     onItemMutateSuccess={refetch}
-                    selectedItemPkIDs={selectedPagePkIDs}
-                    onSelectedPkIDsChanged={setSelectedPagePkIDs}
                     onItemDoubleClick={handlePageClick}
+                    pagePkIDsSelection={pagePkIDsSelection}
+                    setPagePkIDsSelection={setPagePkIDsSelection}
                   />
                 </div>
               )}
@@ -185,17 +196,19 @@ export const PageFolderViewer: PageViewer = (props) => {
                 onClick={() => {}} // prevent click
               >
                 <input {...getInputProps()} className="invisible" />
-                <Typography level="p5" color="textTertiary">
-                  Files and Documents {size ? `(${formatReadableFileSize(size)})` : ''}
-                </Typography>
+                {viewType !== 'list' && (
+                  <Typography level="p5" color="textTertiary">
+                    Files and Documents {size ? `(${formatReadableFileSize(size)})` : ''}
+                  </Typography>
+                )}
                 <PageListView
                   parentPage={page}
+                  pagePkIDsSelection={pagePkIDsSelection}
+                  setPagePkIDsSelection={setPagePkIDsSelection}
                   viewType={viewType}
                   emptyState={<EmptyListPlaceholder onClick={() => onOpenUploadModal(page)} />}
-                  selectedItemPkIDs={selectedPagePkIDs}
                   items={filesAndDocs}
                   onItemMutateSuccess={refetch}
-                  onSelectedPkIDsChanged={setSelectedPagePkIDs}
                   onItemDoubleClick={handlePageClick}
                 />
               </div>

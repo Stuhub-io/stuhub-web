@@ -8,10 +8,6 @@ import {
   useTransformEffect,
 } from 'react-zoom-pan-pinch'
 import {
-  RiArrowLeftSLine,
-  RiDownloadFill,
-  RiPrinterFill,
-  RiTimeFill,
   RiZoomInFill,
   RiZoomOutFill,
 } from 'react-icons/ri'
@@ -46,12 +42,7 @@ export const ImageView = (props: {
       centerOnInit
     >
       <div className="flex h-full w-full flex-col">
-        <div className="relative -mx-4 flex h-[56px] items-center justify-between gap-3 bg-default-50 px-4 ">
-          <div>
-            <Button size="sm" isIconOnly radius="full" variant="light">
-              <RiArrowLeftSLine size={16} />
-            </Button>
-          </div>
+        <div className="relative -mx-4 flex h-[56px] items-center justify-between gap-3 px-4">
           <div className="absolute left-1/2 top-0 flex h-full -translate-x-1/2 items-center">
             <PanPinchZoomControl
               minScale={baseScale * 0.5}
@@ -60,17 +51,6 @@ export const ImageView = (props: {
               containerHeight={containerHeight}
               containerWidth={containerWidth}
             />
-          </div>
-          <div className="flex items-center gap-3">
-            <Button size="sm" isIconOnly radius="full">
-              <RiTimeFill size={16} />
-            </Button>
-            <Button size="sm" isIconOnly radius="full">
-              <RiPrinterFill size={16} />
-            </Button>
-            <Button size="sm" isIconOnly radius="full">
-              <RiDownloadFill size={16} />
-            </Button>
           </div>
         </div>
         <div className="flex-1 overflow-hidden" ref={setContainer}>

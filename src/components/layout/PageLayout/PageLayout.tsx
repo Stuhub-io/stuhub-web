@@ -22,13 +22,13 @@ export const PageLayout = (props: PageLayoutProps) => {
   return (
     <PageLayoutContextProvider>
       <div className="flex h-full w-full flex-col">
-        <header className="flex h-14 shrink-0 items-center justify-between bg-transparent px-4">
+        <header className="flex h-14 shrink-0 items-center justify-between px-4">
           <div className="flex-1 overflow-hidden">{breadCrumb}</div>
           <div className="flex flex-shrink-0 items-center justify-end pl-8">{rightEl}</div>
         </header>
         {headAlert}
         <div className='w-full flex-1 flex overflow-hidden'>
-          <main className="mx-auto w-full overflow-x-hidden px-4 flex-1">
+          <main className="mx-auto w-full overflow-x-hidden px-4 flex-1 overflow-y-auto">
             <PageCoverImage />
             {children}
           </main>

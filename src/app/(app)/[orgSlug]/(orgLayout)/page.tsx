@@ -19,8 +19,8 @@ export default function Page() {
   const { logs, refetch } = useFetchPageAccessLogs({
     allowFetch: true,
   })
-
-  const [selectedPagePkIDs, setSelectedPagePkIDs] = useState<number[]>([])
+  const [pagePkIDsSelection, setPagePkIDsSelection] = useState<Selection>(new Set([]))
+  
   const [typeFilter, setTypeFilter] = useState<Selection>('all')
   const { viewType, setViewType } = useViewType()
   const router = useRouter()
@@ -142,9 +142,9 @@ export default function Page() {
           viewType={viewType}
           items={[...(filesAndDocs ?? []), ...(filesAndDocs ?? [])]}
           onItemMutateSuccess={refetch}
+          pagePkIDsSelection={pagePkIDsSelection}
+          setPagePkIDsSelection={setPagePkIDsSelection}
           onItemDoubleClick={(page) => navigateToPage(page.id, 'nice')}
-          selectedItemPkIDs={selectedPagePkIDs}
-          onSelectedPkIDsChanged={setSelectedPagePkIDs}
           emptyState={<EmptyListPlaceholder onClick={() => {}} />}
           customColumns={[
             {

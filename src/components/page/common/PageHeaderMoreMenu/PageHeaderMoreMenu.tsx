@@ -1,7 +1,16 @@
 'use client'
 
 import { Button, Skeleton, Tooltip } from '@nextui-org/react'
-import { RiInfoI, RiMore2Fill, RiShareFill, RiStarFill, RiStarLine } from 'react-icons/ri'
+import {
+  RiDownloadFill,
+  RiInfoI,
+  RiMore2Fill,
+  RiPrinterFill,
+  RiShareFill,
+  RiStarFill,
+  RiStarLine,
+  RiTimeFill,
+} from 'react-icons/ri'
 import { PageMenu } from '../../PageMenu'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { useParams, useSearchParams } from 'next/navigation'
@@ -14,6 +23,7 @@ import { useSidebar } from '@/components/providers/sidebar'
 import { useUnstarPage } from '@/mutation/mutator/page/useUnstarPage'
 import { getMenuLabelPageViewType } from '@/utils/page'
 import { usePageInfoDrawer } from '@/components/providers/page_info_drawer'
+import { PageViewTypeEnum } from '@/schema/page'
 
 export const PageHeaderMoreMenu = () => {
   const { pageID } = useParams<OrganizationPageParams>()
@@ -76,7 +86,7 @@ export const PageHeaderMoreMenu = () => {
     }
   }, [initOpenShare, onOpenShareModal, page])
 
-  if (!pageID) {
+  if (!pageID || !page) {
     return null
   }
 
@@ -96,6 +106,28 @@ export const PageHeaderMoreMenu = () => {
   return (
     <>
       <div className="flex items-center gap-3">
+        {/* Asset Type Buttons */}
+        {page.view_type == PageViewTypeEnum.ASSET && (
+          <>
+          <Tooltip content="Assert versions">
+            <Button size="sm" isIconOnly radius="full" variant="light">
+              <RiTimeFill size={16} />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Print">
+            <Button size="sm" isIconOnly radius="full" variant="light">
+              <RiPrinterFill size={16} />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Download">
+            <Button size="sm" isIconOnly radius="full" variant="light">
+              <RiDownloadFill size={16} />
+            </Button>
+          </Tooltip>
+          </>
+        )}
+
+        {/* Common Buttons */}
         <Tooltip content="Share">
           <Button
             size="sm"
@@ -111,35 +143,30 @@ export const PageHeaderMoreMenu = () => {
         </Tooltip>
         <Tooltip content={page?.page_star ? 'Remove from favorite' : 'Add to favorite'}>
           <Button size="sm" variant="light" isIconOnly onClick={onToggleStar} isDisabled={isTogglingStar}>
-            {page?.page_star ? <RiStarFill size={20} className="text-warning" /> : <RiStarLine size={20} />}
+            {page.page_star ? <RiStarFill size={20} className="text-warning" /> : <RiStarLine size={20} />}
           </Button>
         </Tooltip>
 
-        {page && (
-          <Tooltip content={`${getMenuLabelPageViewType(page.view_type)} info`}>
-            <Button
-              size="sm"
-              variant="light"
-              isIconOnly
-              onClick={() => {
-                onOpenPageInfo(page)
-              }}
-              isDisabled={false}
-            >
-              <RiInfoI size={20} />
+        <Tooltip content={`${getMenuLabelPageViewType(page.view_type)} info`}>
+          <Button
+            size="sm"
+            variant="light"
+            isIconOnly
+            onClick={() => {
+              onOpenPageInfo()
+            }}
+            isDisabled={false}
+          >
+            <RiInfoI size={20} />
+          </Button>
+        </Tooltip>
+        <Tooltip content="Menu">
+          <PageMenu page={page} parentPage={page.parent_page}>
+            <Button isIconOnly size="sm" variant="flat">
+              <RiMore2Fill size={20} />
             </Button>
-          </Tooltip>
-        )}
-
-        {page && (
-          <Tooltip content="Menu">
-            <PageMenu page={page} parentPage={page.parent_page}>
-              <Button isIconOnly size="sm" variant="flat">
-                <RiMore2Fill size={20} />
-              </Button>
-            </PageMenu>
-          </Tooltip>
-        )}
+          </PageMenu>
+        </Tooltip>
       </div>
     </>
   )

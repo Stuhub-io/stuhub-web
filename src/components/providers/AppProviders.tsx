@@ -11,6 +11,7 @@ import { PermissionProvider } from './permissions'
 import { SharePageProvider } from './share'
 import { GlobalSearchProvider } from './search'
 import { PageInfoDrawerProvider } from './page_info_drawer'
+import { PageSelectProvider } from './page_select'
 
 export function AppProviders({ children }: PropsWithChildren) {
   return (
@@ -23,9 +24,11 @@ export function AppProviders({ children }: PropsWithChildren) {
                 <SharePageProvider>
                   <SidebarProvider>
                     <AssetUploaderContextProvider>
-                      <PageInfoDrawerProvider>
-                        {children}
-                      </PageInfoDrawerProvider>
+                      <PageSelectProvider>
+                        <PageInfoDrawerProvider>
+                          {children}
+                        </PageInfoDrawerProvider>
+                      </PageSelectProvider>
                     </AssetUploaderContextProvider>
                   </SidebarProvider>
                 </SharePageProvider>
