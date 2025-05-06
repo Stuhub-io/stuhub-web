@@ -141,10 +141,6 @@ export default function Page() {
   }
 
   useEffect(() => {
-    setSelectedPagePkIDs([])
-  }, [setSelectedPagePkIDs])
-
-  useEffect(() => {
     setSelectedPagePkIDs(
       pagePkIDsSelection === 'all' ? logs.map(l => l.page.pkid) : [...pagePkIDsSelection].map((pkidStr) => Number(pkidStr)),
     )

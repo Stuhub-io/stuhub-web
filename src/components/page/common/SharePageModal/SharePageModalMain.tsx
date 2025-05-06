@@ -31,6 +31,8 @@ import { ROUTES } from '@/constants/routes'
 import { useOrganization } from '@/components/providers/organization'
 import { BASE_URL } from '@/constants/envs'
 import { SharePageAccessRequestsAlert } from './SharePageAccessRequestsAlert'
+import { useQueryClient } from '@tanstack/react-query'
+import { QUERY_KEYS } from '@/mutation/keys'
 
 type IPermissionMap = Record<
   string,
@@ -52,6 +54,8 @@ export const SharePageModalMain = (props: SharePageModalProps) => {
   const { user } = useAuthContext()
   const { organization } = useOrganization()
   const [loadingAddUser, setLoadingAddUser] = useState(false)
+
+  const queryClient = useQueryClient()
 
   const { isOpen: isOpenConfirmRemove, onClose: onCloseConfirmRemove, onOpen: onOpenConfirmRemove } = useDisclosure()
   const [toRemoveUser, setToRemoveUser] = useState<string>()
@@ -89,6 +93,26 @@ export const SharePageModalMain = (props: SharePageModalProps) => {
     pagePkID: page?.pkid ?? -1,
     allowFetch: Boolean(page),
   })
+
+  const onMutatePageRolesSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEYS.GET_PAGE_PERMISSION_ROLES({
+        pagePkID: page?.pkid ?? -1
+      })
+    })
+  }
+  const onMutatePageSuccess = () => {
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEYS.GET_PAGE({
+        pageID: page?.id ?? ""
+      })
+    })
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEYS.GET_PAGE_PKID({
+        pagePkID: page?.pkid ?? -1
+      })
+    })
+  }
 
   const isFirstLoading = isPendingPageDetail || isPending
 
@@ -144,6 +168,7 @@ export const SharePageModalMain = (props: SharePageModalProps) => {
         email,
         role,
       })
+      onMutatePageRolesSuccess()
       await refetchPageRoles()
     } catch (_) {
       toast({
@@ -175,6 +200,7 @@ export const SharePageModalMain = (props: SharePageModalProps) => {
           general_role: newRole,
         },
       })
+      onMutatePageSuccess()
       await refetchPageDetail()
     } catch (_) {
       toast({

@@ -1,5 +1,7 @@
+import { OrganizationPageParams } from '@/constants/routes'
 import createContext from '@/libs/context'
-import { Dispatch, PropsWithChildren, SetStateAction, useState } from 'react'
+import { useParams } from 'next/navigation'
+import { Dispatch, PropsWithChildren, SetStateAction, useEffect, useState } from 'react'
 
 interface PageInfoProviderValue {
   selectedPagePkIDs: number[]
@@ -13,6 +15,12 @@ export { usePageSelect }
 
 export const PageSelectProvider = ({ children }: PropsWithChildren) => {
   const [pagePkIDs, setPagePkIDs] = useState<number[]>([])
+  const { pageID } = useParams<OrganizationPageParams>()
+
+  // Reset select page on page change
+  useEffect(() => {
+    setPagePkIDs([])
+  }, [setPagePkIDs, pageID])
 
   return (
     <Provider

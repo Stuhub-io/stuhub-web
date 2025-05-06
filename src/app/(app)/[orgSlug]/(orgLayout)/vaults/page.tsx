@@ -126,10 +126,6 @@ export default function RootFolderPage() {
   const childPagePkIDs = useMemo(() => childPages?.map(p => p.pkid) ?? [], [childPages])
 
   useEffect(() => {
-    setSelectedPagePkIDs([])
-  }, [setSelectedPagePkIDs])
-
-  useEffect(() => {
     setSelectedPagePkIDs(
       pagePkIDsSelection === 'all' ? childPagePkIDs : [...pagePkIDsSelection].map((pkidStr) => Number(pkidStr)),
     )

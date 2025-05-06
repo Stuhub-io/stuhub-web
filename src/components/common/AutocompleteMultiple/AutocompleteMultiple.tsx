@@ -221,7 +221,7 @@ export const AutocompleteMultiple = <T extends ACValue = ACValue>(
         <div className="absolute -bottom-2 left-0 right-0 z-50 w-full translate-y-full">
           <Listbox
             className={cn(
-              'w-full rounded-large bg-content2 shadow-large duration-200 animate-in fade-in-0 slide-in-from-top-2',
+              'w-full rounded-large bg-content2 shadow-large',
             )}
           >
             {remainItems?.map((item, itemIdx) => {

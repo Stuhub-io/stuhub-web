@@ -49,10 +49,6 @@ export const PageFolderViewer: PageViewer = (props) => {
   const childPagePkIds = useMemo(() => (childPages ?? []).map((p) => p.pkid), [childPages])
 
   useEffect(() => {
-    setSelectedPagePkIDs([])
-  }, [setSelectedPagePkIDs])
-
-  useEffect(() => {
     setSelectedPagePkIDs(
       pagePkIDsSelection === 'all' ? childPagePkIds : [...pagePkIDsSelection].map((pkidStr) => Number(pkidStr)),
     )
