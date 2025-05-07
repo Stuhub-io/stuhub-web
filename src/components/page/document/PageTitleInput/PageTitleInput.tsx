@@ -6,12 +6,11 @@ import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { Button, Skeleton, TextAreaProps } from '@nextui-org/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { RiUserSmileFill, RiImage2Fill, RiMoreLine } from 'react-icons/ri'
-import { useQueryClient } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/mutation/keys'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
 import { dump } from '@/constants/common'
 import { cn } from '@/libs/utils'
 import { PageMenu } from '../../PageMenu'
+import { useInvalidatePageDetail } from '@/hooks/page/useInvalidatePageDetail'
 
 export interface PageTitleProps {
   pageID: string
@@ -50,7 +49,10 @@ export const PageTitle = (props: PageTitleProps) => {
   const willUpdatePage = useRef(false)
 
   const { mutateAsync: updatePage } = useUpdatePage({ id: page?.id ?? '' })
-  const queryClient = useQueryClient()
+  const invalidatePage = useInvalidatePageDetail({
+    pageID,
+    pagePkID: page?.pkid ?? -1,
+  })
 
   const updatePageTitle = useCallback(
     async (name: string) => {
@@ -65,12 +67,7 @@ export const PageTitle = (props: PageTitleProps) => {
         })
 
         refreshOrgPages()
-
-        queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.GET_PAGE({
-            pageID: page.id,
-          }),
-        })
+        invalidatePage()
         // reset title after revalidate
       } catch (e) {
         toast({
@@ -80,7 +77,7 @@ export const PageTitle = (props: PageTitleProps) => {
       }
       willUpdatePage.current = false
     },
-    [page, queryClient, refreshOrgPages, toast, updatePage],
+    [invalidatePage, page, refreshOrgPages, toast, updatePage],
   )
 
   const throttleUpdateTitle = useDebouncedCallback(updatePageTitle, 500, {
@@ -130,17 +127,7 @@ export const PageTitle = (props: PageTitleProps) => {
               </Button>
             )}
             {page && (
-              <PageMenu
-                placement="right-start"
-                page={page}
-                onSuccess={() => {
-                  queryClient.invalidateQueries({
-                    queryKey: QUERY_KEYS.GET_PAGE({
-                      pageID: page.id,
-                    }),
-                  })
-                }}
-              >
+              <PageMenu placement="right-start" page={page} onSuccess={invalidatePage}>
                 <Button size="sm" variant="light" isIconOnly className="hidden group-hover:flex">
                   <RiMoreLine size={16} />
                 </Button>

@@ -9,15 +9,18 @@ export const PageIconPreview = ({
   page,
   size = 40,
   isFullWidth = false,
+  className
 }: {
   page: Page
   size?: number
   isFullWidth?: boolean
+  className?: string
 }) => {
   const wrapper = (child?: ReactNode) => (
     <div
       className={cn(
         `relative flex shrink-0 items-center justify-center rounded-md bg-default-100`,
+        className
       )}
       style={{
         width: isFullWidth ? "100%": size,

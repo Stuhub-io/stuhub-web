@@ -1,4 +1,5 @@
-import { PageViewType, PageViewTypeEnum } from "@/schema/page"
+import { Page, PageViewType, PageViewTypeEnum } from "@/schema/page"
+import { isAudioExtension, isImageExtension, isVideoExtension } from "./file"
 
 export const IPageFileTypeLabels = {
     FOLDER: 'Folders',
@@ -22,6 +23,23 @@ export const getMenuLabelPageViewType = (viewType: PageViewType) => {
             return "Document"
         case PageViewTypeEnum.FOLDER:
             return "Folder"
+    }
+}
+
+export const getFileTypeLabel = (page?: Page) => {
+    switch (page?.view_type) {
+        case PageViewTypeEnum.DOCUMENT:
+            return "Document"
+        case PageViewTypeEnum.FOLDER:
+            return "Folder"
+        case PageViewTypeEnum.ASSET:
+            if (page.asset?.extension === "pdf") return "PDF"
+            if (isAudioExtension(page.asset?.extension)) return "Audio"
+            if (isImageExtension(page.asset?.extension)) return "Image"
+            if (isVideoExtension(page.asset?.extension)) return "Video"
+            return "Unknown"
+        default:
+            return "Unknown"
     }
 }
 

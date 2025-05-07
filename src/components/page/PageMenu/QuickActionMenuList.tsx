@@ -3,8 +3,6 @@ import { RenamePageInput } from '@/components/page/common/RenamePageInput'
 import { PopperCard } from '@/components/common/PopperCard'
 import { Page, PageViewTypeEnum } from '@/schema/page'
 import { useSidebar } from '@/components/providers/sidebar'
-import { useQueryClient } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/mutation/keys'
 import { PropsWithChildren, useMemo, useState } from 'react'
 import { useSharePageContext } from '@/components/providers/share'
 import { usePermissions } from '@/components/providers/permissions'
@@ -14,6 +12,7 @@ import { useStarPage } from '@/mutation/mutator/page/useStarPage'
 import { useUnstarPage } from '@/mutation/mutator/page/useUnstarPage'
 import { downloadFromUrl } from '@/utils/file'
 import { useToast } from '@/hooks/useToast'
+import { useInvalidatePageDetail } from '@/hooks/page/useInvalidatePageDetail'
 
 export interface BasePageMenuProps extends PropsWithChildren {
   page: Page
@@ -25,13 +24,16 @@ export const PageQuickActionMenu = (props: BasePageMenuProps) => {
   const { permissionChecker } = usePermissions()
   const { toast } = useToast()
 
-  const queryClient = useQueryClient()
-
   const { isOpen: isOpenRename, onOpen: onOpenRename, onClose: onCloseRename } = useDisclosure()
 
   const { onOpenShareModal } = useSharePageContext()
 
   const { refreshOrgPages, refreshStarredOrgPages } = useSidebar()
+  
+  const invalidatePage =  useInvalidatePageDetail({
+    pageID: page.id,
+    pagePkID: page.pkid
+  })
 
   const [togglingStar, setTogglingStar] = useState(false)
   const { mutateAsync: starPage } = useStarPage({
@@ -44,13 +46,7 @@ export const PageQuickActionMenu = (props: BasePageMenuProps) => {
   const onSuccessAction = async () => {
     refreshOrgPages()
     refreshStarredOrgPages()
-
-    queryClient.invalidateQueries({
-      queryKey: QUERY_KEYS.GET_PAGE({
-        pageID: page.id,
-      }),
-    })
-
+    invalidatePage()
     await onSuccess?.()
   }
 

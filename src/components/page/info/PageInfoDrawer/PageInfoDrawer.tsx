@@ -1,7 +1,7 @@
 import Typography from '@/components/common/Typography'
 import { usePageInfoDrawer } from '@/components/providers/page_info_drawer'
-import { Button, Divider, Skeleton, Tab, Tabs } from '@nextui-org/react'
-import { RiCloseLine } from 'react-icons/ri'
+import { Button, Divider, Skeleton, Tab, Tabs, Tooltip } from '@nextui-org/react'
+import { RiCheckLine, RiCloseLine, RiStarFill } from 'react-icons/ri'
 import { PageIconPreview } from '../../PageListView/PageIconPreview'
 import { useParams } from 'next/navigation'
 import { OrganizationPageParams } from '@/constants/routes'
@@ -11,6 +11,7 @@ import { usePageSelect } from '@/components/providers/page_select'
 import { useFetchPageByPkID } from '@/mutation/querier/page/useFetchPageByPkID'
 import { PageDrawerInfoSection } from './PageDrawerInfoSection'
 import { LazySkeleton } from '@/components/common/LazySkeleton'
+import { Image } from '@nextui-org/react'
 
 const randomWidth = () => [200, 240, 180][Math.round(Math.random() * 2)]
 
@@ -18,12 +19,18 @@ export const PageInfoDrawer = () => {
   const { isOpenPageInfo, onClosePageInfo } = usePageInfoDrawer()
   const { pageID } = useParams<OrganizationPageParams>()
   const { selectedPagePkIDs } = usePageSelect()
-  const skeletonWidths = useMemo(() => Array(5).fill(null).map(() => randomWidth()), [])
+  const skeletonWidths = useMemo(
+    () =>
+      Array(5)
+        .fill(null)
+        .map(() => randomWidth()),
+    [],
+  )
 
   const isSelectingMultiple = selectedPagePkIDs.length > 1
 
   const { data: { data: currentPage } = {}, isPending } = useFetchPage({
-    pageID, 
+    pageID,
   })
 
   const selectedPagePkID = useMemo(() => {
@@ -46,17 +53,22 @@ export const PageInfoDrawer = () => {
   }
 
   return (
-    <div className="flex h-full max-h-full w-[340px] px-4 pb-4 pt-px">
+    <div className="flex h-full max-h-full w-[340px] pb-4 pr-4 pt-px">
       <div className="relative flex h-full flex-1 flex-col items-stretch overflow-y-auto rounded-large bg-default-50 p-4 pb-0">
         {/* Drawer Body */}
         {selectedPage && (
           <>
-            <div className="-mt-1 flex items-center">
+            <div className="-mt-1 flex items-center gap-2">
               <div className="flex flex-1 items-center gap-2 overflow-hidden">
                 <PageIconPreview page={selectedPage} size={32} />
-                <Typography className="flex-1 truncate" noWrap>
-                  {selectedPage.name || 'Untitled'}
-                </Typography>
+                <Tooltip content={selectedPage.name || 'Untitled'} delay={1000}>
+                  <div className="inline-flex items-center gap-2 overflow-hidden">
+                    <Typography className="flex-1 truncate" noWrap>
+                      {selectedPage.name || 'Untitled'}
+                    </Typography>
+                    {selectedPage.page_star && <RiStarFill className="text-warning" />}
+                  </div>
+                </Tooltip>
               </div>
               <Button isIconOnly radius="full" variant="light" onClick={onClosePageInfo}>
                 <RiCloseLine size={20} />
@@ -67,15 +79,15 @@ export const PageInfoDrawer = () => {
                 variant="light"
                 color="primary"
                 classNames={{
-                  base: 'pb-3 !overflow-visible',
+                  base: '!overflow-visible',
                   tabList: 'flex-1 -mx-4 px-4 border-b border-b-divider pt-0 pb-4 rounded-b-none',
-                  // tabContent: 'w-auto -mx-3 px-3 flex flex-col items-stretch'
+                  panel: 'overflow-y-hidden flex-1 py-0 -mx-4 px-4',
                 }}
               >
-                <Tab title="Details" className="flex-1">
+                <Tab title="Details">
                   <PageDrawerInfoSection page={selectedPage} />
                 </Tab>
-                <Tab title="Activities" className="flex-1"></Tab>
+                <Tab title="Activities"></Tab>
               </Tabs>
             </div>
           </>
@@ -110,9 +122,24 @@ export const PageInfoDrawer = () => {
           </div>
         )}
 
-        {isSelectingMultiple &&
-          // Selecting Multiple UI
-          null}
+        {isSelectingMultiple && (
+          <>
+            <div className="-mt-1 flex items-center">
+              <div className="flex flex-1 animate-appearance-in items-center gap-2 overflow-hidden">
+                <RiCheckLine size={32} className="" />
+                <Typography className="flex-1 truncate" noWrap>
+                  {selectedPagePkIDs.length} items selected
+                </Typography>
+              </div>
+              <Button isIconOnly radius="full" variant="light" onClick={onClosePageInfo}>
+                <RiCloseLine size={20} />
+              </Button>
+            </div>
+            <div className="mt-4 animate-appearance-in p-10 opacity-70">
+              <Image src="/empty-search.png" alt="selected multiple items" />
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

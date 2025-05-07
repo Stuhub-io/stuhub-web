@@ -3,8 +3,8 @@ import { BaseSidebarViewerProps } from './type'
 import { usePersistCollapseContext } from '@/components/providers/collapse'
 import { useParams, useRouter } from 'next/navigation'
 import { OrganizationPageParams, ROUTES } from '@/constants/routes'
-import { MUTATION_KEYS, QUERY_KEYS } from '@/mutation/keys'
-import { useMutationState, useQueryClient } from '@tanstack/react-query'
+import { MUTATION_KEYS } from '@/mutation/keys'
+import { useMutationState } from '@tanstack/react-query'
 import { useSidebar } from '@/components/providers/sidebar'
 import { PopperContentTrigger } from '@/components/common/PopoverTrigger'
 import { SidebarItem, SidebarItemLeftSpacer, SidebarIconButton } from '@/components/common/Sidebar'
@@ -13,6 +13,7 @@ import { RiFolderOpenFill, RiFolder3Fill, RiMoreLine, RiAddFill } from 'react-ic
 import { PageCreateMenu } from '../../common/PageCreateMenu'
 import { PageMenu } from '../../PageMenu'
 import { useOrganization } from '@/components/providers/organization'
+import { useInvalidatePageDetail } from '@/hooks/page/useInvalidatePageDetail'
 
 export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
   const { page, level = 0, SidebarPageItemViewer, parentPage } = props
@@ -24,6 +25,12 @@ export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
   const router = useRouter()
 
   const { pageID } = useParams<Partial<OrganizationPageParams>>()
+
+  const invalidatePage = useInvalidatePageDetail({
+    pageID: page.id,
+    pagePkID: page.pkid
+  })
+
   // is archiving this page
   const archiveStatus = useMutationState({
     filters: {
@@ -50,14 +57,9 @@ export const FolderSidebarItemView = (props: BaseSidebarViewerProps) => {
       }),
     )
   }
-  const queryClient = useQueryClient()
 
   const onSuccessUpdated = () => {
-    queryClient.invalidateQueries({
-      queryKey: QUERY_KEYS.GET_PAGE({
-        pageID: page.id,
-      }),
-    })
+    invalidatePage()
   }
 
   return (

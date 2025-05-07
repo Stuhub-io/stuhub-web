@@ -24,6 +24,9 @@ import { useUnstarPage } from '@/mutation/mutator/page/useUnstarPage'
 import { getMenuLabelPageViewType } from '@/utils/page'
 import { usePageInfoDrawer } from '@/components/providers/page_info_drawer'
 import { PageViewTypeEnum } from '@/schema/page'
+import { usePermissions } from '@/components/providers/permissions'
+import { useAuthContext } from '@/components/auth/AuthGuard'
+import { useInvalidatePageDetail } from '@/hooks/page/useInvalidatePageDetail'
 
 export const PageHeaderMoreMenu = () => {
   const { pageID } = useParams<OrganizationPageParams>()
@@ -32,6 +35,8 @@ export const PageHeaderMoreMenu = () => {
   const { onOpenShareModal } = useSharePageContext()
   const { refreshOrgPages, refreshStarredOrgPages } = useSidebar()
   const { onOpenPageInfo } = usePageInfoDrawer()
+  const { permissionChecker } = usePermissions()
+  const { user } = useAuthContext()
 
   const { toast } = useToast()
 
@@ -45,6 +50,11 @@ export const PageHeaderMoreMenu = () => {
   } = useFetchPage({
     allowFetch: Boolean(pageID),
     pageID,
+  })
+
+  const invalidatePage = useInvalidatePageDetail({
+    pageID: page?.id ?? '',
+    pagePkID: page?.pkid ?? -1,
   })
 
   const [isTogglingStar, setTogglingStar] = useState(false)
@@ -74,6 +84,7 @@ export const PageHeaderMoreMenu = () => {
 
     refreshOrgPages()
     refreshStarredOrgPages()
+    invalidatePage()
     await refetch()
 
     setTogglingStar(false)
@@ -85,6 +96,12 @@ export const PageHeaderMoreMenu = () => {
       setInitOpenShare(false)
     }
   }, [initOpenShare, onOpenShareModal, page])
+
+  const permissions = {
+    canShare: page && permissionChecker.page.canShare(page),
+    canDownload: page && permissionChecker.page.canDownload(page),
+    canStar: page && permissionChecker.page.canStar(page, user),
+  }
 
   if (!pageID || !page) {
     return null
@@ -109,43 +126,47 @@ export const PageHeaderMoreMenu = () => {
         {/* Asset Type Buttons */}
         {page.view_type == PageViewTypeEnum.ASSET && (
           <>
-          <Tooltip content="Assert versions">
-            <Button size="sm" isIconOnly radius="full" variant="light">
-              <RiTimeFill size={16} />
-            </Button>
-          </Tooltip>
-          <Tooltip content="Print">
-            <Button size="sm" isIconOnly radius="full" variant="light">
-              <RiPrinterFill size={16} />
-            </Button>
-          </Tooltip>
-          <Tooltip content="Download">
-            <Button size="sm" isIconOnly radius="full" variant="light">
-              <RiDownloadFill size={16} />
-            </Button>
-          </Tooltip>
+            <Tooltip content="Assert versions">
+              <Button size="sm" isIconOnly radius="full" variant="light">
+                <RiTimeFill size={16} />
+              </Button>
+            </Tooltip>
+            <Tooltip content="Print">
+              <Button size="sm" isIconOnly radius="full" variant="light">
+                <RiPrinterFill size={16} />
+              </Button>
+            </Tooltip>
+            <Tooltip content="Download">
+              <Button size="sm" isIconOnly radius="full" variant="light">
+                <RiDownloadFill size={16} />
+              </Button>
+            </Tooltip>
           </>
         )}
 
         {/* Common Buttons */}
-        <Tooltip content="Share">
-          <Button
-            size="sm"
-            variant="light"
-            isIconOnly
-            onClick={() => {
-              if (!page) return
-              onOpenShareModal(page)
-            }}
-          >
-            <RiShareFill size={20} />
-          </Button>
-        </Tooltip>
-        <Tooltip content={page?.page_star ? 'Remove from favorite' : 'Add to favorite'}>
-          <Button size="sm" variant="light" isIconOnly onClick={onToggleStar} isDisabled={isTogglingStar}>
-            {page.page_star ? <RiStarFill size={20} className="text-warning" /> : <RiStarLine size={20} />}
-          </Button>
-        </Tooltip>
+        {permissions.canShare && (
+          <Tooltip content="Share">
+            <Button
+              size="sm"
+              variant="light"
+              isIconOnly
+              onClick={() => {
+                if (!page) return
+                onOpenShareModal(page)
+              }}
+            >
+              <RiShareFill size={20} />
+            </Button>
+          </Tooltip>
+        )}
+        {permissions.canStar && (
+          <Tooltip content={page?.page_star ? 'Remove from favorite' : 'Add to favorite'}>
+            <Button size="sm" variant="light" isIconOnly onClick={onToggleStar} isDisabled={isTogglingStar}>
+              {page.page_star ? <RiStarFill size={20} className="text-warning" /> : <RiStarLine size={20} />}
+            </Button>
+          </Tooltip>
+        )}
 
         <Tooltip content={`${getMenuLabelPageViewType(page.view_type)} info`}>
           <Button

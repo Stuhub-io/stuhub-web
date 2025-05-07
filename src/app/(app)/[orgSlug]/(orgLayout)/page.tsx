@@ -140,7 +140,7 @@ export default function Page() {
         </div>
         <PageListView
           viewType={viewType}
-          items={[...(filesAndDocs ?? []), ...(filesAndDocs ?? [])]}
+          items={filesAndDocs ?? []}
           onItemMutateSuccess={refetch}
           pagePkIDsSelection={pagePkIDsSelection}
           setPagePkIDsSelection={setPagePkIDsSelection}

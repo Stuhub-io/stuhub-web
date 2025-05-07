@@ -33,6 +33,7 @@ import { BASE_URL } from '@/constants/envs'
 import { SharePageAccessRequestsAlert } from './SharePageAccessRequestsAlert'
 import { useQueryClient } from '@tanstack/react-query'
 import { QUERY_KEYS } from '@/mutation/keys'
+import { useInvalidatePageDetail } from '@/hooks/page/useInvalidatePageDetail'
 
 type IPermissionMap = Record<
   string,
@@ -77,6 +78,11 @@ export const SharePageModalMain = (props: SharePageModalProps) => {
     allowFetch: Boolean(page),
   })
 
+  const invalidatePage = useInvalidatePageDetail({
+    pageID: page?.id ?? "",
+    pagePkID: page?.pkid ?? -1
+  })
+
   useEffect(() => {
     if (copied) {
       setTimeout(() => {
@@ -102,16 +108,7 @@ export const SharePageModalMain = (props: SharePageModalProps) => {
     })
   }
   const onMutatePageSuccess = () => {
-    queryClient.invalidateQueries({
-      queryKey: QUERY_KEYS.GET_PAGE({
-        pageID: page?.id ?? ""
-      })
-    })
-    queryClient.invalidateQueries({
-      queryKey: QUERY_KEYS.GET_PAGE_PKID({
-        pagePkID: page?.pkid ?? -1
-      })
-    })
+    invalidatePage()
   }
 
   const isFirstLoading = isPendingPageDetail || isPending

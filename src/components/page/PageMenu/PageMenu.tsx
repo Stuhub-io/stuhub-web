@@ -7,8 +7,6 @@ import { WrapperRegistry } from '@/components/common/WrapperRegistry/WrapperRegi
 import { Page, PageViewTypeEnum } from '@/schema/page'
 import { useSidebar } from '@/components/providers/sidebar'
 import { useToast } from '@/hooks/useToast'
-import { useQueryClient } from '@tanstack/react-query'
-import { QUERY_KEYS } from '@/mutation/keys'
 import { useArchivePage } from '@/mutation/mutator/page/useArchivePage'
 import { useMovePage } from '@/mutation/mutator/page/useMovePage'
 import { PageMoreMenuPopoverContent } from './PageMenuPopover'
@@ -26,6 +24,7 @@ import { downloadFromUrl } from '@/utils/file'
 import { useAuthContext } from '@/components/auth/AuthGuard'
 import { getMenuLabelPageViewType } from '@/utils/page'
 import { usePageInfoDrawer } from '@/components/providers/page_info_drawer'
+import { useInvalidatePageDetail } from '@/hooks/page/useInvalidatePageDetail'
 
 
 export interface BasePageMenuProps extends PropsWithChildren {
@@ -42,7 +41,10 @@ export const PageMenu = (props: BasePageMenuProps) => {
   const { organization, currentUserRole } = useOrganization()
   const { permissionChecker } = usePermissions()
 
-  const queryClient = useQueryClient()
+  const invalidatePage = useInvalidatePageDetail({
+    pagePkID: page.pkid,
+    pageID: page.id
+  })
 
   const pageHref =
     BASE_URL +
@@ -96,12 +98,7 @@ export const PageMenu = (props: BasePageMenuProps) => {
   const onSuccessAction = async () => {
     refreshOrgPages()
     refreshStarredOrgPages()
-    queryClient.invalidateQueries({
-      queryKey: QUERY_KEYS.GET_PAGE({
-        pageID: page.id,
-      }),
-    })
-
+    invalidatePage()
     await onSuccess?.()
   }
 

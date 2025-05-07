@@ -2,16 +2,9 @@ import { TOCHeading } from '@/components/common/BlockBasedEditor/utils/extract-h
 import { PopperCard } from '@/components/common/PopperCard'
 import { SidebarItemLeftSpacer } from '@/components/common/Sidebar'
 import { cn } from '@/libs/utils'
-import {
-  Card,
-  CardBody,
-  Listbox,
-  ListboxItem,
-  ListboxSection,
-  useDisclosure,
-} from '@nextui-org/react'
+import { Card, CardBody, Listbox, ListboxItem, ListboxSection, useDisclosure } from '@nextui-org/react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export interface TableOfContentProps {
   headings: TOCHeading[]
@@ -41,6 +34,7 @@ export const TableOfContentInner = (props: TableOfContentProps) => {
     2: 'w-[18px]',
     3: 'w-[12px]',
   }
+  const headingEls = useMemo(() => headings.map((h) => document.getElementById(h.id)), [headings])
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -50,25 +44,24 @@ export const TableOfContentInner = (props: TableOfContentProps) => {
         }
       })
     })
-    const headingElements = headings
-      .map((h) => document.getElementById(h.id))
-      .filter((h) => h !== null) as Element[]
-
-    headingElements.forEach((element) => {
+    headingEls.filter(h => h !== null).forEach((element) => {
       observer.observe(element)
     })
 
     return () => {
       observer.disconnect()
     }
-  }, [headings])
+  }, [headingEls])
 
   if (!headings.length) return null
 
   return (
     <>
-      <div className="w-14 z-20 shrink-0 -ml-14">
-        <div className="sticky h-full max-h-[400px] mt-16 right-0 top-[140px] flex w-full flex-col items-end gap-3" onMouseEnter={onOpen}>
+      <div className="z-20 -ml-14 w-14 shrink-0">
+        <div
+          className="sticky right-0 top-[140px] mt-16 flex h-full max-h-[400px] w-full flex-col items-end gap-3"
+          onMouseEnter={onOpen}
+        >
           <PopperCard
             isOpen={isOpen}
             onClose={onClose}
@@ -78,11 +71,7 @@ export const TableOfContentInner = (props: TableOfContentProps) => {
             }}
             renderContent={(setRef) => {
               return (
-                <Card
-                  ref={setRef}
-                  className="max-h-[calc(100vh-300px)] min-h-[400px] w-[280px]"
-                  onMouseLeave={onClose}
-                >
+                <Card ref={setRef} className="max-h-[calc(100vh-300px)] min-h-[400px] w-[280px]" onMouseLeave={onClose}>
                   <CardBody>
                     <Listbox variant="faded">
                       <ListboxSection title="Table of Content">
@@ -113,14 +102,10 @@ export const TableOfContentInner = (props: TableOfContentProps) => {
           {headings.map((heading, index) => (
             <div
               key={index}
-              className={cn(
-                placeHolderWidthCls[heading.level],
-                'h-1 rounded-small bg-text-tertiary transition-all',
-                {
-                  'bg-text-primary': activeHeading === heading.id,
-                  'bg-text-tertiary opacity-60': activeHeading !== heading.id,
-                },
-              )}
+              className={cn(placeHolderWidthCls[heading.level], 'h-1 rounded-small bg-text-tertiary transition-all', {
+                'bg-text-primary': activeHeading === heading.id,
+                'bg-text-tertiary opacity-60': activeHeading !== heading.id,
+              })}
             />
           ))}
         </div>

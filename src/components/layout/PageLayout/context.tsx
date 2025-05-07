@@ -1,12 +1,11 @@
 'use client'
 
 import { OrganizationPageParams } from '@/constants/routes'
+import { useInvalidatePageDetail } from '@/hooks/page/useInvalidatePageDetail'
 import { useToast } from '@/hooks/useToast'
 import createContext from '@/libs/context'
-import { QUERY_KEYS } from '@/mutation/keys'
 import { useUpdatePage } from '@/mutation/mutator/page/useUpdatePage'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
-import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import { PropsWithChildren, useCallback, useState } from 'react'
 
@@ -26,10 +25,13 @@ export const PageLayoutContextProvider = ({ children }: PropsWithChildren) => {
   const [coverImageUrl, setCoverImageUrl] = useState('')
   const { pageID } = useParams<OrganizationPageParams>()
 
-  const queryClient = useQueryClient()
-
   const { data: { data: page } = {} } = useFetchPage({
     pageID,
+  })
+
+  const invalidatePage = useInvalidatePageDetail({
+    pageID,
+    pagePkID: page?.pkid ?? -1
   })
 
   const { mutateAsync } = useUpdatePage({ id: pageID })
@@ -45,9 +47,7 @@ export const PageLayoutContextProvider = ({ children }: PropsWithChildren) => {
             cover_image: coverImage,
           }
         })
-        queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.GET_PAGE({ pageID }),
-        })
+        invalidatePage()
       } catch (e) {
         toast({
           variant: 'danger',
@@ -55,7 +55,7 @@ export const PageLayoutContextProvider = ({ children }: PropsWithChildren) => {
         })
       }
     },
-    [mutateAsync, page, pageID, queryClient, toast],
+    [invalidatePage, mutateAsync, page, toast],
   )
 
   const handleUpdateCoverImageUrl = useCallback(
