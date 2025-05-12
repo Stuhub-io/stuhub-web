@@ -5,6 +5,7 @@ import { userService } from './user'
 import { pageService } from './page'
 import { uploadService } from './uploader'
 import { pageAccessLogService } from './page-access-log'
+import { activityService } from './activity'
 
 const privateServices: Client[] = [
   // NOTE: add services ...
@@ -13,6 +14,7 @@ const privateServices: Client[] = [
   pageService,
   uploadService,
   pageAccessLogService,
+  activityService,
 ]
 
 const servicesGuard = {

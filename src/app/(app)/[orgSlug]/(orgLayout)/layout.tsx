@@ -12,16 +12,18 @@ export default function OrgDashboardLayout({ children }: Readonly<{ children: Re
   return (
     <OrgLayout
       rightEl={
-        <Popover>
-          <PopoverTrigger>
-            <Button isIconOnly size="sm" variant="flat">
-              <RiMore2Fill size={20} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-            <OrgMoreMenu />
-          </PopoverContent>
-        </Popover>
+        <div className="flex gap-2">
+          <Popover>
+            <PopoverTrigger>
+              <Button isIconOnly size="sm" variant="flat">
+                <RiMore2Fill size={20} />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <OrgMoreMenu />
+            </PopoverContent>
+          </Popover>
+        </div>
       }
     >
       {children}

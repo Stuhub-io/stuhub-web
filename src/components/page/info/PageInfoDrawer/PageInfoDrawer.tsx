@@ -6,12 +6,13 @@ import { PageIconPreview } from '../../PageListView/PageIconPreview'
 import { useParams } from 'next/navigation'
 import { OrganizationPageParams } from '@/constants/routes'
 import { useFetchPage } from '@/mutation/querier/page/useFetchPage'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { usePageSelect } from '@/components/providers/page_select'
 import { useFetchPageByPkID } from '@/mutation/querier/page/useFetchPageByPkID'
 import { PageDrawerInfoSection } from './PageDrawerInfoSection'
 import { LazySkeleton } from '@/components/common/LazySkeleton'
 import { Image } from '@nextui-org/react'
+import { PageDrawerActivity } from './PageDrawerActiviySection'
 
 const randomWidth = () => [200, 240, 180][Math.round(Math.random() * 2)]
 
@@ -19,6 +20,9 @@ export const PageInfoDrawer = () => {
   const { isOpenPageInfo, onClosePageInfo } = usePageInfoDrawer()
   const { pageID } = useParams<OrganizationPageParams>()
   const { selectedPagePkIDs } = usePageSelect()
+
+  const [activeTab, setActiveTab] = useState<string>('info')
+
   const skeletonWidths = useMemo(
     () =>
       Array(5)
@@ -28,25 +32,34 @@ export const PageInfoDrawer = () => {
   )
 
   const isSelectingMultiple = selectedPagePkIDs.length > 1
+  const hasPageID = Boolean(pageID)
 
   const { data: { data: currentPage } = {}, isPending } = useFetchPage({
     pageID,
+    allowFetch: hasPageID,
   })
 
   const selectedPagePkID = useMemo(() => {
     if (selectedPagePkIDs.length === 1) {
       return selectedPagePkIDs[0]
     }
-    if (isSelectingMultiple) {
+    if (isSelectingMultiple || !hasPageID) {
       return null
     }
     return currentPage?.pkid
-  }, [currentPage?.pkid, isSelectingMultiple, selectedPagePkIDs])
+  }, [currentPage?.pkid, hasPageID, isSelectingMultiple, selectedPagePkIDs])
+
+  const allowFetch = (!hasPageID || (hasPageID && !isPending)) && (selectedPagePkID ?? -1) >= 0
 
   const { data: { data: selectedPage } = {} } = useFetchPageByPkID({
     pagePkID: selectedPagePkID ?? -1,
-    allowFetch: !isPending && (selectedPagePkID ?? -1) >= 0,
+    allowFetch,
   })
+
+  const initPageLoading = hasPageID && !allowFetch
+  const pageLoadingOnChange = allowFetch && !selectedPage && !isSelectingMultiple
+  const isNoSelectedPage =
+    !hasPageID && !(initPageLoading || pageLoadingOnChange) && !isSelectingMultiple && !allowFetch
 
   if (!isOpenPageInfo) {
     return null
@@ -76,6 +89,10 @@ export const PageInfoDrawer = () => {
             </div>
             <div className="-mx-4 flex flex-1 flex-col items-stretch overflow-y-auto px-4 pt-4">
               <Tabs
+                selectedKey={activeTab}
+                onSelectionChange={(k) => {
+                  setActiveTab(k as string)
+                }}
                 variant="light"
                 color="primary"
                 classNames={{
@@ -84,15 +101,32 @@ export const PageInfoDrawer = () => {
                   panel: 'overflow-y-hidden flex-1 py-0 -mx-4 px-4',
                 }}
               >
-                <Tab title="Details">
+                <Tab title="Details" key="info">
                   <PageDrawerInfoSection page={selectedPage} />
                 </Tab>
-                <Tab title="Activities"></Tab>
+                <Tab title="Activities" key="activity">
+                  <PageDrawerActivity page={selectedPage} />
+                </Tab>
               </Tabs>
             </div>
           </>
         )}
-        {!isSelectingMultiple && !selectedPage && (
+        {isNoSelectedPage && (
+          <>
+            <div className="-mt-1 flex items-center justify-end">
+              <Button isIconOnly radius="full" variant="light" onClick={onClosePageInfo}>
+                <RiCloseLine size={20} />
+              </Button>
+            </div>
+            <div className="mt-4 animate-appearance-in p-10 opacity-70">
+              <Image src="/empty-search.png" alt="no selected page" className="mx-auto" />
+              <Typography className="text-center" level="p4" color="textTertiary">
+                Select a page to view its details
+              </Typography>
+            </div>
+          </>
+        )}
+        {(initPageLoading || pageLoadingOnChange) && (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <Skeleton className="h-[32px] w-[32px] animate-appearance-in rounded-lg" />
@@ -106,7 +140,7 @@ export const PageInfoDrawer = () => {
               <Skeleton className="h-[32px] flex-1 animate-appearance-in  rounded-lg" />
             </div>
             <Divider className="!mt-4" />
-            <Skeleton className="h-[160px] w-full animate-appearance-in  rounded-xl" />
+            {activeTab !== 'activity' && <Skeleton className="h-[160px] w-full animate-appearance-in  rounded-xl" />}
             <div className="space-y-5">
               {Array(5)
                 .fill(null)

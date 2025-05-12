@@ -1,29 +1,33 @@
 import { VscodeDocumentIcon } from '@/components/icons/VsCodeDocumentIcon'
-import { Page, PageViewTypeEnum } from '@/schema/page'
+import { PageViewType, PageViewTypeEnum } from '@/schema/page'
 import { RiFolder3Fill } from 'react-icons/ri'
 import { getAssetPreviewContent } from './card_view/PageAssetCard'
 import { ReactNode } from 'react'
 import { cn } from '@/libs/utils'
 
-export const PageIconPreview = ({
+type PageWithViewType = {
+  view_type: PageViewType
+  asset?: any
+}
+
+export const PageIconPreview = <T extends PageWithViewType>({
   page,
   size = 40,
   isFullWidth = false,
-  className
+  className,
+  noPreviewImg = false,
 }: {
-  page: Page
+  page: T
   size?: number
   isFullWidth?: boolean
   className?: string
+  noPreviewImg?: boolean
 }) => {
   const wrapper = (child?: ReactNode) => (
     <div
-      className={cn(
-        `relative flex shrink-0 items-center justify-center rounded-md bg-default-100`,
-        className
-      )}
+      className={cn(`relative flex shrink-0 items-center justify-center rounded-md bg-default-100`, className)}
       style={{
-        width: isFullWidth ? "100%": size,
+        width: isFullWidth ? '100%' : size,
         height: size,
       }}
     >
@@ -40,7 +44,7 @@ export const PageIconPreview = ({
       if (!page.asset) {
         return null
       }
-      return wrapper(getAssetPreviewContent(page.asset, { size: iconSize, className: 'bg-transparent' }))
+      return wrapper(getAssetPreviewContent(page.asset, { size: iconSize, className: 'bg-transparent', previewImg: !noPreviewImg }))
     default:
       return null
   }

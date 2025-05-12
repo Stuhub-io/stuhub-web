@@ -1,5 +1,5 @@
 import { cn } from '@/libs/utils'
-import { PageRole, PageRoleEnum } from '@/schema/page'
+import { PageRole, PageRoleEnum, PageRoleEnumLabels } from '@/schema/page'
 import { Button, ListboxItem, Select, SelectItem, Skeleton } from '@nextui-org/react'
 import { PropsWithChildren, useMemo } from 'react'
 
@@ -23,11 +23,11 @@ interface PageRolesMenuProps {
 
 const Options = [
   {
-    label: 'Editor',
+    label: PageRoleEnumLabels[PageRoleEnum.EDITOR],
     value: PageRoleEnum.EDITOR,
   },
   {
-    label: 'Viewer',
+    label: PageRoleEnumLabels[PageRoleEnum.VIEWER],
     value: PageRoleEnum.VIEWER,
   },
 ]

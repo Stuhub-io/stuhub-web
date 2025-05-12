@@ -28,6 +28,7 @@ export default function RootFolderPage() {
 
   const [typeFilter, setTypeFilter] = useState<Selection>('all')
   const { viewType, setViewType } = useViewType()
+  
 
   const { onOpenUploadModal } = useAssetUploadContext()
 

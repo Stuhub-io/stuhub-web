@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { PageCoverImage } from '@/components/page/document/PageCoverImage'
 import { PropsWithChildren, ReactNode } from 'react'

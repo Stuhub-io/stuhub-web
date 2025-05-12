@@ -6,13 +6,14 @@ import { PageListView } from '@/components/page/PageListView/PageListView'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/constants/routes'
 import { useOrganization } from '@/components/providers/organization'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSidebar } from '@/components/providers/sidebar'
 import { Selection } from '@nextui-org/react'
 import { useAssetUploadContext } from '@/components/providers/asset_upload'
 import { FolderViewToolbar } from '@/components/page/page_view/page_viewers/PageFolderViewer/Toolbar'
 import { EmptyListPlaceholder } from '@/components/page/asset/EmpyListPlaceholder'
 import { useViewType } from '@/hooks/useViewType'
+import { usePageSelect } from '@/components/providers/page_select'
 
 export default function StarredPage() {
   const { organization } = useOrganization()
@@ -23,8 +24,17 @@ export default function StarredPage() {
   const { starredOrgPages, refreshStarredOrgPages } = useSidebar()
 
   const { onOpenUploadModal } = useAssetUploadContext()
+  const { setSelectedPagePkIDs } = usePageSelect()
 
   const [pagePkIDsSelection,  setPagePkIDsSelection] = useState<Selection>(new Set([]))
+
+  const childPagePkIds = useMemo(() => (starredOrgPages ?? []).map((p) => p.pkid), [starredOrgPages])
+
+  useEffect(() => {
+       setSelectedPagePkIDs(
+      pagePkIDsSelection === 'all' ? childPagePkIds : [...pagePkIDsSelection].map((pkidStr) => Number(pkidStr)),
+    ) 
+  }, [childPagePkIds, pagePkIDsSelection, setSelectedPagePkIDs])
 
   // folders
   const { folders, filesAndDocs } = useMemo(() => {

@@ -1,3 +1,6 @@
+"use client"
+
+import { PageInfoDrawer } from '@/components/page/info/PageInfoDrawer'
 import { PropsWithChildren, ReactNode } from 'react'
 
 interface OrgLayoutProps extends PropsWithChildren {
@@ -12,7 +15,10 @@ export const OrgLayout = (props: OrgLayoutProps) => {
         <div className='flex-1'/>
         <div className=" flex items-center justify-end">{rightEl}</div>
       </header>
-      <main className="w-full flex-1 overflow-y-auto">{children}</main>
+      <div className='w-full flex-1 flex overflow-hidden'>
+        <main className="w-full flex-1 overflow-y-auto">{children}</main>
+        <PageInfoDrawer />
+      </div>
     </div>
   )
 }

@@ -46,7 +46,7 @@ export const QUERY_KEYS = {
   LIST_PAGE_ROLE_REQUESTS: ({ pagePkID }: { pagePkID: number }) => ['LIST_PAGE_ROLE_REQUESTS', pagePkID],
 
   // Activities
-  GET_PAGE_ACTIVITIES: ({ pagePkID }: { pagePkID: number }) => ['GET_PAGE_ACTIVITIES', pagePkID],
+  GET_PAGE_ACTIVITIES: ({ pagePkID, endTime, limit }: { pagePkID: number, endTime?: string, limit?: number }) => ['GET_PAGE_ACTIVITIES', pagePkID, endTime, limit],
 }
 
 export const MUTATION_KEYS = {

@@ -106,12 +106,17 @@ export const PageAssetCard = memo((props: BaseCardViewProps) => {
   )
 })
 
-export const getAssetPreviewContent = (asset: Asset, style?: {
+export const getAssetPreviewContent = (asset: Asset, style: {
   size?: number
   className?: string
+  previewImg?: boolean
+} = {
+  size: 38,
+  className: '',
+  previewImg: true,
 }) => {
   const Icon = getIconByExtension(asset.extension)
-  if (isImageExtensionSupported(asset.extension)) {
+  if (isImageExtensionSupported(asset.extension) && style?.previewImg) {
     return (
       <Image
         loading="lazy"
@@ -126,7 +131,7 @@ export const getAssetPreviewContent = (asset: Asset, style?: {
 
   return (
     <div className={cn("flex h-full w-full items-center justify-center rounded-small bg-background", style?.className)}>
-      <Icon size={style?.size ?? 38} width={style?.size ?? 38} height={style?.size ?? 38} />
+      <Icon size={style.size} width={style.size} height={style.size} />
     </div>
   )
 }

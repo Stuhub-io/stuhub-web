@@ -131,6 +131,12 @@ export const PageRoleEnum = {
   RESTRICTED: 4 as PageRole,
 } as const
 
+export const PageRoleEnumLabels = {
+  [PageRoleEnum.VIEWER]: 'Viewer',
+  [PageRoleEnum.EDITOR]: 'Editor',
+  [PageRoleEnum.RESTRICTED]: 'Restricted',
+}
+
 export interface UpdatePageGeneralAccessRequest {
   general_role?: PageRole
 }
